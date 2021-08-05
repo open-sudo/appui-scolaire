@@ -1,0 +1,104 @@
+<html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    </head>
+    <body>
+    	        <div id="meet"></div>
+    	
+        <script src="https://meet.jit.si/external_api.js"></script>
+        <script>
+            var domain = "meet.appui.io:4430";
+            var originalDisplayName="{USER_NAME}";
+            var options = {
+                roomName: "{ROOM_NAME}",
+                disableAP: true,
+                disableAEC: true,
+                disableAGC: true,
+                disableNS: true,
+                disableHPF: true,
+				stereo:false,
+				enableLipSync: false,
+
+                interfaceConfigOverwrite: { 
+                   APP_NAME: 'Appui Scolaire Aproresco',   
+                   HIDE_INVITE_MORE_HEADER: true, 
+                   DEFAULT_LOGO_URL: '', 
+                   HIDE_DEEP_LINKING_LOGO: true,
+				   CONNECTION_INDICATOR_DISABLED: true,
+                   JITSI_WATERMARK_LINK: '',
+                   SHOW_CHROME_EXTENSION_BANNER: false,
+                   SHOW_JITSI_WATERMARK: false,
+                   SHOW_BRAND_WATERMARK: false,
+                   SHOW_POWERED_BY: false,
+                   SHOW_WATERMARK_FOR_GUESTS: false,
+                   DISABLE_TRANSCRIPTION_SUBTITLES: {TRANSCRIPTION_ENABLED},
+                   startWithVideoMuted: {VIDEO_MUTED},
+                   TOOLBAR_BUTTONS: ['microphone', 'camera',  'desktop',  'fullscreen',
+         							   'chat',  'settings', 'videoquality','etherpad'
+    								],
+                },
+                userInfo: {
+                     email: 'email@jitsiexamplemail.com',
+                     displayName: '{USER_NAME}'
+                },
+                parentNode: document.querySelector('#meet'),
+                configOverwrite: {
+                	prejoinPageEnabled: false,
+                	startWithVideoMuted: {VIDEO_MUTED},
+                	startWithAudioMuted: {AUDIO_MUTED}
+                },
+            }
+            var api = new JitsiMeetExternalAPI(domain, options);
+            api.addListener('participantJoined', () => {
+            	var participants=api.getParticipantsInfo();
+            	send(participants);
+            });
+            api.addListener('participantLeft', () => {
+            	var participants=api.getParticipantsInfo();
+            	send(participants);
+            });
+            api.addListener('participantKickedOut', () => {
+            	var participants=api.getParticipantsInfo();
+            	send(participants);
+            });
+            api.addListener('audioMuteStatusChanged', (e) => {
+            	var participants=api.getParticipantsInfo();
+            	send(participants,e);
+            });
+            setInterval(function(){
+            	var participants=api.getParticipantsInfo();
+            	send(participants);
+            },10000);
+            
+          
+            
+            function send(participants,e){
+            	const xhr = new XMLHttpRequest()
+            	for (var i in participants) {
+            		participants[i].roomName=options.roomName;
+            		if(participants[i].formattedDisplayName.includes("(me)")){
+            			participants[i].displayName=originalDisplayName;
+            			if(e !=null){
+            				participants[i].audioMuted=e.muted;
+            			}else{
+            				api.isAudioMuted().then(muted => {
+            					participants[i].audioMuted=muted;
+            				});
+            			}
+            		}
+            	}
+            	xhr.addEventListener('readystatechange', function() {
+            	  if (this.readyState === this.DONE) {
+            	    console.log(this.responseText)
+            	  }
+            	})
+            	xhr.open('POST', window.location.origin+'/meet/metadata')
+            	xhr.setRequestHeader('content-type', 'application/json')
+            	xhr.send(JSON.stringify(participants))
+            }
+        </script>
+        
+        
+    </body>
+</html>

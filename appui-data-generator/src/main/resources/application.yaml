@@ -1,0 +1,35 @@
+quarkus:
+   openshift:
+      namespace: appui-backend-project
+      route:
+         expose: true
+      part-of: appui-backend
+   kubernetes-client:
+      trust-certs: true
+   log:
+      level: INFO
+   swagger-ui:
+       always-include: true
+   http:
+     cors: 
+        ~: true
+     test-port: 9090
+
+org:
+  eclipse:
+     microprofile:
+        rest:
+           client:
+               propagateHeaders: TenantKey, Authorization,Proxy-Authorization
+               
+course/mp-rest/url: http://appui-api-course/
+tag/mp-rest/url: http://appui-api-tag/
+parent/mp-rest/url: http://appui-api-student-parent/
+student/mp-rest/url: http://appui-api-student-profile/  
+booking/mp-rest/url: http://appui-api-student-booking/
+teacher/mp-rest/url: http://appui-api-teacher-profile/  
+availability/mp-rest/url: http://appui-api-teacher-availability/  
+schedule/mp-rest/url: http://appui-api-schedule/
+comment/mp-rest/url: http://appui-api-comment/
+
+       

@@ -1,0 +1,6 @@
+2) Video /supervisor testing
+3) Multitenancy
+4) Mobile app integration
+6) API Gateway integration with authentication
+7) Document apis
+Logs

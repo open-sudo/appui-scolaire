@@ -1,0 +1,57 @@
+"%test":
+  quarkus:
+    hibernate-orm:
+      database:
+         generation: drop-and-create
+    kubernetes-config:
+      enabled: false
+      secrets:
+         enabled: false
+    datasource:
+      db-kind: h2
+      username: sa
+      password: 
+      jdbc:
+        url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+          
+quarkus:
+   openshift:
+      namespace: appui-backend-project
+      route:
+         expose: true
+      part-of: appui-backend
+   kubernetes-client:
+      trust-certs: true
+   kubernetes-config:
+      enabled: true
+      secrets:
+         ~: postgres-password
+         enabled: true   
+   log:
+      level: INFO
+   swagger-ui:
+       always-include: true
+   http:
+     cors: 
+        ~: true
+     test-port: 9090
+   datasource:
+      db-kind: postgresql
+      username: appui_scolaire_user
+      password: ${postgres-password}
+      jdbc:
+         max-size: 8
+         min-size: 2
+         url: jdbc:postgresql://postgresql/comments
+   hibernate-orm:
+      database:
+         generation: update
+org:
+  eclipse:
+     microprofile:
+        rest:
+           client:
+               propagateHeaders: TenantKey, Authorization,Proxy-Authorization
+schedule/mp-rest/url: http://appui-api-schedule/
+tag/mp-rest/url: http://appui-api-tag/
+student/mp-rest/url: http://appui-api-student-profile/
