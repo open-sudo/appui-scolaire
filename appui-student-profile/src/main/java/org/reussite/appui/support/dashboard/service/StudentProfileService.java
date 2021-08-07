@@ -85,28 +85,28 @@ public class StudentProfileService {
 	
 	public StudentProfile registerStudent(StudentProfile studentProfile) {
 		
-		if(StringUtils.isAllBlank(studentProfile.getParentId(),studentProfile.getEmail())) {
+		if(StringUtils.isAllBlank(studentProfile.getStudentParentId(),studentProfile.getEmail())) {
 			throw new IllegalArgumentException("Missing parent email or id");
 		}
-		List<StudentProfileEntity> children=StudentProfileEntity.findByParentIdOrEmail(studentProfile.getParentId());
+		List<StudentProfileEntity> children=StudentProfileEntity.findByParentIdOrEmail(studentProfile.getStudentParentId());
 		logger.info("Number of children found for parent:{} : {}",studentProfile.getId(),children.size());
 		for(StudentProfileEntity child:children) {
 			if(child.firstName.equalsIgnoreCase(studentProfile.getFirstName()) && child.lastName.equalsIgnoreCase(studentProfile.getLastName())) {
-				logger.info("Child already exist for  parent with this id {}:{} ",studentProfile.getParentId(),child);
+				logger.info("Child already exist for  parent with this id {}:{} ",studentProfile.getStudentParentId(),child);
 				return studentMapper.toDomain(child);
 			}
 		}
 		StudentParentEntity parent=null;
 		
-		if(StringUtils.isNotBlank(studentProfile.getParentId())) {
-			parent=StudentParentEntity.findById(studentProfile.getParentId());
+		if(StringUtils.isNotBlank(studentProfile.getStudentParentId())) {
+			parent=StudentParentEntity.findById(studentProfile.getStudentParentId());
 		}
 		if(parent==null && StringUtils.isNotBlank(studentProfile.getEmail())) {
 			parent=StudentParentEntity.findByEmail(studentProfile.getEmail());
 		}
 		if(parent==null ) {
 			logger.info("Parent :{} not found in local db. fetching it from remote service");
-			StudentParent found=parentService.getStudentParent(studentProfile.getParentId());
+			StudentParent found=parentService.getStudentParent(studentProfile.getStudentParentId());
 			parent=parentMapper.toEntity(found);
 			logger.info("Parent found from remote service. Storing it:{}",parent);
 			parent.persistAndFlush();

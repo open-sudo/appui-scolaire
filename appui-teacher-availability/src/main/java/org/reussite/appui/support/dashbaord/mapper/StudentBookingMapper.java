@@ -5,9 +5,10 @@ import org.mapstruct.MappingTarget;
 import org.reussite.appui.support.dashboard.domain.StudentBooking;
 import org.reussite.appui.support.dashboard.model.StudentBookingEntity;
 
-@Mapper(componentModel = "CDI")
+@Mapper(componentModel = "CDI", uses = { StudentProfileMapper.class, TeacherAvailabilityMapper.class})
 public interface StudentBookingMapper {
 
+	
 	StudentBookingEntity toEntity(StudentBooking domain);
 
 	StudentBooking toDomain(StudentBookingEntity entity);

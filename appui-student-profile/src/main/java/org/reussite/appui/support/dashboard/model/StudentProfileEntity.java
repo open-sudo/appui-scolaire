@@ -58,6 +58,7 @@ public class StudentProfileEntity extends PanacheEntityBase{
 	public ZonedDateTime createDate=TimeUtils.getCurrentTime();
 	public short onlineStatus;
 	public String lastSeenRoom;
+	public String phoneNumber;
 
 	@ManyToMany
 	public List<TagEntity> tags= new ArrayList<TagEntity>();

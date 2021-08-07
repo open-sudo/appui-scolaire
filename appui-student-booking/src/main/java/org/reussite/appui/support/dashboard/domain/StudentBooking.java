@@ -32,7 +32,7 @@ public class StudentBooking {
     private ZonedDateTime createDate=TimeUtils.getCurrentTime();
 	
     @NotNull(message="Student profile may not be null")
-	private String studentProfileId;
+	private StudentProfile studentProfile;
 
     @JsonIgnore
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
@@ -48,7 +48,7 @@ public class StudentBooking {
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
     private ZonedDateTime rejectDate;
 	
-	private String scheduleId;
+	private Schedule schedule;
 	
 	@JsonView(Views.Response.class)
 	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
@@ -64,6 +64,14 @@ public class StudentBooking {
 		this.id = id;
 	}
 
+	public StudentProfile getStudentProfile() {
+		return studentProfile;
+	}
+
+	public void setStudentProfile(StudentProfile studentProfile) {
+		this.studentProfile = studentProfile;
+	}
+
 	public ZonedDateTime getCreateDate() {
 		return createDate;
 	}
@@ -71,13 +79,7 @@ public class StudentBooking {
 	public void setCreateDate(ZonedDateTime createDate) {
 		this.createDate = createDate;
 	}
-	public String getStudentProfileId() {
-		return studentProfileId;
-	}
-
-	public void setStudentProfileId(String studentProfileId) {
-		this.studentProfileId = studentProfileId;
-	}
+	
 
 	public ZonedDateTime getDeleteDate() {
 		return deleteDate;
@@ -111,15 +113,17 @@ public class StudentBooking {
 		this.rejectDate = rejectDate;
 	}
 
-	public String getScheduleId() {
-		return scheduleId;
-	}
-
-	public void setScheduleId(String scheduleId) {
-		this.scheduleId = scheduleId;
-	}
+	
 
 	
+	public Schedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
+
 	public ZonedDateTime getLastUpdateDate() {
 		return lastUpdateDate;
 	}

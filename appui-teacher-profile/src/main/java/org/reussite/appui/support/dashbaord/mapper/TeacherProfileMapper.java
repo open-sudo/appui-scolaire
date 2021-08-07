@@ -5,7 +5,7 @@ import org.mapstruct.MappingTarget;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.model.TeacherProfileEntity;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "cdi", uses= {SubjectMapper.class})
 public interface TeacherProfileMapper {
 
 	TeacherProfileEntity toEntity(TeacherProfile domain);

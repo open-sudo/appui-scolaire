@@ -37,7 +37,6 @@ public class TeacherProfile{
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
     private ZonedDateTime createDate=TimeUtils.getCurrentTime();
 	@ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> subjects;
 	private Set<Integer>  grades=new HashSet<Integer>();
     private String biographie;
     private String imageUrl;
@@ -54,8 +53,16 @@ public class TeacherProfile{
 	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
 	private List<Tag> tags= new ArrayList<Tag>();
 
-	
+	private List<Subject>subjects= new ArrayList<Subject>();
 
+
+	public List<Subject> getSubjects() {
+		return subjects;
+	}
+
+	public void setSubjects(List<Subject> subjects) {
+		this.subjects = subjects;
+	}
 
 	public List<Tag> getTags() {
 		return tags;
@@ -134,14 +141,6 @@ public class TeacherProfile{
 
 	public void setCreateDate(ZonedDateTime createDate) {
 		this.createDate = createDate;
-	}
-
-	public Set<String> getSubjects() {
-		return subjects;
-	}
-
-	public void setSubjects(Set<String> subjects) {
-		this.subjects = subjects;
 	}
 
 	public Set<Integer> getGrades() {

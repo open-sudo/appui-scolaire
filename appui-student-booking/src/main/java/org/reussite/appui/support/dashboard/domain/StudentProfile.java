@@ -19,7 +19,14 @@ public class StudentProfile {
 	private String email;
 	private String lastName;
 	private String firstName;
+	private String studentParentId;
 	
+	public String getStudentParentId() {
+		return studentParentId;
+	}
+	public void setStudentParentId(String studentParentId) {
+		this.studentParentId = studentParentId;
+	}
 	public String getId() {
 		return id;
 	}

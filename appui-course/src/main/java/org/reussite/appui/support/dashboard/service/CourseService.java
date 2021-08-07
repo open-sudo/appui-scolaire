@@ -14,6 +14,7 @@ import org.reussite.appui.support.dashboard.domain.Course;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
 import org.reussite.appui.support.dashboard.mapper.CourseMapper;
 import org.reussite.appui.support.dashboard.model.ResultPage;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
 import org.reussite.appui.support.dashboard.utils.SearchUtils;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
 import org.reussite.appui.support.dashboard.model.CourseEntity;
@@ -31,7 +32,7 @@ public class CourseService {
 
 	@Inject protected CourseMapper courseMapper;
 	
-
+	@Inject SubjectService subjectService;
 
 	public ResultPage<Course> searchCourses( String title, int gradeMin,int gradeMax,String sortParams, Integer size,
 			Integer page,  String language) {
@@ -39,7 +40,7 @@ public class CourseService {
 		Sort sort=SearchUtils.getAbsoluteSort(sortParams, Course.class);
 		List<Course> result=new ArrayList<Course>();
 		logger.info("Language found:{}",language);
-		PanacheQuery<CourseEntity> query = CourseEntity.find("select DISTINCT c from Course c , IN(c.grades) g where  g >=?1 and g<=?2    and  c.deleteDate IS NULL and  lower(c.subject) like concat('%',concat(?3,'%')) and ('null' = ?4 or lower(c.language)=?4 )",sort,gradeMin,gradeMax, title.toLowerCase(),String.valueOf(language).toLowerCase());
+		PanacheQuery<CourseEntity> query = CourseEntity.find("select DISTINCT c from Course c , IN(c.grades) g where  g >=?1 and g<=?2    and  c.deleteDate IS NULL and  lower(c.subject.name) like concat('%',concat(?3,'%')) and ('null' = ?4 or lower(c.language)=?4 )",sort,gradeMin,gradeMax, title.toLowerCase(),String.valueOf(language).toLowerCase());
 		result=query.page(page, size).list().stream().map(courseMapper::toDomain).collect(Collectors.toList());;
 		ResultPage<Course> resultPage= new ResultPage<Course>(page,query.pageCount(),query.count(),result);
 		logger.info("Number of schedules found:{}",result.toArray().length);
@@ -53,12 +54,15 @@ public class CourseService {
     	Course course=courseMapper.toDomain(entity);
     	return course;
     }
+    
     @Transactional
 	public List<Course>  registerCourse(List<Course> courses) {
     	logger.info("Creating schedule  {} ", Arrays.deepToString(courses.toArray()));
     	List<CourseEntity> entities= new ArrayList<CourseEntity>();
     	for(Course course:courses) {
     		CourseEntity entity= courseMapper.toEntity(course);
+    		SubjectEntity subject=SubjectEntity.findById(course.getSubject().getId());
+    		entity.subject=subject;
 	    	entity.id=null;
 	    	MonetaryAmountEntity.persist(entity.prices);
 	    	if(course.getGrades().size()==0) {
@@ -80,8 +84,8 @@ public class CourseService {
  			throw new NoSuchElementException(Course.class,body.getId().toString());
 		 }
 		
-		 if(StringUtils.isNotBlank(body.getSubject())) {
-			 schedule.subject=(body.getSubject());
+		 if((body.getSubject())!=null) {
+			//FIXME: Use masptruc schedule.subject=body.getSubject();
 		 }
 		
 		 if(body.getGrades().size()>0) {

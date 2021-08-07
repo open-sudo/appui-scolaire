@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response;
 
 import org.reussite.appui.support.dashboard.domain.StudentBooking;
 import org.reussite.appui.support.dashboard.model.ResultPage;
-import org.reussite.appui.support.dashboard.model.StudentBookingEntity;
 import org.reussite.appui.support.dashboard.service.StudentBookingService;
 import org.reussite.appui.support.dashboard.view.Views;
 import org.slf4j.Logger;
@@ -59,13 +58,12 @@ public class StudentBookingController {
     		@QueryParam("firstName") String firstName,
     		@QueryParam("parentId") String parentId,
     		@QueryParam("profileId") String profileId,
-    		@QueryParam("availabilityId") String availabilityId,
     		@QueryParam("sort") String sort, 
     		@DefaultValue("20") @QueryParam("size")Integer size,
     		@DefaultValue("0") @QueryParam("page") Integer page,
     		@DefaultValue("01/01/2010 00:00:00 -0500") @QueryParam("startDate") String startDate, 
     		@DefaultValue("01/01/2110 00:00:00 -0500") @QueryParam("endDate") String endDate, @HeaderParam("Authorization") String auth ) {
-		ResultPage<StudentBooking>  result= studentBookingService.searchStudentBookings(tag, firstName==null?"":firstName, sort,  size, page, startDate, endDate,profileId,parentId,availabilityId);
+		ResultPage<StudentBooking>  result= studentBookingService.searchStudentBookings(tag, firstName==null?"":firstName, sort,  size, page, startDate, endDate,profileId,parentId);
 		return Response.ok(result).build();
 	}
     

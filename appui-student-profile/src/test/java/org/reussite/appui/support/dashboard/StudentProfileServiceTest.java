@@ -43,7 +43,7 @@ public class StudentProfileServiceTest {
     	Mockito.when(parentService.getStudentParent(parent.getId())).thenReturn(parent);
     	StudentProfile student= new StudentProfile();
     	student.setCreateDate(null);
-    	student.setParentId(parent.getId());
+    	student.setStudentParentId(parent.getId());
     	student.setFirstName("Jane");
     	student.setLastName("Joe");
     	student.setGrade(4);

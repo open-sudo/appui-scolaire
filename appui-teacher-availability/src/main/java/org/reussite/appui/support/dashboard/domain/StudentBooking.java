@@ -1,9 +1,13 @@
 package org.reussite.appui.support.dashboard.domain;
 
 
+import java.time.ZonedDateTime;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.reussite.appui.support.dashboard.utils.TimeUtils;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -13,6 +17,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class StudentBooking {
 	private String id;
 	private StudentProfile studentProfile;
+	private TeacherAvailability teacherAvailability;
+	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
+    public ZonedDateTime teacherAssignedDate;
 
 	
 	public String getId() {
@@ -29,6 +36,19 @@ public class StudentBooking {
 	}
 	
 	
+	public TeacherAvailability getTeacherAvailability() {
+		return teacherAvailability;
+	}
+	public void setTeacherAvailability(TeacherAvailability teacherAvailability) {
+		this.teacherAvailability = teacherAvailability;
+	}
+	
+	public ZonedDateTime getTeacherAssignedDate() {
+		return teacherAssignedDate;
+	}
+	public void setTeacherAssignedDate(ZonedDateTime teacherAssignedDate) {
+		this.teacherAssignedDate = teacherAssignedDate;
+	}
 	@Override
 	public String toString() 
 	{ 

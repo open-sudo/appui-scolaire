@@ -1,5 +1,7 @@
 package org.reussite.appui.support.dashboard.controller;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -17,6 +19,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.reussite.appui.support.dashboard.domain.StudentBooking;
 import org.reussite.appui.support.dashboard.domain.TeacherAvailability;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.TeacherAvailabilityEntity;
@@ -53,8 +56,30 @@ public class TeacherAvailabilityController {
 		ResultPage<TeacherAvailability>  result= teacherAvailabilityService.searchTeacherAvailabilities(tag,tenantKey, firstName==null?"":firstName,teacherId, sort, size, page, startDate, endDate);
 		return Response.ok(result).build();
 	}
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("booking")
+	@Transactional
+	@JsonView(Views.Response.class)
+    public Response findStudentBookings(
+    		@HeaderParam("TenantKey") String tenantKey,
+    		@PathParam("ids") List<String> ids) {
+		List<StudentBooking> bookings= teacherAvailabilityService.findStudentBookings(ids);
+		return Response.ok(bookings).build();
+	}
+			
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("/{availabilityId}/booking")
+	@Transactional
+	@JsonView(Views.Response.class)
+    public Response searchStudentProfiles(
+    		@HeaderParam("TenantKey") String tenantKey,
+    		@PathParam("availabilityId") String availabilityId) {
+		List<StudentBooking> bookings= teacherAvailabilityService.searchStudentBooking(tenantKey,availabilityId);
+		return Response.ok(bookings).build();
+	}
 		
-
 	@Consumes(MediaType.APPLICATION_JSON)
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -93,7 +118,7 @@ public class TeacherAvailabilityController {
 	}
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("{availabilityId}/student-booking/{bookingId}")
+	@Path("{availabilityId}/booking/{bookingId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
 	public Response assignTeacherBooking(@HeaderParam("TenantKey") String tenantKey, @PathParam("bookingId")  String bookingId, @PathParam("availabilityId") String availabilityId) {
@@ -103,7 +128,7 @@ public class TeacherAvailabilityController {
 	}
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("{availabilityId}/student-booking/{bookingId}")
+	@Path("{availabilityId}/booking/{bookingId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
 	public Response unassignTeacherBooking(@HeaderParam("TenantKey") String tenantKey, @PathParam("bookingId")  String bookingId, @PathParam("availabilityId") String availabilityId) {

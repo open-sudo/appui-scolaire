@@ -53,10 +53,9 @@ public class StudentBookingServiceTest {
     	Mockito.when(scheduleService.getSchedule(schedule.getId())).thenReturn(schedule);
 
     	StudentBooking booking= new StudentBooking();
-    	booking.setStudentProfileId(student.getId());
+    	booking.setStudentProfile(student);
     	booking.setCreateDate(null);
-    	booking.setScheduleId(schedule.getId());
-    	booking.setStudentProfileId(student.getId());
+    	booking.setSchedule(schedule);
     	booking=
     		given()
 	    	  .header("TenantKey",tenantKey)

@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -43,7 +44,6 @@ import org.reussite.appui.support.dashboard.utils.TimeUtils.DateTimeFormats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 
@@ -94,14 +94,15 @@ public class TeacherAvailabilityService {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateTimeFormats.DATETIME_FORMAT);
 			ZonedDateTime start=ZonedDateTime.parse(startDate,formatter);
 			ZonedDateTime end=ZonedDateTime.parse(endDate,formatter);
-			PanacheQuery<PanacheEntityBase>  query=null;
+			PanacheQuery<TeacherAvailabilityEntity>  query=null;
 			String tagParam=(StringUtils.isEmpty(tag) || StringUtils.isEmpty(tag.trim()))?"null":tag.trim().toLowerCase();
 
 			if(StringUtils.isNotBlank(teacherId)) {
 				query = TeacherAvailabilityEntity.find(
 						"SELECT DISTINCT c FROM TeacherAvailability c  LEFT JOIN c.tags h where (?2 ='null' OR ?2 = lower(h.name)) and c.teacherProfile.id=?1 and c.deleteDate IS NULL ",
 						teacherId,tagParam);
-			}else {
+			}
+			else {
 				query = TeacherAvailabilityEntity.find(
 						"SELECT  c FROM TeacherAvailability c JOIN c.teacherProfile p LEFT JOIN c.tags h  where (?4 ='null' OR lower(h.name) like concat(concat('%',lower(?4),'%')) ) and (lower(p.firstName) like concat(concat('%',lower(?1),'%'))  OR  lower(p.lastName) like concat(concat('%',lower(?1),'%'))) and c.schedule.startDate > ?2 and c.schedule.startDate < ?3 and c.deleteDate IS NULL  ",
 						sort,firstName,start,end,tagParam);
@@ -115,6 +116,18 @@ public class TeacherAvailabilityService {
 		 	}
 		 	ResultPage<TeacherAvailability> resultPage= new ResultPage<TeacherAvailability>(page, query.pageCount(), query.count(),avs);
 		return resultPage;
+	}
+	public List<StudentBooking> findStudentBookings(List<String> ids){
+		List<StudentBookingEntity>  entities= StudentBookingEntity.find("id in ?1",ids).list();
+	 	List<StudentBooking>bookings=entities.stream().map(studentBookingMapper::toDomain).collect(Collectors.toList());
+	 	return bookings;
+	}
+
+	public List<StudentBooking> searchStudentBooking(String tenantKey,String availabilityId) {
+		logger.info("Searching bookings for availability:{}",availabilityId);
+			List<StudentBookingEntity>bookingEntities=StudentBookingEntity.find("teacherAvailability.id=?1", availabilityId).list();
+			List<StudentBooking>bookings=bookingEntities.stream().map(studentBookingMapper::toDomain).collect(Collectors.toList());
+			return bookings;
 	}
 	
 	
@@ -169,9 +182,9 @@ public class TeacherAvailabilityService {
 	@Transactional 
 	public TeacherAvailability registerAvailability(TeacherAvailability availability) {
 		logger.info("Creating availability:{}",availability);
-		TeacherProfileEntity profile=getTeacherProfile(availability.getTeacherProfileId());
-		logger.info("Teacher {} found while creating availability ", availability.getTeacherProfileId());
-		ScheduleEntity schedule=getSchedule(availability.getScheduleId());
+		TeacherProfileEntity profile=getTeacherProfile(availability.getTeacherProfile().getId());
+		logger.info("Teacher {} found while creating availability ", availability.getTeacherProfile().getId());
+		ScheduleEntity schedule=getSchedule(availability.getSchedule().getId());
 		logger.info("Schedule {} found while creating availability ", schedule);
 		long overlap=TeacherAvailabilityEntity.countByTeacherProfileAndSchedule(profile,schedule);
 		if(overlap>0) {
@@ -244,8 +257,8 @@ public class TeacherAvailabilityService {
 		 if(StringUtils.isNotBlank(availability.duration)) {
 			 availability.duration=(body.getDuration());
 		 }
-		 if(StringUtils.isNotBlank(body.getScheduleId())) {
-				String scheduleId=body.getScheduleId();
+		 if(body.getSchedule()!=null) {
+				String scheduleId=body.getSchedule().getId();
 				ScheduleEntity schedule=ScheduleEntity.findById(scheduleId);
 				long overlap=TeacherAvailabilityEntity.countByTeacherProfileAndSchedule(availability.teacherProfile,schedule);
 				if(overlap>0) {
@@ -325,6 +338,7 @@ public class TeacherAvailabilityService {
 
 
 	protected String createJoinConferenceUrl(TeacherAvailabilityEntity availability, StudentBookingEntity booking) {
+		logger.info("Creating conference URL with :{} and {}",availability,booking);
 		String firstName=booking==null?availability.teacherProfile.firstName:booking.studentProfile.firstName;
 		String lastName=booking==null?availability.teacherProfile.lastName:booking.studentProfile.lastName;
 		String meetingId=availability.conferenceId;
@@ -369,6 +383,7 @@ public class TeacherAvailabilityService {
 		 return mapper.toDomain(availability);
     }
 
+	@Transactional
 	public TeacherAvailability assignTeacher(String tenantKey,String bookingId, String availablityId) {
 		 StudentBookingEntity booking=getStudentBooking(bookingId);
 		 logger.info("Assigning booking:{} to availability:{}",bookingId,availablityId);

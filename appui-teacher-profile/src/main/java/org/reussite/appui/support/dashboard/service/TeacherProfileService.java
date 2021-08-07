@@ -1,12 +1,15 @@
 package org.reussite.appui.support.dashboard.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.PathParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -17,6 +20,7 @@ import org.reussite.appui.support.dashboard.domain.Tag;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
 import org.reussite.appui.support.dashboard.model.ResultPage;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
 import org.reussite.appui.support.dashboard.model.TagEntity;
 import org.reussite.appui.support.dashboard.model.TeacherProfileEntity;
 import org.reussite.appui.support.dashboard.repository.TeacherProfileRepository;
@@ -105,6 +109,17 @@ public class TeacherProfileService {
 		if(StringUtils.isNotBlank(profile.getPhoneNumber())) {
 			entity.setPhoneNumber(profile.getPhoneNumber().replaceAll("[^0-9]", "").replaceFirst("^0+(?!$)", ""));
 		}
+		Set<SubjectEntity> subjects= new HashSet<SubjectEntity>();
+		for(SubjectEntity subject:entity.getSubjects()) {
+			SubjectEntity sub=SubjectEntity.findById(subject.id);
+			if(sub!=null) {
+				subjects.add(sub);
+			}else {
+				subjects.add(subject);
+			}
+		}
+		SubjectEntity.persist(subjects);
+		entity.setSubjects(subjects);
 		teacherRepo.persistAndFlush(entity);
 		profile=teacherMapper.toDomain(entity);
 		return profile;
@@ -153,9 +168,9 @@ public class TeacherProfileService {
 		logger.info("Approval for teacher profile deleted for : {}",id);
 	}
 	@Transactional
-	public void updateTeacherProfile(String tenantKey, TeacherProfile body) {
-		logger.info("Executing teacher profile update :{}",body.getId());
-		TeacherProfileEntity profile = teacherRepo.findById(body.getId());
+	public void updateTeacherProfile(String tenantKey, String id, TeacherProfile body) {
+		logger.info("Executing teacher profile update :{}",id);
+		TeacherProfileEntity profile = teacherRepo.findById(id);
 		logger.info("Teacher profile found in db:{}",profile);
 
 		if (profile == null) {
@@ -199,9 +214,10 @@ public class TeacherProfileService {
 		if (StringUtils.isNotBlank(body.getSchoolName())) {
 			profile.setSchoolName(body.getSchoolName());
 		}
-		if (body.getSubjects() != null && body.getSubjects().size() > 0) {
+		//FIXME: USe mapstruc
+		/*if (body.getSubjects() != null && body.getSubjects().size() > 0) {
 			profile.setSubjects (body.getSubjects());
-		}
+		}*/
 		if (body.getGrades() != null && body.getGrades().size() > 0) {
 			profile.setGrades (body.getGrades());
 		}

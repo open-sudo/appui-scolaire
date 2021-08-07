@@ -11,7 +11,7 @@ public interface StudentProfileMapper {
 
 	StudentProfileEntity toEntity(StudentProfile domain);
 
-    @Mapping(source = "entity.parent.id", target = "parentId")
+    @Mapping(source = "entity.parent.id", target = "studentParentId")
 	StudentProfile toDomain(StudentProfileEntity entity);
 	void updateModel(StudentProfile domain, @MappingTarget StudentProfileEntity entity);
 

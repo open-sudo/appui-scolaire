@@ -116,9 +116,11 @@ public class TeacherCommentController {
 	@Transactional
 	@JsonView(Views.Read.class)
 	public Response createTeacherComment(@HeaderParam("TenantKey") String tenantKey,@JsonView(Views.WriteOnce.class) TeacherComment comment) {
-		logger.info("Creating teacher comment:{}, by {}",comment);
+		logger.info("Creating teacher comment. {}",comment);
+
+		logger.info("Creating teacher comment. Student:{}, Commenter: {}",comment.getStudentProfile().getLastName(),comment.getCommenter().getLastName());
 		TeacherComment result=teacherCommentService.createTeacherComment(comment);
-		logger.info("Created teacher comment:{} ",result);
+		logger.info("Created teacher comment. Student:{}, Commenter: {}",comment.getStudentProfile().getLastName(),comment.getCommenter().getLastName());
 		return Response.ok(result).status(Response.Status.CREATED).build();
 	}
 }

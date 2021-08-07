@@ -26,7 +26,7 @@ public class StudentProfile{
 	@JsonView(Views.Read.class)
 	private String id;
 	@JsonView(Views.WriteOnce.class)
-	private String parentId;
+	private String studentParentId;
 	private String email;
     @NotBlank(message="Last name may not be blank")
 	private String lastName;
@@ -42,6 +42,8 @@ public class StudentProfile{
 	private boolean isTermCondionApproved;
 	private String conferenceUrl;
 
+	private String phoneNumber;
+	
 	@JsonView(Views.Read.class)
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime createDate=TimeUtils.getCurrentTime();
@@ -56,6 +58,16 @@ public class StudentProfile{
 	
 
 	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+
 	public List<Tag> getTags() {
 		return tags;
 	}
@@ -83,13 +95,13 @@ public class StudentProfile{
 	}
 
 
-	public String getParentId() {
-		return parentId;
+	public String getStudentParentId() {
+		return studentParentId;
 	}
 
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
+	public void setStudentParentId(String studentParentId) {
+		this.studentParentId = studentParentId;
 	}
 
 

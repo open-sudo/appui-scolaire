@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -13,6 +14,7 @@ import org.reussite.appui.support.dashboard.utils.TimeUtils;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -30,11 +32,11 @@ public class TeacherAvailability {
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime createDate =TimeUtils.getCurrentTime();
 	@NotBlank
-	private String teacherProfileId;
+	private TeacherProfile teacherProfile;
 	@JsonView(Views.Response.class) 
     private long studentCount;
-    @NotBlank
-    private String scheduleId;
+    @NotNull
+    private Schedule schedule;
     
     private String duration;
     @JsonView(Views.Response.class) 
@@ -48,7 +50,9 @@ public class TeacherAvailability {
 	private List<TeacherProfile>assistants= new ArrayList<TeacherProfile>();
 	private List<Tag> tags= new ArrayList<Tag>();
 
+	@JsonIgnore
 	private String studentPassword;
+	@JsonIgnore
 	private String teacherPassword;
 	
 	private String conferenceUrl;
@@ -93,12 +97,12 @@ public class TeacherAvailability {
 		this.createDate = createDate;
 	}
 
-	public String getTeacherProfileId() {
-		return teacherProfileId;
+	public TeacherProfile getTeacherProfile() {
+		return teacherProfile;
 	}
 
-	public void setTeacherProfileId(String teacherProfileId) {
-		this.teacherProfileId = teacherProfileId;
+	public void setTeacherProfile(TeacherProfile teacherProfile) {
+		this.teacherProfile = teacherProfile;
 	}
 
 	public long getStudentCount() {
@@ -111,12 +115,12 @@ public class TeacherAvailability {
 
 	
 
-	public String getScheduleId() {
-		return scheduleId;
+	public Schedule getSchedule() {
+		return schedule;
 	}
 
-	public void setScheduleId(String scheduleId) {
-		this.scheduleId = scheduleId;
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 
 	public String getDuration() {

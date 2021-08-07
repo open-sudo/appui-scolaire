@@ -80,9 +80,10 @@ public class ScheduleController {
 	@Transactional
 	@JsonView(Views.Response.class)
     public Response searchSchedules(@Context SecurityContext securityContext,
-    		@DefaultValue("") @QueryParam("title") String title,
-    		@DefaultValue("FR") @QueryParam("title") String language,
+    		@QueryParam("title") List<String> subjectIds,
+    		@DefaultValue("FR") @QueryParam("language") String language,
     		@DefaultValue("startDate,asc") @QueryParam("sort") String sort, 
+    		@DefaultValue("") @QueryParam("courseId") String courseId, 
     		@DefaultValue("20") @QueryParam("size")Integer size,
     		@DefaultValue("0") @QueryParam("page") Integer page,
     		@DefaultValue("0") @QueryParam("gradeMin") Integer gradeMin,
@@ -90,7 +91,7 @@ public class ScheduleController {
 	    		@DefaultValue("01/01/2010 00:00:00 -0500") @QueryParam("startDate") String startDate, 
 	    		@DefaultValue("01/01/2110 00:00:00 -0500") @QueryParam("endDate") String endDate ) {
 		
-		ResultPage<Schedule> result= scheduleService.searchSchedules(title, gradeMin,gradeMax, sort, size, page,startDate,endDate,language);
+		ResultPage<Schedule> result= scheduleService.searchSchedules(courseId,subjectIds, gradeMin,gradeMax, sort, size, page,startDate,endDate,language);
 		return Response.ok(result).build();
 	}
 

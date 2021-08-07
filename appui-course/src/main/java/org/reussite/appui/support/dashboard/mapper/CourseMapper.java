@@ -7,7 +7,7 @@ import org.mapstruct.MappingTarget;
 import org.reussite.appui.support.dashboard.domain.Course;
 import org.reussite.appui.support.dashboard.model.CourseEntity;
 
-@Mapper(componentModel = "cdi", uses = {MonetaryAmountMapper.class})
+@Mapper(componentModel = "cdi", uses = {MonetaryAmountMapper.class, SubjectMapper.class})
 public interface CourseMapper {
 
 	CourseEntity toEntity(Course domain);

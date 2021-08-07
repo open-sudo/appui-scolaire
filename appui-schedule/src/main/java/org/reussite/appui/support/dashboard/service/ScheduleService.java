@@ -11,6 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
 import org.reussite.appui.support.dashboard.mapper.CourseMapper;
@@ -23,6 +24,7 @@ import org.reussite.appui.support.dashboard.domain.Schedule;
 import org.reussite.appui.support.dashboard.model.CourseEntity;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.ScheduleEntity;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,16 +47,24 @@ public class ScheduleService {
 
 	
 
-	public ResultPage<Schedule> searchSchedules( String title, int gradeMin,int gradeMax,String sortParams, Integer size,
+	public ResultPage<Schedule> searchSchedules(String courseId, List<String> subjectIds, int gradeMin,int gradeMax,String sortParams, Integer size,
 			Integer page, String startDate, String endDate, String language) {
-		logger.info("Searching schedules for Min grade:{}. Max grade:{}. Start date:{}. End Date:{} and title:{}. Principal:{}. Sort params:{}",gradeMin,gradeMax,startDate,endDate,title,sortParams);
+		logger.info("Searching schedules for Min grade:{}. Max grade:{}. Start date:{}. End Date:{} and title:{}. Principal:{}. Sort params:{}",gradeMin,gradeMax,startDate,endDate,Arrays.deepToString(subjectIds.toArray()),sortParams);
 		Sort sort=SearchUtils.getAbsoluteSort(sortParams, Schedule.class);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateTimeFormats.DATETIME_FORMAT);
 		ZonedDateTime start=ZonedDateTime.parse(startDate,formatter);
 		ZonedDateTime end=ZonedDateTime.parse(endDate,formatter);
 		List<Schedule> result=new ArrayList<Schedule>();
 		logger.info("Language found:{}",language);
-		PanacheQuery<ScheduleEntity> query = ScheduleEntity.find("select DISTINCT c from Schedule c,  IN(c.course.grades) g where g >=?1 and g<=?2   and  c.deleteDate IS NULL and c.startDate > ?3 and c.startDate < ?4 and lower(c.course.subject) like concat('%',concat(?5,'%'))",sort,gradeMin,gradeMax,start,end, title.toLowerCase());
+		PanacheQuery<ScheduleEntity> query =null;
+		if(StringUtils.isNotBlank(courseId)) {
+			query= ScheduleEntity.find("select DISTINCT c from Schedule c where c.course.id=?1   and  c.deleteDate IS NULL ",sort,courseId);
+		}else if(subjectIds==null || subjectIds.size()==0){
+				query= ScheduleEntity.find("select DISTINCT c from Schedule c,  IN(c.course.grades) g where g >=?1 and g<=?2   and  c.deleteDate IS NULL and c.startDate > ?3 and c.startDate < ?4 ",sort,gradeMin,gradeMax,start,end);
+		}
+		else {
+			query= ScheduleEntity.find("select DISTINCT c from Schedule c,  IN(c.course.grades) g where g >=?1 and g<=?2   and  c.deleteDate IS NULL and c.startDate > ?3 and c.startDate < ?4 and (c.course.subject.id) in ?5",sort,gradeMin,gradeMax,start,end, subjectIds);
+		}
 		result=query.page(page, size).list().stream().map(scheduleMapper::toDomain).collect(Collectors.toList());;
 		ResultPage<Schedule> resultPage= new ResultPage<Schedule>(page,query.pageCount(),query.count(),result);
 		logger.info("Number of schedules found:{}",result.toArray().length);
@@ -86,12 +96,16 @@ public class ScheduleService {
 		logger.info("Course received from remote service:{}",course);
 		CourseEntity existing=CourseEntity.findById(courseId);
 		if(existing==null) {
-			logger.info("Existing course found:{}",existing);
-
+			logger.info("No existing course found with id:{}",courseId);
 			CourseEntity entity=courseMapper.toEntity(course);
+			SubjectEntity subject=SubjectEntity.findById(entity.subject.id);
+			if(subject==null) {
+				entity.subject.persistAndFlush();
+			}
 			entity.persistAndFlush();
 			return entity;
 		}
+		logger.info("Existing course found:{}",existing);
 		return existing;
 	}
 

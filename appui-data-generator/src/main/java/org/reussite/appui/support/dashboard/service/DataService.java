@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -25,7 +24,7 @@ import org.reussite.appui.support.dashboard.domain.Schedule;
 import org.reussite.appui.support.dashboard.domain.StudentBooking;
 import org.reussite.appui.support.dashboard.domain.StudentParent;
 import org.reussite.appui.support.dashboard.domain.StudentProfile;
-import org.reussite.appui.support.dashboard.domain.Tag;
+import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.domain.TeacherAvailability;
 import org.reussite.appui.support.dashboard.domain.TeacherComment;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
@@ -117,6 +116,9 @@ public class DataService {
     protected CourseService courseService;
 	@Inject
     @RestClient
+    protected SubjectService subjectService;
+	@Inject
+    @RestClient
     protected ScheduleService scheduleService;
 	@Inject
     @RestClient
@@ -195,11 +197,11 @@ public class DataService {
            profile.setLastName(firstnames.get(firstnames.size()-count-10));
        	   profile.setFirstName(surnames.get((surnames.size()-count-20)));
            profile.setEmail((profile.getFirstName()+"."+profile.getLastName()+random.nextLong()+"@gmail.com").toLowerCase());
-           Set<String>subjects= new  HashSet<String>();
+           Set<Subject>sub= new  HashSet<Subject>();
            for(int  i=0;i<numberOfSubjects; i++) {
-           	subjects.add(SUBJECTS[(i+count)%(SUBJECTS.length)]);
+           	sub.add(subjects.get((i+count)%(SUBJECTS.length)));
            }
-           profile.setSubjects(subjects);
+           profile.setSubjects(sub);
            int numberOfLevels=(count%4)+2;
            Set<Integer>grades= new  HashSet<Integer>();
 
@@ -212,9 +214,9 @@ public class DataService {
            TeacherAvailability availability = new TeacherAvailability();
 
            availability.setEffectiveStartDate(TimeUtils.getCurrentTime());//
-           availability.setTeacherProfileId(profile.getId());
+           availability.setTeacherProfile(profile);
            		
-           availability.setScheduleId(schedules.get(count%schedules.size()).getId());
+           availability.setSchedule(schedules.get(count%schedules.size()));
            availability.setEffectiveStartDate(TimeUtils.getCurrentTime());
            availability=availabilityService.create(tenantKey, availability);
            availabilities.add(availability);
@@ -252,20 +254,23 @@ public class DataService {
 	    	parent=parentService.create(tenantKey, parent);
 			logger.info("Parent  created:{}",parent);
 			parents.add(parent);
-	    	profile.setParentId(parent.getId());
+	    	profile.setStudentParentId(parent.getId());
 	    	profile.setFirstName(firstnames.get( count+200));
 	    	profile.setLastName(surnames.get(count));
 	    	profile=studentService.create(tenantKey, profile);
 	    	profile.setGrade(((count%12))+1);
 	    	profile.setEmail((profile.getFirstName()+"."+profile.getLastName()+random.nextLong()+"@gmail.com").toLowerCase());
+	    	profile.setSchoolBoard("Conseil Scolaire Mon Success");
 	    	logger.info("Creating student:{}",profile);
+	    	profile.setGrade(r.nextInt(12));
+	    	profile.setSchoolName("Ecole Des Rois Mages");
 	    	profile=studentService.create(tenantKey, profile);
 	    	logger.info("Student created:{}",profile);
 	    	students.add(profile);
 
-	    	booking.setStudentProfileId(profile.getId());
+	    	booking.setStudentProfile(profile);
 	    	logger.info("Number of schedules:{}",schedules.size());
-	        booking.setScheduleId(schedules.get(count%schedules.size()).getId());
+	        booking.setSchedule(schedules.get(count%schedules.size()));
 	    	logger.info("Creating booking:{}",booking);
 
 	        booking=bookingService.create(tenantKey, booking);
@@ -294,14 +299,28 @@ public class DataService {
 				}
 	   }
 		List<Schedule> schedules= new ArrayList<Schedule>();
+		   List<Subject> subjects= new ArrayList<Subject>();
 
 	   public void createScheduleList() {
 		   schedules= new ArrayList<Schedule>();
+		   List<Subject> subs= new ArrayList<Subject>();
+
+		   for(int l=0; l<languages.length; l++) {
+			   for(int i=0; i<SUBJECTS.length; i++) {
+				   Subject subject= new Subject();
+				   subject.setName(SUBJECTS[i]);
+				   subject.setLanguage(languages[l]);
+				   subs.add(subject);
+			   }
+		   }
+		   logger.info("Creating subjects");
+		   subjects=subjectService.create("",subs);
+		   logger.info("Subjects created");
 	    	for(int l=0; l<languages.length; l++) {
 	    		for(int j=0; j<SUBJECTS.length; j++) {
 	    			Course course= new Course();
 	    	    	course.setName(SUBJECTS[j]);
-	    	    	course.setSubject(SUBJECTS[j]);
+	    	    	course.setSubject(subjects.get(j));
 	    	    	course.setId(null);
 	    	    	course.setDescription(languages[l].toLowerCase().contains("en")?descriptionsEn[0]:descriptionsFr[0]);
 	    	    	course.setLanguage(languages[l]);
@@ -339,20 +358,29 @@ public class DataService {
 			logger.info("Number of schedules created:{}",schedules.size());
     	}
 	   
+	   StudentParent getParent(String id) {
+		   for(StudentParent p:parents) {
+			   if(p.getId().equals(id)) {
+				   return p;
+			   }
+		   }
+		   return null;
+	   }
 	   public void createTeacherComments() {
+		   int count=0;
 		   for(TeacherProfile teacher:teachers) {
-			   for(StudentProfile student:students) {
-				   for(StudentParent parent:parents) {
 					   for(StudentBooking booking:bookings) {
 						   TeacherComment comment = new TeacherComment();
 					    	comment.setCommenter(teacher);
 					    	comment.setStudentBooking(booking);
-					    	comment.setStudentProfile(student);
-					    	comment.setStudentParent(parent);
+					    	comment.setStudentProfile(booking.getStudentProfile());
+					    	comment.setStudentParent(getParent(booking.getStudentProfile().getStudentParentId()));
 					    	comment.setContent("Example comment");
 					    	commentService.create(tenantKey, comment);
-					   }
-				   }
+					    	count++;
+					    	if(count>100) {
+					    		return;
+					    	}
 			   }
 		   }
 	    	
@@ -363,77 +391,6 @@ public class DataService {
 		createStudentBookingList(studentCount);
 		createTeacherList(teacherCount);
 		createTeacherComments();
-		String tenantKey="alpha";
-		Tag tag= new Tag("Blue"+UUID.randomUUID().toString());
-		tag=tagService.create(tenantKey, tag);
-		logger.info("Tag  created:{}",tag);
-
-		StudentParent parent= new StudentParent();
-    	parent.setFirstName("Peter");
-    	parent.setCountryCode(1);
-    	SecureRandom r= new SecureRandom();
-    	parent.setPhoneNumber(r.nextLong()+"");
-    	parent.setLastName("Moonsoon");
-    	parent.setId(null);
-    	
-    	parent=parentService.create(tenantKey, parent);
-		logger.info("Parent  created:{}",parent);
-
-		StudentProfile student= new StudentProfile();
-    	student.setParentId(parent.getId());
-    	student.setFirstName("Jane");
-    	student.setLastName("Joe "+r.nextInt());
-    	student.setGrade(4);
-    	student=studentService.create(tenantKey, student);
-		logger.info("Student  created:{}",student);
-
-		Course course= new Course();
-    	course.setName("Quarkus Programming");
-    	course.setSubject("Quarkus for CRUD");
-    	course.setId(null);
-    	course.setPrices(Arrays.asList(new MonetaryAmount(new BigDecimal(12.34567), "CAD")));
-    	logger.info("Creating course:{}",course);
-    	List<Course> courses=courseService.create(tenantKey, Arrays.asList(course));
-		logger.info("Course  created:{}",courses.get(0));
-
-		Schedule schedule= new Schedule();
-    	schedule.setCourseId(courses.get(0).getId());
-    	schedule.setStartDate(TimeUtils.getCurrentTime());
-    	schedule.setEndDate(TimeUtils.getCurrentTime());
-    	
-    	List<Schedule>schedules=scheduleService.create(tenantKey, Arrays.asList(schedule));
-    	
-    	logger.info("Schedule created:{}",schedules.get(0));
-    	
-    	TeacherProfile teacher= new TeacherProfile();
-    	teacher.setCreateDate(null);
-    	teacher.setFirstName("Jane"+UUID.randomUUID().toString());
-    	teacher.setLastName("Joe");
-    	teacher.setEmail(UUID.randomUUID().toString()+".it@let.do");
-    	teacher=teacherService.create(tenantKey, teacher);
-    	logger.info("Teacher created:{}",teacher);
-
-    	
-    	StudentBooking booking= new StudentBooking();
-    	booking.setStudentProfileId(student.getId());
-    	booking.setCreateDate(null);
-    	booking.setScheduleId(schedules.get(0).getId());
-    	
-    	logger.info("Creating booking:{}",booking);
-    	booking=bookingService.create(tenantKey, booking);
-    	
-    	logger.info("Booking created:{}",booking);
-
-    	TeacherAvailability availability= new TeacherAvailability();
-    	availability.setTeacherProfileId(teacher.getId());
-    	availability.setCreateDate(null);
-    	availability.setScheduleId(schedules.get(0).getId());
-    	availability.setTeacherProfileId(teacher.getId());
-    	
-    	logger.info("Creating availability:{}",availability);
-    	availability=availabilityService.create(tenantKey, availability);
-    	logger.info("Availability created:{}",availability);
-
 	}
 
 

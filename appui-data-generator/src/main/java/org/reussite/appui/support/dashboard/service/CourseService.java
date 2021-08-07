@@ -21,4 +21,5 @@ public interface CourseService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@POST
 	List<Course> create(@HeaderParam("TenantKey") String tenantKey,List<Course> s);
+
 }

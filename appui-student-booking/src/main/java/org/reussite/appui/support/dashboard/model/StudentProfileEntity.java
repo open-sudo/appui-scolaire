@@ -22,7 +22,7 @@ public class StudentProfileEntity extends PanacheEntityBase{
 	public String email;
 	public String lastName;
 	public String firstName;
-	
+	public String studentParentId;
 	
 	@Override
 	public String toString() 

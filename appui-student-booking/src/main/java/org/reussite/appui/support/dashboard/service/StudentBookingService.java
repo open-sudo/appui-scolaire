@@ -66,8 +66,8 @@ public class StudentBookingService {
 	public StudentBooking registerStudentBooking(StudentBooking body) {
     	logger.info("Creating booking:{}",body);
     	StudentBookingEntity booking=studentBookingMapper.toEntity(body);
-    	booking.schedule=getSchedule( body.getScheduleId());
-    	booking.studentProfile=getStudentProfile(body.getStudentProfileId());
+    	booking.schedule=getSchedule( body.getSchedule().getId());
+    	booking.studentProfile=getStudentProfile(body.getStudentProfile().getId());
     	logger.info("Student profile found:{}",booking.studentProfile);
 
 		booking.persistAndFlush();
@@ -109,8 +109,8 @@ public class StudentBookingService {
 	}
 
 	public ResultPage<StudentBooking>  searchStudentBookings(String tag,String firstName, String sortParams,  Integer size, Integer page,
-			String startDate, String endDate, String profileId, String parentId, String availabilityId) {
-		logger.info("Searching student bookings with First Name:{}, Profile ID:{}, Parent ID:{}, Availability ID:{}",firstName,profileId,parentId,availabilityId);
+			String startDate, String endDate, String profileId, String parentId) {
+		logger.info("Searching student bookings with First Name:{}, Profile ID:{}, Parent ID:{}, Availability ID:{}",firstName,profileId,parentId);
 		
 		Sort sort=SearchUtils.getAbsoluteSort(sortParams, null);
 		String tagParam=(tag==null?"null":(tag)).toLowerCase();
@@ -123,15 +123,12 @@ public class StudentBookingService {
 			query = StudentBookingEntity.find("SELECT c FROM StudentBooking c LEFT JOIN c.tags h where (?4 ='null' OR lower(h.name) like concat(concat('%',lower(?4),'%')) )  and  c.studentProfile.id=?1  and c.schedule.startDate > ?2 and c.schedule.startDate < ?3 and c.deleteDate IS NULL ",
 				sort,profileId,start,end, tag+"");
 		}
-		if(StringUtils.isNotBlank(availabilityId)){
-			query = StudentBookingEntity.find("SELECT c FROM StudentBooking c  LEFT JOIN c.tags h  where  (?4 ='null' OR lower(h.name) like concat(concat('%',lower(?4),'%')) )  and  c.teacherAvailability.id=?1  and c.schedule.startDate > ?2 and c.schedule.startDate < ?3 and c.deleteDate IS NULL",
-				sort,availabilityId,start,end,tagParam);
-		}
+		
 		if(StringUtils.isNotBlank(parentId)){
 			query = StudentBookingEntity.find("SELECT c FROM StudentBooking c  LEFT JOIN c.tags h  where (?4 ='null' OR lower(h.name) like concat(concat('%',lower(?4),'%')) )  and  c.studentProfile.parent.id=?1  and c.schedule.startDate > ?2 and c.schedule.startDate < ?3 and c.deleteDate IS NULL",
 				sort,parentId,start,end,tagParam);
 		}
-		if(StringUtils.isAllBlank(profileId,parentId,availabilityId)){
+		if(StringUtils.isAllBlank(profileId,parentId)){
 			query = StudentBookingEntity.find("SELECT c FROM StudentBooking c  LEFT JOIN c.tags h  where  (?4 ='null' OR lower(h.name) like concat(concat('%',lower(?4),'%')) )  and (lower(c.studentProfile.firstName) like concat(concat('%',lower(?1),'%'))  OR  lower(c.studentProfile.lastName) like concat(concat('%',lower(?1),'%'))) and c.schedule.startDate > ?2 and c.schedule.startDate < ?3 and c.deleteDate IS NULL ",
 				sort,firstName,start,end,tagParam);
 		}
@@ -153,8 +150,8 @@ public class StudentBookingService {
 				throw new NoSuchElementException(StudentBooking.class,body.getId());
 		 }
 		
-		 if(StringUtils.isBlank(body.getScheduleId())) {
-			 booking.schedule=ScheduleEntity.findById(body.getScheduleId());
+		 if(body.getSchedule().getId()!=null) {
+			 booking.schedule=ScheduleEntity.findById(body.getSchedule().getId());
 		 }
 		 booking.lastUpdateDate=TimeUtils.getCurrentTime();
 		 booking.persistAndFlush();

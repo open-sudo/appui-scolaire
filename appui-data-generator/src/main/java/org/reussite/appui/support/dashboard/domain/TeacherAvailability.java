@@ -26,9 +26,9 @@ public class TeacherAvailability {
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime createDate =TimeUtils.getCurrentTime();
 	@NotNull
-	private String teacherProfileId;
+	private TeacherProfile teacherProfile;
     private long studentCount;
-    private String scheduleId;
+    private Schedule schedule;
     
     private String duration;
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
@@ -86,14 +86,6 @@ public class TeacherAvailability {
 		this.createDate = createDate;
 	}
 
-	public String getTeacherProfileId() {
-		return teacherProfileId;
-	}
-
-	public void setTeacherProfileId(String teacherProfileId) {
-		this.teacherProfileId = teacherProfileId;
-	}
-
 	public long getStudentCount() {
 		return studentCount;
 	}
@@ -103,13 +95,20 @@ public class TeacherAvailability {
 	}
 
 	
-
-	public String getScheduleId() {
-		return scheduleId;
+	public TeacherProfile getTeacherProfile() {
+		return teacherProfile;
 	}
 
-	public void setScheduleId(String scheduleId) {
-		this.scheduleId = scheduleId;
+	public void setTeacherProfile(TeacherProfile teacherProfile) {
+		this.teacherProfile = teacherProfile;
+	}
+
+	public Schedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 
 	public String getDuration() {

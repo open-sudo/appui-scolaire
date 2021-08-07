@@ -3,7 +3,7 @@ package org.reussite.appui.support.dashboard.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -19,8 +19,8 @@ public class Course{
 
 	private String id;
    
-    @NotBlank(message="Subject may not be null")
-	private String subject;
+    @NotNull(message="Subject may not be null")
+	private Subject subject;
     private String name;
     private Set<Integer>  grades= new HashSet<Integer>();
     
@@ -32,13 +32,12 @@ public class Course{
 		this.id = id;
 	}
 	
-	public String getSubject() {
+	public Subject getSubject() {
 		return subject;
 	}
-	public void setSubject(String subject) {
+	public void setSubject(Subject subject) {
 		this.subject = subject;
 	}
-	
 	public String getName() {
 		return name;
 	}

@@ -11,9 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -42,8 +43,9 @@ public class CourseEntity extends PanacheEntityBase{
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	public ZonedDateTime deleteDate;
 	
-    @NotBlank(message="Subject may not be null")
-	public String subject;
+    @NotNull(message="Subject may not be null")
+    @ManyToOne
+	public SubjectEntity subject;
     @ElementCollection(fetch = FetchType.EAGER)
 	public Set<Integer>  grades= new HashSet<Integer>();
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    

@@ -112,12 +112,12 @@ public class TeacherProfileController {
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class) 
-	public Response updateTeacherProfile(@HeaderParam("TenantKey") String tenantKey,TeacherProfile profile) {
+	public Response updateTeacherProfile(@HeaderParam("TenantKey") String tenantKey,@PathParam("id") String id,TeacherProfile profile) {
 		logger.info("Updating teacher profile  :{} ",profile);
-		teacherProfileService.updateTeacherProfile(tenantKey,profile);
+		teacherProfileService.updateTeacherProfile(tenantKey,id,profile);
 		logger.info("Updating teacher profile completed :{}",profile);
 		return Response.ok().build();
 	}

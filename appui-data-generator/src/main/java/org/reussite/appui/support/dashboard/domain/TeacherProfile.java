@@ -1,13 +1,9 @@
 package org.reussite.appui.support.dashboard.domain;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.FetchType;
 import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -34,8 +30,7 @@ public class TeacherProfile{
     private String qualifications;
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
     private ZonedDateTime createDate=TimeUtils.getCurrentTime();
-	@ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> subjects;
+    private Set<Subject> subjects=new HashSet<Subject>();
 	private Set<Integer>  grades=new HashSet<Integer>();
     private String biographie;
     private String imageUrl;
@@ -51,15 +46,14 @@ public class TeacherProfile{
 	private short onlineStatus;
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
-	private List<Tag> tags= new ArrayList<Tag>();
-
+	private Set<Tag> tags= new HashSet<Tag>();
 	
 
-	public List<Tag> getTags() {
+	public Set<Tag> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<Tag> tags) {
+	public void setTags(Set<Tag> tags) {
 		this.tags = tags;
 	}
 
@@ -134,11 +128,12 @@ public class TeacherProfile{
 		this.createDate = createDate;
 	}
 
-	public Set<String> getSubjects() {
+
+	public Set<Subject> getSubjects() {
 		return subjects;
 	}
 
-	public void setSubjects(Set<String> subjects) {
+	public void setSubjects(Set<Subject> subjects) {
 		this.subjects = subjects;
 	}
 

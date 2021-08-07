@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class StudentProfile{
 	private String id;
 	
-	private String parentId;
+	private String studentParentId;
 	private String email;
     @NotBlank(message="Last name may not be blank")
 	private String lastName;
@@ -74,13 +74,16 @@ public class StudentProfile{
 	}
 
 
-	public String getParentId() {
-		return parentId;
+
+
+
+	public String getStudentParentId() {
+		return studentParentId;
 	}
 
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
+	public void setStudentParentId(String studentParentId) {
+		this.studentParentId = studentParentId;
 	}
 
 

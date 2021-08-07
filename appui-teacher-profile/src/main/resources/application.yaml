@@ -64,4 +64,6 @@ org:
         rest:
            client:
                propagateHeaders: TenantKey, Authorization,Proxy-Authorization
-tag/mp-rest/url: http://appui-api-tag/
+tag/mp-rest/url: http://appui-tag/
+subject/mp-rest/url: http://appui-course/
+

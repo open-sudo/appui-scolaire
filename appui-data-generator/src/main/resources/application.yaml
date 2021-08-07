@@ -22,14 +22,15 @@ org:
            client:
                propagateHeaders: TenantKey, Authorization,Proxy-Authorization
                
-course/mp-rest/url: http://appui-api-course/
-tag/mp-rest/url: http://appui-api-tag/
-parent/mp-rest/url: http://appui-api-student-parent/
-student/mp-rest/url: http://appui-api-student-profile/  
-booking/mp-rest/url: http://appui-api-student-booking/
-teacher/mp-rest/url: http://appui-api-teacher-profile/  
-availability/mp-rest/url: http://appui-api-teacher-availability/  
-schedule/mp-rest/url: http://appui-api-schedule/
-comment/mp-rest/url: http://appui-api-comment/
+subject/mp-rest/url: http://appui-course/
+course/mp-rest/url: http://appui-course/
+tag/mp-rest/url: http://appui-tag/
+parent/mp-rest/url: http://appui-student-parent/
+student/mp-rest/url: http://appui-student-profile/  
+booking/mp-rest/url: http://appui-student-booking/
+teacher/mp-rest/url: http://appui-teacher-profile/  
+availability/mp-rest/url: http://appui-teacher-availability/  
+schedule/mp-rest/url: http://appui-schedule/
+comment/mp-rest/url: http://appui-comment/
 
        

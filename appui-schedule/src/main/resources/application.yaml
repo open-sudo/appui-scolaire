@@ -52,4 +52,4 @@ org:
         rest:
            client:
                propagateHeaders: TenantKey, Authorization,Proxy-Authorization
-course/mp-rest/url: http://appui-api-course/
+course/mp-rest/url: http://appui-course/

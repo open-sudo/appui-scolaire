@@ -56,9 +56,9 @@ public class TeacherAvailabilityServiceTest {
     	Mockito.when(scheduleService.getSchedule(schedule.getId())).thenReturn(schedule);
 
     	TeacherAvailability availability= new TeacherAvailability();
-    	availability.setTeacherProfileId(teacher.getId());
+    	availability.setTeacherProfile(teacher);
     	availability.setCreateDate(null);
-    	availability.setScheduleId(schedule.getId());
+    	availability.setSchedule(schedule);
     	availability=
     		given()
 	    	  .header("TenantKey", tenantKey)

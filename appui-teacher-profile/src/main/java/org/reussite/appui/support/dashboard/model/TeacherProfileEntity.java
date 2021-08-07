@@ -1,9 +1,7 @@
 package org.reussite.appui.support.dashboard.model;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -43,8 +41,7 @@ public class TeacherProfileEntity{
     private String qualifications;
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
     private ZonedDateTime createDate=TimeUtils.getCurrentTime();
-	@ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> subjects;
+    
     @ElementCollection(fetch = FetchType.EAGER)
 	private Set<Integer>  grades=new HashSet<Integer>();
     private String biographie;
@@ -69,20 +66,13 @@ public class TeacherProfileEntity{
 	private ZonedDateTime approveDate=TimeUtils.getCurrentTime();
 	
 	@ManyToMany
-	private List<TagEntity> tags= new ArrayList<TagEntity>();
+	private Set<TagEntity> tags= new HashSet<TagEntity>();
+
+	@ManyToMany
+	private Set<SubjectEntity> subjects= new HashSet<SubjectEntity>();
 
 	public ZonedDateTime getApproveDate() {
 		return approveDate;
-	}
-
-
-	public List<TagEntity> getTags() {
-		return tags;
-	}
-
-
-	public void setTags(List<TagEntity> tags) {
-		this.tags = tags;
 	}
 
 
@@ -158,13 +148,27 @@ public class TeacherProfileEntity{
 		this.createDate = createDate;
 	}
 
-	public Set<String> getSubjects() {
+
+
+	public Set<TagEntity> getTags() {
+		return tags;
+	}
+
+
+	public void setTags(Set<TagEntity> tags) {
+		this.tags = tags;
+	}
+
+
+	public Set<SubjectEntity> getSubjects() {
 		return subjects;
 	}
 
-	public void setSubjects(Set<String> subjects) {
+
+	public void setSubjects(Set<SubjectEntity> subjects) {
 		this.subjects = subjects;
 	}
+
 
 	public Set<Integer> getGrades() {
 		return grades;

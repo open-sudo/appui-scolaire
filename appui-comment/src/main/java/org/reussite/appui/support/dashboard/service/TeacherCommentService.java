@@ -16,14 +16,15 @@ import org.reussite.appui.support.dashbaord.mapper.StudentParentMapper;
 import org.reussite.appui.support.dashbaord.mapper.StudentProfileMapper;
 import org.reussite.appui.support.dashbaord.mapper.TeacherCommentMapper;
 import org.reussite.appui.support.dashbaord.mapper.TeacherProfileMapper;
-import org.reussite.appui.support.dashboard.domain.StudentBooking;
-import org.reussite.appui.support.dashboard.domain.StudentParent;
-import org.reussite.appui.support.dashboard.domain.StudentProfile;
 import org.reussite.appui.support.dashboard.domain.TeacherComment;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
 import org.reussite.appui.support.dashboard.model.ResultPage;
+import org.reussite.appui.support.dashboard.model.StudentBookingEntity;
+import org.reussite.appui.support.dashboard.model.StudentParentEntity;
+import org.reussite.appui.support.dashboard.model.StudentProfileEntity;
 import org.reussite.appui.support.dashboard.model.TeacherCommentEntity;
+import org.reussite.appui.support.dashboard.model.TeacherProfileEntity;
 import org.reussite.appui.support.dashboard.utils.SearchUtils;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
 import org.slf4j.Logger;
@@ -64,38 +65,31 @@ public class TeacherCommentService {
     @Transactional
 	public TeacherComment createTeacherComment(TeacherComment commentDomain) {
     	TeacherCommentEntity comment= commentMapper.toEntity(commentDomain);
-    	
-    	TeacherProfile teacher=teacherService.getTeacherProfile(commentDomain.getCommenter().getId());
-	    logger.info("Commenter profile  found:{}",teacher);
-	    
-	    
-    	StudentProfile student=profileService.getStudentProfile(commentDomain.getStudentProfile().getId());
-    	logger.info("Student found:{}",student);
-    
-    	StudentBooking booking=bookingService.getStudentBooking(commentDomain.getStudentBooking().getId());
-    	logger.info("Student booking found:{}",booking);
-    
-    	StudentParent parent=parentService.getStudentParent(commentDomain.getStudentParent().getId());
-    	logger.info("Student parent found:{}",parent);
-    
-    	comment.commenter= teacherMapper.toEntity(teacher);
-    	comment.commenter.persistAndFlush();
-    	comment.studentProfile=studentMapper.toEntity(student);
-    	comment.studentProfile.persistAndFlush();
-    	logger.info("Student profile :"+student.getId());
-    	
-    	comment.studentBooking=bookingMapper.toEntity(booking);
-    	comment.studentBooking.persistAndFlush();
-    	
-    	logger.info("Student profile 3 :"+student.getId());
-    	try {
-    	comment.studentParent=parentMapper.toEntity(parent);
-    	comment.studentParent.persistAndFlush();
-    	}catch(Exception e) {
-    		e.printStackTrace();
+    	TeacherProfileEntity existingTeacher=TeacherProfileEntity.findById(commentDomain.getCommenter().getId());
+    	if(existingTeacher==null) {
+    		comment.commenter.persistAndFlush();
+    	}else {
+    		comment.commenter=existingTeacher;
     	}
-    	logger.info("Student profile 2 :"+student.getId());
-
+    	StudentProfileEntity existingStudent=StudentProfileEntity.findById(comment.studentProfile.id);
+    	if(existingStudent==null) {
+        	comment.studentProfile.persistAndFlush();
+    	}else {
+    		comment.studentProfile=existingStudent;
+    	}
+    	StudentBookingEntity existingBooking=StudentBookingEntity.findById(comment.studentBooking.id);
+    	if(existingBooking==null) {
+    		comment.studentBooking.studentProfile=comment.studentProfile;
+    		comment.studentBooking.persistAndFlush();
+    	}else {
+    		comment.studentBooking=existingBooking;
+    	}
+    	StudentParentEntity existingParent=StudentParentEntity.findById(comment.studentParent.id);
+    	if(existingParent==null) {
+    		comment.studentParent.persistAndFlush();
+    	}else {
+    		comment.studentParent=existingParent;
+    	}
     	logger.info("Student profile :"+comment.studentBooking.studentProfile.id);
     	comment.persistAndFlush();
     	return commentMapper.toDomain(comment);

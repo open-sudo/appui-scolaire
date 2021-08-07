@@ -16,10 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.reussite.appui.support.dashboard.domain.Course;
 import org.reussite.appui.support.dashboard.domain.Schedule;
+import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.mapper.CourseMapper;
 import org.reussite.appui.support.dashboard.model.CourseEntity;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.ScheduleEntity;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
 import org.reussite.appui.support.dashboard.service.CourseService;
 import org.reussite.appui.support.dashboard.service.ScheduleService;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
@@ -42,10 +44,15 @@ public class ScheduleServiceTest {
 	String tenantKey="alpha";
 	@Transactional
 	public ScheduleEntity setup() {
+		SubjectEntity subject= new SubjectEntity();
+		subject.name="Java";
+		subject.id=UUID.randomUUID().toString();
+		subject.persistAndFlush();
+		
 		CourseEntity course= new CourseEntity();
 		course.id=UUID.randomUUID().toString();
 		course.name="java";
-		course.subject=course.name;
+		course.subject=subject;
 		course.grades.add(1);
 		course.persistAndFlush();
 		ScheduleEntity schedule= new ScheduleEntity();
@@ -68,15 +75,34 @@ public class ScheduleServiceTest {
 			         .statusCode(200).extract().body().as(ResultPage.class);
 	    		assertNotNull(result);
 	    		assertTrue(result.content.size()>0);
-	            Mockito.verify(scheduleService, Mockito.times(1)).searchSchedules(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(),Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString()); 
+	            Mockito.verify(scheduleService, Mockito.times(1)).searchSchedules(Mockito.anyString(),Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString()); 
 	    }
-	    
+	 @Test
+	    public void testScheduleSearchSubjectId() {
+		 	ScheduleEntity schedule=setup();
+	    		assertTrue(ScheduleEntity.count()>0);
+	    		@SuppressWarnings("rawtypes")
+				ResultPage result=given()
+				  .header("TenantKey",tenantKey).queryParam("subjectIds",schedule.course.subject.id )
+			      .when().get("/v1/schedule")
+			      .then()
+			         .statusCode(200).extract().body().as(ResultPage.class);
+	    		assertNotNull(result);
+	    		assertTrue(result.content.size()>0);
+	            Mockito.verify(scheduleService, Mockito.times(1)).searchSchedules(Mockito.anyString(),Mockito.anyList(), Mockito.anyInt(), Mockito.anyInt(),Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(),Mockito.anyString(),Mockito.anyString(),Mockito.anyString()); 
+	    }
+	       
     @Test
     public void testScheduleCreation() {
     	String tenantKey="alpha";
+    	
+    	Subject subject = new Subject();
+    	subject.setId(UUID.randomUUID().toString());
+    	subject.setName("Quarkus");
+    	
     	Course course= new Course();
     	course.setName("Quarkus Programming");
-    	course.setSubject("Quarkus for CRUD");
+    	course.setSubject(subject);
     	course.setId(UUID.randomUUID().toString());
     	Mockito.when(courseService.getCourse(course.getId())).thenReturn(course);
     	Schedule schedule= new Schedule();

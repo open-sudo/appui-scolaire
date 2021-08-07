@@ -27,7 +27,7 @@ public class Course{
 	private ZonedDateTime createDate=TimeUtils.getCurrentTime();
 		
     @NotBlank(message="Subject may not be null")
-	private String subject;
+	private Subject subject;
 	private Set<Integer>  grades= new HashSet<Integer>();
     @NotNull(message="Tenant may not be null")
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
@@ -68,10 +68,10 @@ public class Course{
 	}
 	
 	
-	public String getSubject() {
+	public Subject getSubject() {
 		return subject;
 	}
-	public void setSubject(String subject) {
+	public void setSubject(Subject subject) {
 		this.subject = subject;
 	}
 	public Set<Integer> getGrades() {

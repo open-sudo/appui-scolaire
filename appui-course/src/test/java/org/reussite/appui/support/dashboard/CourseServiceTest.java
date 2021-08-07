@@ -7,17 +7,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.reussite.appui.support.dashboard.domain.Course;
 import org.reussite.appui.support.dashboard.domain.MonetaryAmount;
+import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.model.CourseEntity;
 import org.reussite.appui.support.dashboard.model.ResultPage;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
 import org.reussite.appui.support.dashboard.service.CourseService;
+import org.reussite.appui.support.dashboard.service.SubjectService;
 
 import io.quarkus.test.junit.QuarkusTest;
 
@@ -28,15 +33,34 @@ public class CourseServiceTest {
 	@Inject
 	CourseService parentService;
 	
+	@Inject
+	SubjectService subjectService;
+	
 	String tenantKey="alpha";
+	
+	@Transactional
+	public SubjectEntity setup1() {
+    	SubjectEntity subject = new SubjectEntity();
+    	subject.name="Java";
+    	subject.persistAndFlush();
+		
+		
+    	return subject;
+	} 
 	
     @Test
     public void testCourseCreation() {
+    	SubjectEntity s=setup1();
+    	
+    	Subject subject= new Subject();
+    	subject.setId(s.id);
     	Course course= new Course();
     	course.setName("Quarkus Programming");
-    	course.setSubject("Quarkus for CRUD");
+    	course.setSubject(subject);
     	
     	course.setPrices(Arrays.asList(new MonetaryAmount(new BigDecimal(12.34567), "CAD")));
+    	
+
 	    Course[] courses=	given()
 	    	  .header("TenantKey", tenantKey)
 		      .contentType(MediaType.APPLICATION_JSON)
@@ -52,9 +76,12 @@ public class CourseServiceTest {
     }
     @Transactional
 	public CourseEntity setup() {
+    	SubjectEntity subject = new SubjectEntity();
+    	subject.name="Java";
+    	subject.persistAndFlush();
 		CourseEntity course= new CourseEntity();
-		course.name="java";
-		course.subject=course.name;
+		course.name="java for Beginner";
+		course.subject=subject;
 		course.language="EN";
 		course.grades.add(1);
 		course.persistAndFlush();
