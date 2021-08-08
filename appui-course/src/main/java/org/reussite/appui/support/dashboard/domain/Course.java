@@ -6,10 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,13 +24,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Course{
-
+	@Null
 	private String id;
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime createDate=TimeUtils.getCurrentTime();
 		
-    @NotBlank(message="Subject may not be null")
+    @NotNull(groups = ValidationGroups.Post.class)
 	private Subject subject;
+    @NotEmpty(groups = ValidationGroups.Post.class)
 	private Set<Integer>  grades= new HashSet<Integer>();
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
@@ -34,7 +39,7 @@ public class Course{
 
     private Integer durationInMinutes=120;
     private String imageUrl;
-    @NotBlank(message="Name may not be null")
+    @NotBlank(groups = ValidationGroups.Post.class)
     private String name;
   
     private String language;

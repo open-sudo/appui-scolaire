@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import org.reussite.appui.support.dashboard.utils.TimeUtils;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import io.restassured.response.ExtractableResponse;
 
 @QuarkusTest
 public class ScheduleServiceTest {
@@ -93,6 +95,45 @@ public class ScheduleServiceTest {
 	    }
 	       
     @Test
+    public void testSchedulePatch() {
+    	String tenantKey="alpha";
+    	
+    	Subject subject = new Subject();
+    	subject.setId(UUID.randomUUID().toString());
+    	subject.setName("Quarkus");
+    	
+    	Course course= new Course();
+    	course.setName("Quarkus Programming");
+    	course.setSubject(subject);
+    	course.setId(UUID.randomUUID().toString());
+    	Mockito.when(courseService.getCourse(course.getId())).thenReturn(course);
+    	Schedule schedule= new Schedule();
+    	schedule.setCourseId(course.getId());
+    	schedule.setStartDate(TimeUtils.getCurrentTime());
+    	schedule.setEndDate(TimeUtils.getCurrentTime());
+    	
+    	Schedule[] schedules=	given()
+	    	  .header("TenantKey", tenantKey)
+		      .contentType(MediaType.APPLICATION_JSON)
+		      .body(Arrays.asList(schedule))
+		      .when().post("/v1/schedule")
+		      .then()
+		         .statusCode(201).extract().body().as(Schedule[].class);
+    	assertTrue(schedules.length>0);
+    	assertNotNull(schedules[0].getId());
+    	schedule.setStartDate(null);
+    	 ExtractableResponse<?> t=given()
+  	  	   .header("TenantKey", tenantKey)
+	      .contentType(MediaType.APPLICATION_JSON)
+	      .body((schedule))
+	      .when().patch("/v1/schedule/"+schedules[0].getId())
+	      .then()
+	         .statusCode(200).extract();
+    	System.out.println(t.asPrettyString());
+    }
+
+    
+    @Test
     public void testScheduleCreation() {
     	String tenantKey="alpha";
     	
@@ -121,6 +162,5 @@ public class ScheduleServiceTest {
     	assertNotNull(schedules[0].getId());
 
     }
-
    
 }

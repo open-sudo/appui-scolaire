@@ -8,11 +8,13 @@ import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -27,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class TeacherProfile{
 	@JsonView(Views.Response.class) 
 	private String id;
-	@NotBlank
+    @NotNull(groups = ValidationGroups.Post.class)
     private String email;
     private String firstName;
     private String lastName;
@@ -41,7 +43,6 @@ public class TeacherProfile{
     private String biographie;
     private String imageUrl;
     private String schoolName;
-    private String internalEmail;
 	private String conferenceUrl;
     private String meetUrl;
 	private int countryCode;
@@ -51,8 +52,10 @@ public class TeacherProfile{
 	@JsonView(Views.Response.class) 
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
+	
 	private List<Tag> tags= new ArrayList<Tag>();
 
+    @NotEmpty(groups = ValidationGroups.Post.class)
 	private List<Subject>subjects= new ArrayList<Subject>();
 
 
@@ -173,14 +176,6 @@ public class TeacherProfile{
 
 	public void setSchoolName(String schoolName) {
 		this.schoolName = schoolName;
-	}
-
-	public String getInternalEmail() {
-		return internalEmail;
-	}
-
-	public void setInternalEmail(String internalEmail) {
-		this.internalEmail = internalEmail;
 	}
 
 	public String getConferenceUrl() {

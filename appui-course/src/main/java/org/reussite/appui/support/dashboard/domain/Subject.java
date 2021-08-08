@@ -2,9 +2,12 @@ package org.reussite.appui.support.dashboard.domain;
 
 import java.time.ZonedDateTime;
 
+import javax.validation.constraints.NotEmpty;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,7 +25,9 @@ public class Subject {
     
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
   	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
+    @NotEmpty(groups = ValidationGroups.Post.class)
 	private String name;
+    @NotEmpty(groups = ValidationGroups.Post.class)
 	private String language;
 	
 	

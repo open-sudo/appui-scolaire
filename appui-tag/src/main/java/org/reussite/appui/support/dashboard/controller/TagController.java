@@ -6,11 +6,13 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -26,6 +28,7 @@ import org.reussite.appui.support.dashboard.domain.TagRequest;
 import org.reussite.appui.support.dashboard.domain.TagResponse;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.service.TagService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +49,7 @@ public class TagController {
 		        @APIResponse(responseCode = "200", description = "Tag created.")})
 		    @Operation(summary = "Create a tag with the given name.")
 	@Transactional
-	public Response createTag(TagRequest tag) {
+	public Response createTag(@Valid @ConvertGroup(to = ValidationGroups.Post.class) TagRequest tag) {
 			logger.info("Creating a tag :{}",tag);
 			TagResponse result=tagService.createTag(tag);
 			logger.info("Creating tag completed:{}",result);
@@ -56,13 +59,13 @@ public class TagController {
 
 	
 	
-	@PUT
+	@PATCH
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	
-	public Response updateTag(@PathParam("id")String id, TagRequest body) {
+	public Response updateTag(@PathParam("id")String id, @Valid @ConvertGroup(to = ValidationGroups.Patch.class) TagRequest body) {
 		logger.info("Executing request to update tag :{}",body);
 		TagRequest tag=tagService.updateTag( id,body);
 		logger.info("Executing request to update tag  completed with body :{} ",tag);

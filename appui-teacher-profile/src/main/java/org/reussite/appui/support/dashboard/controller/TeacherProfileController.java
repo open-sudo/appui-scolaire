@@ -4,13 +4,15 @@ package org.reussite.appui.support.dashboard.controller;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -22,6 +24,7 @@ import org.reussite.appui.support.dashbaord.mapper.TeacherProfileMapper;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.service.TeacherProfileService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +81,7 @@ public class TeacherProfileController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class) 
-	public Response registerTeacher(@HeaderParam("TenantKey") String tenantKey, @JsonView(Views.Request.class)  TeacherProfile profile) {
+	public Response registerTeacher(@HeaderParam("TenantKey") String tenantKey, @Valid @ConvertGroup(to = ValidationGroups.Patch.class) @JsonView(Views.Request.class)  TeacherProfile profile) {
  		logger.info("Registering teacher profile:{}",profile);
 		TeacherProfile result=teacherProfileService.registerTeacher(profile);
 		logger.info("Registering tenant profile  completed:{}",result);
@@ -110,12 +113,12 @@ public class TeacherProfileController {
 	}
 	
 	
-	@PUT
+	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class) 
-	public Response updateTeacherProfile(@HeaderParam("TenantKey") String tenantKey,@PathParam("id") String id,TeacherProfile profile) {
+	public Response updateTeacherProfile(@HeaderParam("TenantKey") String tenantKey,@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Patch.class) @JsonView(Views.Request.class) TeacherProfile profile) {
 		logger.info("Updating teacher profile  :{} ",profile);
 		teacherProfileService.updateTeacherProfile(tenantKey,id,profile);
 		logger.info("Updating teacher profile completed :{}",profile);

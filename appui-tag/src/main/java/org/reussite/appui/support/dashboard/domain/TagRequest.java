@@ -2,8 +2,11 @@ package org.reussite.appui.support.dashboard.domain;
 
 
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TagRequest {
 	
+	@NotNull(groups = ValidationGroups.Post.class)
 	private String name;
 	private String url;
 	private Boolean enabled;

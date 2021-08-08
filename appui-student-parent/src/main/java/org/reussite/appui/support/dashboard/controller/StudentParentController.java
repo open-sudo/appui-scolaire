@@ -5,8 +5,9 @@ package org.reussite.appui.support.dashboard.controller;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -14,6 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -22,6 +24,7 @@ import org.reussite.appui.support.dashboard.domain.StudentParent;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.StudentParentEntity;
 import org.reussite.appui.support.dashboard.service.StudentParentService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +42,7 @@ public class StudentParentController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Response.class)
-	public Response registerParent(@JsonView(Views.Request.class) StudentParent parent) {
+	public Response registerParent(@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Post.class)  @JsonView(Views.Request.class) StudentParent parent) {
 		logger.info("Creating parent:{}",parent);
 		StudentParent result=parentService.registerParent(parent);
 		logger.info("Parent creation completed:{}",result);
@@ -47,13 +50,13 @@ public class StudentParentController {
 	}
 	
 
-	@PUT
+	@PATCH
     @Consumes(MediaType.APPLICATION_JSON) 
     @Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@Path("{id}")
 	@JsonView(Views.Response.class)
-	public Response updateParent(@PathParam(value = "id") String id, @JsonView(Views.Request.class) StudentParent profile) {
+	public Response updateParent(@PathParam(value = "id") String id, @Valid @ConvertGroup(to = ValidationGroups.Patch.class) @JsonView(Views.Request.class) StudentParent profile) {
 		logger.info("Updating parent:{} with body:{}",id,profile);
 		profile.setId(id);
 		StudentParent result=parentService.updateParentProfile(profile);

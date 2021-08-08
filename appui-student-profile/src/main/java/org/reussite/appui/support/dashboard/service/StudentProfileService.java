@@ -122,10 +122,10 @@ public class StudentProfileService {
 	
 
 	@Transactional
-	 public StudentProfile updateStudentProfile(StudentProfile body) {
-		StudentProfileEntity profile=StudentProfileEntity.findById(body.getId());
+	 public StudentProfile updateStudentProfile(String id,StudentProfile body) {
+		StudentProfileEntity profile=StudentProfileEntity.findById(id);
 		 if(profile==null) {
-			 logger.info("Cound not find student with id:{}",body.getId());
+			 logger.info("Cound not find student with id:{}",id);
 				throw new NoSuchElementException(StudentProfile.class,body.getId());
 		 }
 		 
@@ -133,8 +133,8 @@ public class StudentProfileService {
 		 if(StringUtils.isNotBlank(body.getFirstName())) {
 			 profile.firstName=(body.getFirstName());
 		 }
-		 if(StringUtils.isNotBlank(body.getFirstName())) {
-			 profile.lastName=(body.getFirstName());
+		 if(StringUtils.isNotBlank(body.getLastName())) {
+			 profile.lastName=(body.getLastName());
 		 }
 
 		if(StringUtils.isNoneBlank(profile.firstName,profile.lastName)) {

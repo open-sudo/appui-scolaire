@@ -6,13 +6,15 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -25,6 +27,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.reussite.appui.support.dashboard.domain.Course;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.service.CourseService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,20 +55,20 @@ public class CourseController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
-	public Response registerCourse(List<Course> courses) {
+	public Response registerCourse(@Valid @ConvertGroup(to = ValidationGroups.Post.class) List<Course> courses) {
 		logger.info("Registering course  Course: :{}",Arrays.deepToString(courses.toArray()));
 		List<Course> result = courseService.registerCourse(courses);
 		logger.info("Registering course completed:{}",Arrays.deepToString(courses.toArray()));
 		return Response.ok(result).status(Response.Status.CREATED).build();
 	}
 	
-	@PUT
+	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateCourse(Course course) {
+	public Response updateCourse(@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Patch.class)  Course course) {
 		logger.info("Updating course:{} ",course);
-		courseService.updateCourse(course);
+		courseService.updateCourse(id,course);
 		logger.info("Updating course completed:{}",course);
 
 		return Response.ok().build();

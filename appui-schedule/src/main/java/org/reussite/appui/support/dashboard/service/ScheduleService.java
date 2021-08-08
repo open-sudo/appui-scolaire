@@ -110,22 +110,30 @@ public class ScheduleService {
 	}
 
     @Transactional
-	public void updateSchedule(Schedule body) {
-    	ScheduleEntity schedule=ScheduleEntity.findById(body.getId());
+	public void updateSchedule(String id,Schedule body) {
+    	ScheduleEntity schedule=ScheduleEntity.findById(id);
 		 if(schedule==null) {
  			throw new NoSuchElementException(Schedule.class,body.getId());
 		 }
-		
-		
-		 if(body.getStartDate()!=null) {
-			 schedule.startDate=(body.getStartDate());
-		 }
-		 if(body.getEndDate()!=null) {
-			 schedule.startDate=(body.getEndDate());
-		 }
+		 try {
+			 logger.info("Before update:{}",schedule);
+
+			 if(body.getStartDate()!=null) {
+				 schedule.startDate=(body.getStartDate());
+			 }
+			 if(body.getEndDate()!=null) {
+				 schedule.startDate=(body.getEndDate());
+			 }
+			 schedule.lastUpdateDate=TimeUtils.getCurrentTime();
+			 schedule.persistAndFlush();
+		 logger.info("After update:{}",schedule);
+
 		 schedule.lastUpdateDate=TimeUtils.getCurrentTime();
 		 schedule.persistAndFlush();
-	}
+		 }catch(Exception e) {
+			 e.printStackTrace();
+		 }
+		 }
 
 	public Schedule findById(String id) {
 		ScheduleEntity entuty=ScheduleEntity.findById(id);

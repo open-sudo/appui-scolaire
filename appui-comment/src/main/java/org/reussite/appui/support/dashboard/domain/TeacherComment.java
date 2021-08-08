@@ -3,12 +3,13 @@ package org.reussite.appui.support.dashboard.domain;
 
 import java.time.ZonedDateTime;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -22,24 +23,25 @@ import com.fasterxml.jackson.annotation.JsonView;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TeacherComment{
 
+	@Null
 	@JsonView(Views.Read.class)
 	private String id;
 	
-	@NotNull
+    @NotNull(groups = ValidationGroups.Post.class)
 	@JsonView(Views.WriteOnce.class)
 	private TeacherProfile commenter;
 	private TeacherProfile approver;
-	@NotBlank
+    @NotNull(groups = ValidationGroups.Post.class)
 	private String content;
 	@JsonView(Views.Read.class)
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime createDate=TimeUtils.getCurrentTime();
 	
-	@NotNull
+    @NotNull(groups = ValidationGroups.Post.class)
 	private StudentBooking studentBooking;
-	@NotNull
+    @NotNull(groups = ValidationGroups.Post.class)
 	private StudentParent studentParent;
-	@NotNull
+    @NotNull(groups = ValidationGroups.Post.class)
 	private StudentProfile studentProfile;
 	
 	

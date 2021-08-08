@@ -5,12 +5,12 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,11 +31,11 @@ public class TeacherAvailability {
 	@JsonView(Views.Response.class) 
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime createDate =TimeUtils.getCurrentTime();
-	@NotBlank
+    @NotNull(groups = ValidationGroups.Post.class)
 	private TeacherProfile teacherProfile;
 	@JsonView(Views.Response.class) 
     private long studentCount;
-    @NotNull
+    @NotNull(groups = ValidationGroups.Post.class)
     private Schedule schedule;
     
     private String duration;

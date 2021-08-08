@@ -3,10 +3,12 @@ package org.reussite.appui.support.dashboard.domain;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,11 +19,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Course{
 
+	
 	private String id;
    
-    @NotNull(message="Subject may not be null")
+    @NotNull(message="Subject may not be null",groups = ValidationGroups.Post.class)
 	private Subject subject;
     private String name;
+    
+    @NotEmpty(groups = ValidationGroups.Post.class)
     private Set<Integer>  grades= new HashSet<Integer>();
     
     private String language;

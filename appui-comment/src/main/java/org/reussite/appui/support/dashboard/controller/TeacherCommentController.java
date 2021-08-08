@@ -5,13 +5,15 @@ package org.reussite.appui.support.dashboard.controller;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -23,6 +25,8 @@ import org.reussite.appui.support.dashboard.domain.TeacherComment;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.TeacherCommentEntity;
 import org.reussite.appui.support.dashboard.service.TeacherCommentService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups.Post;
 import org.reussite.appui.support.dashboard.view.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +41,15 @@ public class TeacherCommentController {
 	 @Inject
 	 protected TeacherCommentService teacherCommentService;
 	 
-	@PUT
+	@PATCH
+	@Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON) 
     @Produces(MediaType.APPLICATION_JSON)
 	@Transactional
-	public Response updateTeacherComment(@HeaderParam("TenantKey") String tenantKey,
-			@JsonView(Views.WriteMany.class)	TeacherComment comment) {
+	public Response updateTeacherComment(@HeaderParam("TenantKey") String tenantKey,@PathParam("id") String id,
+			@Valid @ConvertGroup(to = ValidationGroups.Patch.class) 	@JsonView(Views.WriteMany.class)	TeacherComment comment) {
 		logger.info("Updating teacher comemnt:{}",comment);
-		TeacherComment response=teacherCommentService.updateTeacherComment(tenantKey,comment);
+		TeacherComment response=teacherCommentService.updateTeacherComment(tenantKey,id,comment);
 		logger.info("Updating teacher completed:{} ",comment.getId());
 		return Response.ok(response).build();
 	}
@@ -67,16 +72,16 @@ public class TeacherCommentController {
 		return Response.ok(result).build();
 	}
 	
-	@Path("{commentId}")
+	@Path("{Id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Read.class)
     public  Response getComment(
     		@HeaderParam("TenantKey") String tenantKey,
-    		@PathParam("commentId") String commentId,
+    		@PathParam("id") String id,
     		@HeaderParam("Authorization") String auth ) {
-			TeacherCommentEntity comment=TeacherCommentEntity.findById(commentId);
+			TeacherCommentEntity comment=TeacherCommentEntity.findById(id);
 			if(comment!=null) {
 				return Response.ok(comment).build();
 			}
@@ -85,28 +90,28 @@ public class TeacherCommentController {
 	
 	@POST
     @Consumes(MediaType.APPLICATION_JSON) 
-	@Path("{commentId}/approval/{approverId}")
+	@Path("{id}/approval/{approverId}")
     @Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Read.class)
-	public Response approveTeacherComment(@HeaderParam("TenantKey") String tenantKey, @PathParam("commentId") String commentId,
+	public Response approveTeacherComment(@HeaderParam("TenantKey") String tenantKey, @PathParam("id") String id,
 			 @PathParam("approverId") 	String approverId) {
-		logger.info("Approving teacher comment:{}, by {}",commentId,approverId);
-		teacherCommentService.approveTeacherComment(tenantKey,commentId,approverId);
-		logger.info("Approving teacher completed:{} , {}",commentId, approverId);
+		logger.info("Approving teacher comment:{}, by {}",id,approverId);
+		teacherCommentService.approveTeacherComment(tenantKey,id,approverId);
+		logger.info("Approving teacher completed:{} , {}",id, approverId);
 		return Response.ok().build();
 	}
 
 	@DELETE
     @Consumes(MediaType.APPLICATION_JSON) 
-	@Path("{commentId}/approval")
+	@Path("{id}/approval")
     @Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Read.class)
-	public Response revertApproveTeacherComment(@HeaderParam("TenantKey") String tenantKey, @PathParam("commentId") String commentId) {
-		logger.info("Revert approval for  comment:{}",commentId);
-		teacherCommentService.revertApproveTeacherComment(commentId);
-		logger.info("reverting pproval completed:{} , {}",commentId);
+	public Response revertApproveTeacherComment(@HeaderParam("TenantKey") String tenantKey, @PathParam("id") String id) {
+		logger.info("Revert approval for  comment:{}",id);
+		teacherCommentService.revertApproveTeacherComment(id);
+		logger.info("reverting pproval completed:{} , {}",id);
 		return Response.ok().build();
 	}
 	@POST
@@ -115,7 +120,7 @@ public class TeacherCommentController {
     @Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Read.class)
-	public Response createTeacherComment(@HeaderParam("TenantKey") String tenantKey,@JsonView(Views.WriteOnce.class) TeacherComment comment) {
+	public Response createTeacherComment(@HeaderParam("TenantKey") String tenantKey,@Valid @ConvertGroup(to = Post.class)  @JsonView(Views.WriteOnce.class) TeacherComment comment) {
 		logger.info("Creating teacher comment. {}",comment);
 
 		logger.info("Creating teacher comment. Student:{}, Commenter: {}",comment.getStudentProfile().getLastName(),comment.getCommenter().getLastName());

@@ -78,7 +78,7 @@ public class CourseService {
 	}
  
     @Transactional
-	public void updateCourse(Course body) {
+	public void updateCourse(String id,Course body) {
     	CourseEntity schedule=CourseEntity.findById(body.getId());
 		 if(schedule==null) {
  			throw new NoSuchElementException(Course.class,body.getId().toString());

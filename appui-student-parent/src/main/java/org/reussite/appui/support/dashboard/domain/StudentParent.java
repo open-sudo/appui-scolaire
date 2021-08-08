@@ -3,12 +3,12 @@ package org.reussite.appui.support.dashboard.domain;
 
 import java.time.ZonedDateTime;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,8 +25,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class StudentParent{
 	@JsonView(Views.Response.class)
 	private String id;
+    @NotNull(groups = ValidationGroups.Post.class)
 	private String email;
-	@NotBlank
+    @NotNull(groups = ValidationGroups.Post.class)
 	private String phoneNumber;
 
 	@JsonIgnore
@@ -40,8 +41,8 @@ public class StudentParent{
 	private ZonedDateTime createDate=TimeUtils.getCurrentTime();
 	private String firstName;
 	private String lastName;
+	@NotNull(groups = ValidationGroups.Post.class)
 	private String language="EN";
-	@Positive
 	private int countryCode;
 
 	@JsonView(Views.Response.class)

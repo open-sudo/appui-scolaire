@@ -11,6 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 
@@ -28,7 +31,11 @@ public class CourseEntity extends PanacheEntityBase{
     @ElementCollection(fetch = FetchType.EAGER)
   	public Set<Integer>  grades= new HashSet<Integer>();
    
-	
+    @Override
+	public String toString() 
+	{ 
+	    return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE); 
+	}
 
 
 }

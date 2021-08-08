@@ -3,12 +3,14 @@ package org.reussite.appui.support.dashboard.controller;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,6 +21,7 @@ import javax.ws.rs.core.Response;
 import org.reussite.appui.support.dashboard.domain.StudentBooking;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.service.StudentBookingService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +44,7 @@ public class StudentBookingController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Response.class)
-	public Response registerStudentBooking(@JsonView(Views.Request.class) StudentBooking booking) {
+	public Response registerStudentBooking(@Valid @ConvertGroup(to = ValidationGroups.Post.class)  @JsonView(Views.Request.class) StudentBooking booking) {
 		logger.info("Registering booking:{}",booking);
 		StudentBooking result = studentBookingService.registerStudentBooking(booking);
 		logger.info("Registering booking completed:{}",booking);
@@ -80,12 +83,12 @@ public class StudentBookingController {
 		return Response.ok(booking).build();
 	}
     
-	@PUT
+	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
-	public Response updateStudentBooking(@JsonView(Views.Request.class) StudentBooking booking) {
+	public Response updateStudentBooking(@Valid @ConvertGroup(to = ValidationGroups.Patch.class)  @JsonView(Views.Request.class) StudentBooking booking) {
 		logger.info("Updating booking:{} with body:{}",booking);
 		studentBookingService.updateStudentBooking(booking);
 		logger.info("Updating booking:{} completed",booking);

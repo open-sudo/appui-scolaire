@@ -5,11 +5,12 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -28,9 +29,9 @@ public class StudentProfile{
 	@JsonView(Views.WriteOnce.class)
 	private String studentParentId;
 	private String email;
-    @NotBlank(message="Last name may not be blank")
+    @NotNull(groups = ValidationGroups.Post.class)
 	private String lastName;
-    @NotBlank(message="First name may not be blank")
+    @NotNull(groups = ValidationGroups.Post.class)
 	private String firstName;
 	private Integer grade;
 	private String imageUrl;

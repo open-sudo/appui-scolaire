@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,13 +27,15 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StudentBooking {
 	@JsonView(Views.Response.class)
+	@Null
 	private String id;
 
 	@JsonView(Views.Response.class)
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
     private ZonedDateTime createDate=TimeUtils.getCurrentTime();
 	
-    @NotNull(message="Student profile may not be null")
+	
+    @NotNull(groups = ValidationGroups.Post.class)
 	private StudentProfile studentProfile;
 
     @JsonIgnore
@@ -48,6 +52,7 @@ public class StudentBooking {
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
     private ZonedDateTime rejectDate;
 	
+    @NotNull(groups = ValidationGroups.Post.class)
 	private Schedule schedule;
 	
 	@JsonView(Views.Response.class)

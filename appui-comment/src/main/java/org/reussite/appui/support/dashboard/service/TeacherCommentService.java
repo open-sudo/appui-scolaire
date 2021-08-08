@@ -125,8 +125,8 @@ public class TeacherCommentService {
 	}
 	
    @Transactional
-	public TeacherComment updateTeacherComment(String tenantKey,TeacherComment commentDomain) {
-		 TeacherCommentEntity comment=TeacherCommentEntity.findById(commentDomain.getId());
+	public TeacherComment updateTeacherComment(String tenantKey,String id, TeacherComment commentDomain) {
+		 TeacherCommentEntity comment=TeacherCommentEntity.findById(id);
 		 if(comment==null) {
 				throw new NoSuchElementException(TeacherCommentEntity.class,commentDomain.getId());
 		 }

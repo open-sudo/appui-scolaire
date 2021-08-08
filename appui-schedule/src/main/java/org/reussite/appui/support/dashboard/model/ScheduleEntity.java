@@ -11,10 +11,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.panache.common.Sort;
@@ -32,6 +35,8 @@ public class ScheduleEntity extends PanacheEntityBase{
 
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	public ZonedDateTime createDate=TimeUtils.getCurrentTime();
+    
+    @JsonIgnore
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	public ZonedDateTime deleteDate;
 	@NotNull(message="Start date may not be null")
@@ -70,5 +75,10 @@ public class ScheduleEntity extends PanacheEntityBase{
 	public  List<ScheduleEntity> findBySubjectAndTenantKeyAndStartDate(String subject,String tenantKey, ZonedDateTime startDate, ZonedDateTime endDate) {
 		return find("lower(tenantKey) = ?1 and lower(course.subject) = ?2 and startDate >?3 ",tenantKey.toLowerCase(),subject.toLowerCase(),startDate,endDate).list();
 
+	}
+	@Override
+	public String toString() 
+	{ 
+	    return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE); 
 	}
 }

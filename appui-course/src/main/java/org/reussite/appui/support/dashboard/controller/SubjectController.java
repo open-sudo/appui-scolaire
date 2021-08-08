@@ -6,6 +6,8 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -23,6 +25,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.service.SubjectService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,7 @@ public class SubjectController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
-	public Response registerSubject(List<Subject> Subjects) {
+	public Response registerSubject(@Valid @ConvertGroup(to = ValidationGroups.Post.class) List<Subject> Subjects) {
 		logger.info("Registering Subject  Subject: :{}",Arrays.deepToString(Subjects.toArray()));
 		List<Subject> result = subjectService.registerSubject(Subjects);
 		logger.info("Registering Subject completed:{}",Arrays.deepToString(Subjects.toArray()));
@@ -61,7 +64,7 @@ public class SubjectController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSubject(Subject Subject) {
+	public Response updateSubject(@Valid @ConvertGroup(to = ValidationGroups.Patch.class) Subject Subject) {
 		logger.info("Updating Subject:{} ",Subject);
 		subjectService.updateSubject(Subject);
 		logger.info("Updating Subject completed:{}",Subject);

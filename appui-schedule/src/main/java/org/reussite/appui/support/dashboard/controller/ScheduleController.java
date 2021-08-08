@@ -6,11 +6,13 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -23,6 +25,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.reussite.appui.support.dashboard.domain.Schedule;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.service.ScheduleService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +47,7 @@ public class ScheduleController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Response.class)
-	public Response registerSchedule(@JsonView(Views.Request.class) List<Schedule> schedules) {
+	public Response registerSchedule(@Valid @ConvertGroup(to = ValidationGroups.Post.class)  @JsonView(Views.Request.class) List<Schedule> schedules) {
 		logger.info("Registering  Schedule: :{}",Arrays.deepToString(schedules.toArray()));
 		List<Schedule> result = scheduleService.registerSchedule(schedules);
 		logger.info("Registering schedule completed:{}",Arrays.deepToString(schedules.toArray()));
@@ -61,14 +64,14 @@ public class ScheduleController {
 		logger.info("Finding schedule by id {} resulted in {} ",id,schedule);
 		return Response.ok(schedule).build();
 	}
-	@PUT
+	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
-	public Response updateSchedule(@JsonView(Views.Request.class) Schedule schedule) {
-		logger.info("Updating schedule:{} ",schedule);
-		scheduleService.updateSchedule(schedule);
+	public Response updateSchedule(@PathParam("id") String id, @Valid @ConvertGroup(to = ValidationGroups.Patch.class)  @JsonView(Views.Request.class) Schedule schedule) {
+		logger.info("Updating schedule:{} with content ",id,schedule);
+		scheduleService.updateSchedule(id,schedule);
 		logger.info("Updating schedule completed:{}",schedule);
 
 		return Response.ok().build();

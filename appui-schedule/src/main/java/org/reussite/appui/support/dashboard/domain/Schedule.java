@@ -2,12 +2,13 @@ package org.reussite.appui.support.dashboard.domain;
 
 import java.time.ZonedDateTime;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -22,18 +23,19 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class Schedule{
 
 	@JsonView(Views.Response.class)
+	@Null
 	private String id;
 	@JsonView(Views.Response.class)
-    @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
+    @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)  
 	private ZonedDateTime createDate=TimeUtils.getCurrentTime();
-    @NotNull(message="Start date may not be null")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern =  TimeUtils.DateTimeFormats.DATETIME_FORMAT)
-	private ZonedDateTime startDate;
-	@NotNull(message="Start date may not be null")
-    @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
+    @NotNull(groups = ValidationGroups.Post.class)
+    private ZonedDateTime startDate;
+    @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT) 
+    @NotNull(groups = ValidationGroups.Post.class)
 	private ZonedDateTime endDate;
     
-    @NotBlank
+    @NotNull(groups = ValidationGroups.Post.class)
     private String courseId;
    
     private Integer repeatPeriodInDays=0;

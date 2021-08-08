@@ -243,10 +243,10 @@ public class TeacherAvailabilityService {
 		return existing;
 	}
 	@Transactional
-	public TeacherAvailability updateTeacherAvailability(String tenantKey,TeacherAvailability body) {
-		 logger.info("Processing request for patching teacher availability:{} in tenant {} ",body,tenantKey);
+	public TeacherAvailability updateTeacherAvailability(String tenantKey,String id,TeacherAvailability body) {
+		 logger.info("Processing request for patching teacher availability:{} in tenant {} ",id,tenantKey);
 
-		TeacherAvailabilityEntity availability=TeacherAvailabilityEntity.findById(body.getId());
+		TeacherAvailabilityEntity availability=TeacherAvailabilityEntity.findById(id);
 
 		 if(availability==null) {
 				throw new NoSuchElementException(TeacherAvailability.class,body.getId());

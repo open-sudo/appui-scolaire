@@ -5,13 +5,15 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,6 +26,7 @@ import org.reussite.appui.support.dashboard.domain.TeacherAvailability;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.TeacherAvailabilityEntity;
 import org.reussite.appui.support.dashboard.service.TeacherAvailabilityService;
+import org.reussite.appui.support.dashboard.validation.ValidationGroups;
 import org.reussite.appui.support.dashboard.view.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +87,7 @@ public class TeacherAvailabilityController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
-	public Response registerTeacherAvailability(@HeaderParam("TenantKey") String tenantKey,@JsonView(Views.Request.class) TeacherAvailability availability) {
+	public Response registerTeacherAvailability(@HeaderParam("TenantKey") String tenantKey,@Valid @ConvertGroup(to = ValidationGroups.Post.class)  @JsonView(Views.Request.class) TeacherAvailability availability) {
  		logger.info("Registering teacher availability in tenant:{},  :{}",tenantKey,availability);
  		logger.info("Number of teacher availabilities before insertion:{}",TeacherAvailabilityEntity.count());
  		TeacherAvailability result=teacherAvailabilityService.registerAvailability(availability);
@@ -95,13 +98,13 @@ public class TeacherAvailabilityController {
 	}
 
 
-	@PUT
+	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{id}")
-	public Response updateTeacherAvailability(@HeaderParam("TenantKey") String tenantKey,@JsonView(Views.Request.class) TeacherAvailability availability) {
+	public Response updateTeacherAvailability(@HeaderParam("TenantKey") String tenantKey,@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Patch.class)  @JsonView(Views.Request.class) TeacherAvailability availability) {
 		logger.info("Updating availabilty:{} , with body:{}",tenantKey,availability);
-		TeacherAvailability result=teacherAvailabilityService.updateTeacherAvailability(tenantKey,availability);
+		TeacherAvailability result=teacherAvailabilityService.updateTeacherAvailability(tenantKey,id,availability);
 		logger.info("Updating availabilty completed:{} ",availability);
 		return Response.ok(result).build();
 	}
