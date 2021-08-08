@@ -9,13 +9,14 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.PathParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.reussite.appui.support.dashbaord.mapper.SubjectMapper;
 import org.reussite.appui.support.dashbaord.mapper.TagMapper;
 import org.reussite.appui.support.dashbaord.mapper.TeacherProfileMapper;
+import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.domain.Tag;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
@@ -54,6 +55,10 @@ public class TeacherProfileService {
 
 	@Inject
 	protected TagMapper tagMapper;
+
+
+	@Inject
+	protected SubjectMapper subjectMapper;
 
 
 	public ResultPage<TeacherProfile>  searchTeacherProfiles(String tag,String firstName, String sortParams, Integer size, Integer page) {
@@ -214,10 +219,19 @@ public class TeacherProfileService {
 		if (StringUtils.isNotBlank(body.getSchoolName())) {
 			profile.setSchoolName(body.getSchoolName());
 		}
-		//FIXME: USe mapstruc
-		/*if (body.getSubjects() != null && body.getSubjects().size() > 0) {
-			profile.setSubjects (body.getSubjects());
-		}*/
+		if (body.getSubjects() != null && body.getSubjects().size() > 0) {
+			Set<SubjectEntity> subjects= new HashSet<SubjectEntity>();
+			for(Subject subject:body.getSubjects()) {
+				SubjectEntity sub=SubjectEntity.findById(subject.getId());
+				if(sub!=null) {
+					subjects.add(sub);
+				}else {
+					subjects.add(subjectMapper.toEntity(subject));
+				}
+			}
+			SubjectEntity.persist(subjects);
+			profile.setSubjects(subjects);
+		}
 		if (body.getGrades() != null && body.getGrades().size() > 0) {
 			profile.setGrades (body.getGrades());
 		}

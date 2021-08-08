@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
+import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.TeacherProfileEntity;
@@ -32,6 +33,11 @@ public class TeacherProfileServiceTest {
     	teacher.setFirstName("Jane");
     	teacher.setLastName("Joe");
     	teacher.setEmail("it@let.do");
+    	
+    	Subject subject= new Subject();
+    	subject.setId(UUID.randomUUID().toString());
+    	subject.setName("German");
+    	teacher.getSubjects().add(subject);
     	teacher=
     		given()
 	    	  .header("TenantKey", tenantKey)

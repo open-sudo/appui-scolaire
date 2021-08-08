@@ -27,7 +27,6 @@ public class StudentParent{
 	private String id;
     @NotNull(groups = ValidationGroups.Post.class)
 	private String email;
-    @NotNull(groups = ValidationGroups.Post.class)
 	private String phoneNumber;
 
 	@JsonIgnore

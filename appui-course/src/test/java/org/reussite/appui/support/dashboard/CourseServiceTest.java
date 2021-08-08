@@ -57,9 +57,8 @@ public class CourseServiceTest {
     	Course course= new Course();
     	course.setName("Quarkus Programming");
     	course.setSubject(subject);
-    	
     	course.setPrices(Arrays.asList(new MonetaryAmount(new BigDecimal(12.34567), "CAD")));
-    	
+    	course.getGrades().add(3);
 
 	    Course[] courses=	given()
 	    	  .header("TenantKey", tenantKey)

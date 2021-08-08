@@ -33,14 +33,6 @@ public class TagServiceTest {
     	tag.name=("Red");
     	tag.persistAndFlush();
 	}
-	@Test
-    public void testHello() {
-        given()
-                .given().get("/v1/tag/hello")
-                .then()
-                .statusCode(200)
-                .body(equalTo("\"Hello World\""));
-    }
 	
 	    
     @Test

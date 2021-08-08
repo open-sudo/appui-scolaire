@@ -83,6 +83,7 @@ public class TeacherCommentServiceTest {
     	comment.setStudentBooking(booking);
     	comment.setStudentProfile(student);
     	comment.setStudentParent(parent);
+    	comment.setContent("Sample content");
     	comment=
     		given()
 	    	  .header("TenantKey",tenantKey)
@@ -125,6 +126,7 @@ public class TeacherCommentServiceTest {
     	comment.studentBooking=(booking);
     	comment.studentProfile=(student);
     	comment.studentParent=(parent);
+    	comment.content="Sample content";
     	comment.persist();
     	return comment;
     }

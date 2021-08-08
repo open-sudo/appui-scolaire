@@ -36,6 +36,8 @@ public class StudentParentServiceTest {
     	parent.setCountryCode(1);
     	parent.setPhoneNumber("45027575634");
     	parent.setLastName("Moonsoon");
+    	parent.setLanguage("EN");
+    	parent.setEmail(UUID.randomUUID().toString());
 	    parent=	given()
 	    	  .header("TenantKey", tenantKey)
 		      .contentType(MediaType.APPLICATION_JSON)
@@ -53,6 +55,7 @@ public class StudentParentServiceTest {
 		parent.firstName=UUID.randomUUID().toString();
 		parent.email=UUID.randomUUID().toString()+"@gmail.com";
 		parent.lastName="Jinda";
+		parent.language="EN";
 		parent.phoneNumber=String.valueOf(new SecureRandom().nextInt());
 		parent.persist();
     	return parent;

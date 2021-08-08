@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class TeacherAvailability {
 	
 	@JsonView(Views.Response.class) 
+	@Null
 	private String id;
 	@JsonView(Views.Response.class) 
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
