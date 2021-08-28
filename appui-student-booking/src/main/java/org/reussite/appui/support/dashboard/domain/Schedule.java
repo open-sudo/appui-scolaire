@@ -26,7 +26,14 @@ public class Schedule {
 	private ZonedDateTime endDate;
 
 	private Integer durationInMinutes=0;
-	
+	  private Course course;
+	   
+	    public Course getCourse() {
+			return course;
+		}
+		public void setCourse(Course course) {
+			this.course = course;
+		}
 	
 	public ZonedDateTime getStartDate() {
 		return startDate;

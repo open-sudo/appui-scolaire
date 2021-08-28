@@ -4,8 +4,11 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Sort;
 
 @ApplicationScoped
 public class ScheduleService {
@@ -47,10 +49,13 @@ public class ScheduleService {
 
 	
 
-	public ResultPage<Schedule> searchSchedules(String courseId, List<String> subjectIds, int gradeMin,int gradeMax,String sortParams, Integer size,
+	public ResultPage<Schedule> searchSchedules(List<Integer>  grade,String courseId, List<String> subjectIds, String sortParams, Integer size,
 			Integer page, String startDate, String endDate, String language) {
-		logger.info("Searching schedules for Min grade:{}. Max grade:{}. Start date:{}. End Date:{} and title:{}. Principal:{}. Sort params:{}",gradeMin,gradeMax,startDate,endDate,Arrays.deepToString(subjectIds.toArray()),sortParams);
-		Sort sort=SearchUtils.getAbsoluteSort(sortParams, Schedule.class);
+		if(grade==null || grade.size()==0) {
+			grade = IntStream.range(0,25).boxed().collect(Collectors.toList());
+		}
+		logger.info("Searching schedules for  grades:{}. Start date:{}. End Date:{} and title:{}. Principal:{}. Sort params:{}",Arrays.deepToString(grade.toArray()),endDate,Arrays.deepToString(subjectIds.toArray()),sortParams);
+		io.quarkus.panache.common.Sort sort=SearchUtils.getAbsoluteSort(sortParams, Schedule.class);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateTimeFormats.DATETIME_FORMAT);
 		ZonedDateTime start=ZonedDateTime.parse(startDate,formatter);
 		ZonedDateTime end=ZonedDateTime.parse(endDate,formatter);
@@ -60,10 +65,10 @@ public class ScheduleService {
 		if(StringUtils.isNotBlank(courseId)) {
 			query= ScheduleEntity.find("select DISTINCT c from Schedule c where c.course.id=?1   and  c.deleteDate IS NULL ",sort,courseId);
 		}else if(subjectIds==null || subjectIds.size()==0){
-				query= ScheduleEntity.find("select DISTINCT c from Schedule c,  IN(c.course.grades) g where g >=?1 and g<=?2   and  c.deleteDate IS NULL and c.startDate > ?3 and c.startDate < ?4 ",sort,gradeMin,gradeMax,start,end);
+				query= ScheduleEntity.find("select DISTINCT c from Schedule c,  IN(c.course.grades) g where g in ?1   and  c.deleteDate IS NULL and c.startDate > ?2 and c.startDate < ?3 ",grade,start,end);
 		}
 		else {
-			query= ScheduleEntity.find("select DISTINCT c from Schedule c,  IN(c.course.grades) g where g >=?1 and g<=?2   and  c.deleteDate IS NULL and c.startDate > ?3 and c.startDate < ?4 and (c.course.subject.id) in ?5",sort,gradeMin,gradeMax,start,end, subjectIds);
+			query= ScheduleEntity.find("select DISTINCT c from Schedule c,  IN(c.course.grades) g where g in ?1   and  c.deleteDate IS NULL and c.startDate > ?2 and c.startDate < ?3 and (c.course.subject.id) in ?4",grade,start,end, subjectIds);
 		}
 		result=query.page(page, size).list().stream().map(scheduleMapper::toDomain).collect(Collectors.toList());;
 		ResultPage<Schedule> resultPage= new ResultPage<Schedule>(page,query.pageCount(),query.count(),result);
@@ -79,7 +84,7 @@ public class ScheduleService {
     	for(Schedule schedule:schedules) {
     		logger.info("Creating schedule :{}",schedule);
     		ScheduleEntity entity= scheduleMapper.toEntity(schedule);
-	    	CourseEntity course=getCourse(schedule.getCourseId());
+	    	CourseEntity course=getCourse(schedule.getCourse().getId());
 	    	entity.course=course;
 	    	entities.add(entity);
 	    	entity.persist();

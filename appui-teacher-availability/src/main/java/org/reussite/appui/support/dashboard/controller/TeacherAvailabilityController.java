@@ -66,8 +66,8 @@ public class TeacherAvailabilityController {
 	@JsonView(Views.Response.class)
     public Response findStudentBookings(
     		@HeaderParam("TenantKey") String tenantKey,
-    		@PathParam("ids") List<String> ids) {
-		List<StudentBooking> bookings= teacherAvailabilityService.findStudentBookings(ids);
+    		@QueryParam("id") List<String> id) {
+		List<StudentBooking> bookings= teacherAvailabilityService.findStudentBookings(id);
 		return Response.ok(bookings).build();
 	}
 			
@@ -87,6 +87,7 @@ public class TeacherAvailabilityController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
+	@Transactional
 	public Response registerTeacherAvailability(@HeaderParam("TenantKey") String tenantKey,@Valid @ConvertGroup(to = ValidationGroups.Post.class)  @JsonView(Views.Request.class) TeacherAvailability availability) {
  		logger.info("Registering teacher availability in tenant:{},  :{}",tenantKey,availability);
  		logger.info("Number of teacher availabilities before insertion:{}",TeacherAvailabilityEntity.count());
@@ -102,6 +103,7 @@ public class TeacherAvailabilityController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{id}")
+	@Transactional
 	public Response updateTeacherAvailability(@HeaderParam("TenantKey") String tenantKey,@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Patch.class)  @JsonView(Views.Request.class) TeacherAvailability availability) {
 		logger.info("Updating availabilty:{} , with body:{}",tenantKey,availability);
 		TeacherAvailability result=teacherAvailabilityService.updateTeacherAvailability(tenantKey,id,availability);
@@ -114,6 +116,7 @@ public class TeacherAvailabilityController {
 	@Path("{availabilityId}/assistant/{teacherId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
+	@Transactional
 	public Response assignTeacherAssistants(@HeaderParam("TenantKey") String tenantKey, @PathParam("teacherId")  String teacherId, @PathParam("availabilityId") String availabilityId) {
 		logger.info("Assigning teacher assistant:{} to availability :{}",teacherId,availabilityId);
 		TeacherAvailability result=teacherAvailabilityService.assignAssistant(tenantKey,teacherId,availabilityId);
@@ -124,6 +127,7 @@ public class TeacherAvailabilityController {
 	@Path("{availabilityId}/booking/{bookingId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
+	@Transactional
 	public Response assignTeacherBooking(@HeaderParam("TenantKey") String tenantKey, @PathParam("bookingId")  String bookingId, @PathParam("availabilityId") String availabilityId) {
 		logger.info("Assigning booking :{} to availability :{}",bookingId,availabilityId);
 		TeacherAvailability result=teacherAvailabilityService.assignTeacher(tenantKey,bookingId,availabilityId);
@@ -134,6 +138,7 @@ public class TeacherAvailabilityController {
 	@Path("{availabilityId}/booking/{bookingId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
+	@Transactional
 	public Response unassignTeacherBooking(@HeaderParam("TenantKey") String tenantKey, @PathParam("bookingId")  String bookingId, @PathParam("availabilityId") String availabilityId) {
 		logger.info("Assigning booking :{} to availability :{}",bookingId,availabilityId);
 		TeacherAvailability result=teacherAvailabilityService.unassignTeacher(tenantKey,bookingId,availabilityId);
@@ -145,6 +150,7 @@ public class TeacherAvailabilityController {
 	@Path("{availabilityId}/assistant/{teacherId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
+	@Transactional
 	public Response unassignTeacherAssistants(@HeaderParam("TenantKey") String tenantKey, @PathParam("teacherId")  String teacherId, @PathParam("availabilityId") String availabilityId) {
 		logger.info("Unassigning teacher assistant:{} to availability :{}",teacherId,availabilityId);
 		TeacherAvailability result=teacherAvailabilityService.assignAssistant(tenantKey,teacherId,availabilityId);
@@ -158,6 +164,7 @@ public class TeacherAvailabilityController {
 	@Path("{availabilityId}/tag/{tagId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
+	@Transactional
 	public Response tagStudentProfile(@HeaderParam("TenantKey") String tenantKey, @PathParam("availabilityId") String availabilityId, @PathParam("tagId") String tagId) {
 		logger.info("Tagging availability {} with tag :{} ",availabilityId, tagId);
 		TeacherAvailability result=teacherAvailabilityService.tagTeacherAvailability(tenantKey,availabilityId,tagId);
@@ -169,6 +176,7 @@ public class TeacherAvailabilityController {
 	@Path("{availabilityId}/tag/{tagId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
+	@Transactional
 	public Response untagStudentProfile(@HeaderParam("TenantKey") String tenantKey, @PathParam("availabilityId") String availabilityId, @PathParam("tagId") String tagId) {
 		logger.info("Tagging availability {} with tag :{} ",availabilityId, tagId);
 		TeacherAvailability result=teacherAvailabilityService.untagTeacherAvailability(tenantKey,availabilityId,tagId);

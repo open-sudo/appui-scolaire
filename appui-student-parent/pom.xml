@@ -39,6 +39,10 @@
 			<artifactId>twilio</artifactId>
 			<version>8.2.0</version>
 		</dependency>
+		 <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-multipart</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.googlecode.libphonenumber</groupId>
 			<artifactId>geocoder</artifactId>

@@ -3,7 +3,9 @@ package org.reussite.appui.support.dashboard.model;
 import java.time.ZonedDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -33,6 +35,9 @@ public class ScheduleEntity  extends PanacheEntityBase{
 	@JsonIgnore
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	public ZonedDateTime deleteDate;
+
+	@ManyToOne(targetEntity=CourseEntity.class,fetch = FetchType.EAGER)
+	public CourseEntity course;
 	
 	@Override
 	public String toString() 

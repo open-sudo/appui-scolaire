@@ -42,7 +42,7 @@ quarkus:
       jdbc:
          max-size: 8
          min-size: 2
-         url: jdbc:postgresql://postgresql/teacher_availabilities
+         url: jdbc:postgresql://postgresql/availabilities
    hibernate-orm:
       database:
          generation: update

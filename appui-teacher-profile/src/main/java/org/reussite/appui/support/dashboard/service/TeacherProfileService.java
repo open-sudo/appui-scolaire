@@ -16,9 +16,11 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.reussite.appui.support.dashbaord.mapper.SubjectMapper;
 import org.reussite.appui.support.dashbaord.mapper.TagMapper;
 import org.reussite.appui.support.dashbaord.mapper.TeacherProfileMapper;
+import org.reussite.appui.support.dashbaord.utils.OAuth2Constants;
 import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.domain.Tag;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
+import org.reussite.appui.support.dashboard.domain.TokenResponse;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.SubjectEntity;
@@ -43,6 +45,13 @@ public class TeacherProfileService {
 	protected String teacherPrefixUrl = "";
 	@ConfigProperty(name = "reussite.appui.conference.url.prefix.student") 
 	protected String studentPrefixUrl = "";
+	@ConfigProperty(name = "reussite.appui.keycloak.client.name") 
+	protected String keycloakClientName;
+	@ConfigProperty(name = "reussite.appui.keycloak.client.secret") 
+	protected String keycloakClientSecret;
+	@Inject
+    @RestClient
+	protected KeycloakService keycloakService;
 
 	@Inject 
 	protected TeacherProfileMapper teacherMapper;
@@ -101,11 +110,13 @@ public class TeacherProfileService {
 
 		if(StringUtils.isNoneBlank(profile.getFirstName(),profile.getLastName())) {
 			entity.setConferenceUrl((profile.getFirstName().trim()+"-"+profile.getLastName().trim()).replaceAll("\\s", "").toLowerCase());
+			logger.info("Searching teacher by conference:{}", entity.getConferenceUrl());
 			TeacherProfileEntity existing=teacherRepo.findByExactConferenceUrl(entity.getConferenceUrl());
 			Random random= new Random();
 			String conferenceUrl=entity.getConferenceUrl();
 			while(existing!=null) {
 				entity.setConferenceUrl(conferenceUrl+random.nextInt(100));
+				logger.info("Teacher already with  conference:{}. Trying new one:{}",conferenceUrl,entity.getConferenceUrl());
 				existing=teacherRepo.findByExactConferenceUrl(entity.getConferenceUrl());
 			}
 			logger.info("Conference URL generated:{}",entity.getConferenceUrl());
@@ -140,11 +151,12 @@ public class TeacherProfileService {
 	
 
 	public TeacherProfile getTeacherProfileById(String id) {
-		TeacherProfileEntity profile=teacherRepo.findById(id);
+		TeacherProfileEntity entity=teacherRepo.findById(id);
+		TeacherProfile profile=teacherMapper.toDomain(entity);
 		if(StringUtils.isNotBlank(profile.getConferenceUrl()) && !profile.getConferenceUrl().contains(teacherPrefixUrl)) {
 			profile.setConferenceUrl(teacherPrefixUrl+profile.getConferenceUrl());
 		}
-		return teacherMapper.toDomain(profile);
+		return (profile);
 	}
 	
 	@Transactional
@@ -281,5 +293,31 @@ public class TeacherProfileService {
 			profile.getTags().remove(deleteMe);
 		}
 		teacherRepo.persist(profile);
+	}
+
+
+	public void login(String phoneNumber) {
+		String response=keycloakService.register(phoneNumber);
+		logger.info("Teacher login triggered in Keycloak:{}, :{}",response,phoneNumber);
+	}
+	
+
+	@Transactional
+	public TokenResponse activateTeacher(String id, String activationCode,  String refreshToken) {
+		TeacherProfileEntity teacher= teacherRepo.findById(id);
+		logger.info("Teacher found in db: {}",teacher);
+		logger.info("Preparing to send activation request to Keycloak:{} ");
+		
+		TokenResponse token=null;
+		if(StringUtils.isBlank(refreshToken)) {
+			token=keycloakService.activate(OAuth2Constants.PASSWORD.asLowerCase(),teacher.getPhoneNumber(),activationCode,keycloakClientName,keycloakClientSecret,null);
+		}else {
+			token=keycloakService.activate(OAuth2Constants.REFRESH_TOKEN.asLowerCase(),teacher.getPhoneNumber(),null,keycloakClientName,keycloakClientSecret,refreshToken);
+		}
+		teacher.setLastUpdateDate(TimeUtils.getCurrentTime());
+		teacher.setActivationDate(TimeUtils.getCurrentTime());
+		logger.info("Activation response from  Keycloak:{} ",token);
+		teacherRepo.persist(teacher);
+		return token;
 	}
 }

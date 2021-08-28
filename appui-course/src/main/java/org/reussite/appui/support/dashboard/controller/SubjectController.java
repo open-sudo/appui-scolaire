@@ -11,6 +11,7 @@ import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -60,13 +61,13 @@ public class SubjectController {
 		return Response.ok(result).status(Response.Status.CREATED).build();
 	}
 	
-	@PUT
+	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSubject(@Valid @ConvertGroup(to = ValidationGroups.Patch.class) Subject Subject) {
+	public Response updateSubject(@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Patch.class) Subject Subject) {
 		logger.info("Updating Subject:{} ",Subject);
-		subjectService.updateSubject(Subject);
+		subjectService.updateSubject(id,Subject);
 		logger.info("Updating Subject completed:{}",Subject);
 
 		return Response.ok().build();

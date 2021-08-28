@@ -66,6 +66,14 @@ public class StudentProfileEntity extends PanacheEntityBase{
 	
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	public ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
+	
+	
+
+	public  static StudentProfileEntity findByExactConferenceUrl(String path) {
+		return find("conferenceUrl = lower(?1)",path.toLowerCase()).firstResult();
+	}
+
+	
 	public static StudentProfileEntity findByConferenceUrlContaining(String path) {
 		return find("conferenceUrl like concat('%',concat(?1,'%'))",path).firstResult();
 	}

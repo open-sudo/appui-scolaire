@@ -42,16 +42,17 @@ quarkus:
       jdbc:
          max-size: 8
          min-size: 2
-         url: jdbc:postgresql://postgresql/student_parents
+         url: jdbc:postgresql://postgresql/parents
    hibernate-orm:
       database:
          generation: update
    
 reussite:
   appui:
-    activation:
-       template: "<#> Yodaa.IO: Your code is {CODE}\r\nr64Iw/6mD1D"
-       defaultCodeEnabled: false
+    keycloak:
+         client: 
+            name: mobile
+            secret: 46428c57-6155-4532-b61e-0dd77f7f33be 
  
 org:
   eclipse:
@@ -59,3 +60,6 @@ org:
         rest:
            client:
                propagateHeaders: TenantKey, Authorization,Proxy-Authorization
+               
+keycloak/mp-rest/url: http://keycloak-appui
+

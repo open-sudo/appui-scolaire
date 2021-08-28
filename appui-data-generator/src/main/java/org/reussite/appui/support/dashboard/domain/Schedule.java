@@ -29,17 +29,17 @@ public class Schedule{
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime endDate;
     
-    @NotBlank
-    private String courseId;
+    @NotNull
+    private Course course;
    
     private Integer repeatPeriodInDays=0;
    
 
-	public String getCourseId() {
-		return courseId;
+	public Course getCourse() {
+		return course;
 	}
-	public void setCourseId(String courseId) {
-		this.courseId = courseId;
+	public void setCourse(Course course) {
+		this.course = course;
 	}
 	
 	public String getId() {

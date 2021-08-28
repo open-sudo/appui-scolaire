@@ -123,6 +123,7 @@ public class StudentProfileController {
 	@Path("{studentId}/tag/{tagId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Read.class)
+	@Transactional
 	public Response tagStudentProfile( @PathParam("studentId") String studentId, @PathParam("tagId") String tagId) {
 		logger.info("Tagging student profile {} with tag :{} ",studentId, tagId);
 		StudentProfile result=studentProfileService.tagStudentProfile(studentId,tagId);
@@ -134,6 +135,7 @@ public class StudentProfileController {
 	@Path("{studentId}/tag/{tagId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Read.class)
+	@Transactional
 	public Response untagStudentProfile( @PathParam("studentId") String studentId, @PathParam("tagId") String tagId) {
 		logger.info("Tagging student profile {} with tag :{} ",studentId, tagId);
 		StudentProfile result=studentProfileService.untagStudentProfile(studentId,tagId);

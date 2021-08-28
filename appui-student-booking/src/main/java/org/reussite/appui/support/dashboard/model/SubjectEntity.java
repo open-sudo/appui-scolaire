@@ -3,13 +3,11 @@ package org.reussite.appui.support.dashboard.model;
 import java.time.ZonedDateTime;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.GenericGenerator;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,8 +21,6 @@ public class SubjectEntity  extends PanacheEntityBase {
 	
 
 	@Id
-	@GeneratedValue(generator="system-uuid")
-	@GenericGenerator(name="system-uuid", strategy = "uuid")
 	public String id;
     @JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	public ZonedDateTime createDate=TimeUtils.getCurrentTime();

@@ -84,10 +84,9 @@ public class CourseController {
     		@DefaultValue("subject,asc") @QueryParam("sort") String sort, 
     		@DefaultValue("20") @QueryParam("size")Integer size,
     		@DefaultValue("0") @QueryParam("page") Integer page,
-    		@DefaultValue("0") @QueryParam("gradeMin") Integer gradeMin,
-    		@DefaultValue("30") @QueryParam("gradeMax") Integer gradeMax) {
+    		 @QueryParam("grade") List<Integer> grade) {
 		
-		ResultPage<Course> result= courseService.searchCourses( title, gradeMin,gradeMax, sort, size, page,language);
+		ResultPage<Course> result= courseService.searchCourses( title, grade, sort, size, page,language);
 		return Response.ok(result).build();
 	}
 

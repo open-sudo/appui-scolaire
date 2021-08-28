@@ -17,6 +17,6 @@ public interface TagService {
 	
 	@GET
 	@Path("{id}")
-	public Tag getTag(@HeaderParam("TenantKey") String tenantKey, @PathParam String id);
+	public Tag getTag(@HeaderParam("TenantKey") String tenantKey, @PathParam("id") String id);
 
 }

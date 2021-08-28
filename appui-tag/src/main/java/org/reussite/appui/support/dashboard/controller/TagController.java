@@ -81,7 +81,14 @@ public class TagController {
 		List<TagRequest> tags=tagService.enableTags( ids);
 		return Response.ok(tags).build();
 	}
-	
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("{id}")
+	@Transactional
+    public Response findById(@PathParam("id") String id) {
+		TagResponse tag= tagService.findById(id);
+		return Response.ok(tag).build();
+	}
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	@Transactional
@@ -95,6 +102,9 @@ public class TagController {
 		return Response.ok(result).build();
 	}
 
+	
+
+	
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)

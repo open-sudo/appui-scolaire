@@ -58,9 +58,18 @@ public class StudentBooking {
 	@JsonView(Views.Response.class)
 	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
 	private List<Tag> tags= new ArrayList<Tag>();
-
+	private List<Attachment> attachments= new ArrayList<Attachment>();
 	private String conferenceUrl;
 	
+	
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
 	public String getId() {
 		return id;
 	}

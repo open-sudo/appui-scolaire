@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 
 import org.reussite.appui.support.dashbaord.utils.PhoneUtils;
 import org.reussite.appui.support.dashboard.domain.StudentParent;
+import org.reussite.appui.support.dashboard.domain.TokenResponse;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.StudentParentEntity;
 import org.reussite.appui.support.dashboard.service.StudentParentService;
@@ -66,13 +67,13 @@ public class StudentParentController {
 	
 	@GET
 	@Path("activate/{id}")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
-	public Response activateParent( @PathParam("id") String id,@QueryParam("activationCode") String activationCode) {
+	public Response activateParent( @PathParam("id") String id,@QueryParam("activationCode") String activationCode,@QueryParam("refreshToken") String refreshToken) {
 		logger.info("Activating parent:{} with code",id,activationCode);
-		String jwt= parentService.activateParent(id,activationCode);
+		TokenResponse jwt= parentService.activateParent(id,activationCode,"mobile",refreshToken);
 		logger.info("Activating parent {} with ocde{}, resulting in jwt:",id,activationCode,jwt);
-		return Response.ok("{\"access_token\":\""+jwt+"\"}").build();
+		return Response.ok(jwt).build();
 	}
 	
 	

@@ -42,14 +42,16 @@ quarkus:
       jdbc:
          max-size: 8
          min-size: 2
-         url: jdbc:postgresql://postgresql/teacher_profiles
+         url: jdbc:postgresql://postgresql/teachers
    hibernate-orm:
       database:
          generation: update
 reussite:
     appui:
-      activation:
-        defaultCodeEnabled: true
+      keycloak:
+         client: 
+            name: web-teacher
+            secret: b9c7f07c-bdc8-42b0-92cb-c439d530a4a1 
       conference:
          bbb:
             default:
@@ -66,4 +68,5 @@ org:
                propagateHeaders: TenantKey, Authorization,Proxy-Authorization
 tag/mp-rest/url: http://appui-tag/
 subject/mp-rest/url: http://appui-course/
+keycloak/mp-rest/url: http://keycloak-appui
 

@@ -19,6 +19,6 @@ public interface TagService {
 	@Path("{id}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Tag getTag(@PathParam String id);
+	public Tag getTag(@PathParam("id") String id);
 
 }

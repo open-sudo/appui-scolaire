@@ -32,9 +32,12 @@ import org.reussite.appui.support.dashboard.domain.TeacherAvailability;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.exceptions.ApplicationException;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
+import org.reussite.appui.support.dashboard.model.CourseEntity;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.ScheduleEntity;
 import org.reussite.appui.support.dashboard.model.StudentBookingEntity;
+import org.reussite.appui.support.dashboard.model.StudentProfileEntity;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
 import org.reussite.appui.support.dashboard.model.TagEntity;
 import org.reussite.appui.support.dashboard.model.TeacherAvailabilityEntity;
 import org.reussite.appui.support.dashboard.model.TeacherProfileEntity;
@@ -195,22 +198,35 @@ public class TeacherAvailabilityService {
 		logger.info("Availability creation completed successfully: {}  ", entity);
 		return mapper.toDomain(entity);
 	}
-	
-	private ScheduleEntity getSchedule(String scheduleId) {
-		logger.info("Fetching schedule:{}",scheduleId);
-		Schedule schedule=scheduleService.getSchedule(scheduleId);
-		ScheduleEntity existing=ScheduleEntity.findById(scheduleId);
+	private ScheduleEntity getSchedule(String id) {
+		logger.info("Fetching schedule:{}",id);
+		Schedule schedule=scheduleService.getSchedule(id);
+		ScheduleEntity existing=ScheduleEntity.findById(id);
 		if(existing==null) {
 			ScheduleEntity entity=scheduleMapper.toEntity(schedule);
+			SubjectEntity subject=SubjectEntity.findById(entity.course.subject.id);
+			if(subject==null) {
+				entity.course.subject.persistAndFlush();
+			}else {
+				entity.course.subject=subject;
+			}
+			CourseEntity course=CourseEntity.findById(entity.course.id);
+			if(course==null) {
+				entity.course.persistAndFlush();
+			}else {
+				entity.course=course;
+			}
 			entity.persistAndFlush();
+			logger.info("Schedule fetched from remote service:{}",entity);
+			
 			return entity;
 		}
-		existing.endDate=schedule.getEndDate();
-		existing.startDate=schedule.getStartDate();
+		scheduleMapper.updateModel(schedule, existing);
 		existing.persistAndFlush();
+		logger.info("Existing schedule updated :{}",existing);
 		return existing;
 	}
-
+	
 	private TeacherProfileEntity getTeacherProfile(String teacherId) {
 		TeacherProfile teacherProfile=teacherProfileService.getTeacherProfile(teacherId);
 		TeacherProfileEntity existing=TeacherProfileEntity.findById(teacherId);
@@ -237,6 +253,12 @@ public class TeacherAvailabilityService {
 		StudentBookingEntity existing=StudentBookingEntity.findById(bookingId);
 		if(existing==null) {
 			StudentBookingEntity entity=studentBookingMapper.toEntity(studentBooking);
+			StudentProfileEntity profile=StudentProfileEntity.findById(studentBooking.getStudentProfile().getId());
+			if(profile!=null) {
+				entity.studentProfile=profile;
+			}else {
+				entity.studentProfile.persist();
+			}
 			entity.persistAndFlush();
 			return entity;
 		}
@@ -273,10 +295,11 @@ public class TeacherAvailabilityService {
 
 	@Transactional
 	public TeacherAvailability assignAssistant(String tenantKey,String teacherId, String availablityId) {
-		 logger.info("Assigning assiatnt :{} to availability:{}",teacherId,availablityId);
+		 logger.info("Assigning assistant :{} to availability:{}",teacherId,availablityId);
 		 TeacherProfileEntity teacher=TeacherProfileEntity.findById(teacherId);
 		 TeacherAvailabilityEntity availability=TeacherAvailabilityEntity.findById(availablityId);
 		 availability.assistants.add(teacher);
+		 availability.persistAndFlush();
 		 return mapper.toDomain(availability);
     }
 
@@ -293,6 +316,7 @@ public class TeacherAvailabilityService {
 		 if(deleteMe!=null) {
 			 availability.assistants.remove(deleteMe);
 		 }
+		 availability.persistAndFlush();
 		 return mapper.toDomain(availability);
     }
 

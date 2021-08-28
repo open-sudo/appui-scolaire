@@ -21,10 +21,13 @@ import org.reussite.appui.support.dashboard.domain.StudentBooking;
 import org.reussite.appui.support.dashboard.domain.StudentProfile;
 import org.reussite.appui.support.dashboard.domain.Tag;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
+import org.reussite.appui.support.dashboard.model.AttachmentEntity;
+import org.reussite.appui.support.dashboard.model.CourseEntity;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.ScheduleEntity;
 import org.reussite.appui.support.dashboard.model.StudentBookingEntity;
 import org.reussite.appui.support.dashboard.model.StudentProfileEntity;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
 import org.reussite.appui.support.dashboard.model.TagEntity;
 import org.reussite.appui.support.dashboard.utils.SearchUtils;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
@@ -69,7 +72,9 @@ public class StudentBookingService {
     	booking.schedule=getSchedule( body.getSchedule().getId());
     	booking.studentProfile=getStudentProfile(body.getStudentProfile().getId());
     	logger.info("Student profile found:{}",booking.studentProfile);
-
+    	for(AttachmentEntity attachment:booking.attachments) {
+    		attachment.persistAndFlush();
+    	}
 		booking.persistAndFlush();
 		return studentBookingMapper.toDomain(booking);
 	}
@@ -81,8 +86,21 @@ public class StudentBookingService {
 		ScheduleEntity existing=ScheduleEntity.findById(id);
 		if(existing==null) {
 			ScheduleEntity entity=scheduleMapper.toEntity(schedule);
+			SubjectEntity subject=SubjectEntity.findById(entity.course.subject.id);
+			if(subject==null) {
+				entity.course.subject.persistAndFlush();
+			}else {
+				entity.course.subject=subject;
+			}
+			CourseEntity course=CourseEntity.findById(entity.course.id);
+			if(course==null) {
+				entity.course.persistAndFlush();
+			}else {
+				entity.course=course;
+			}
 			entity.persistAndFlush();
 			logger.info("Schedule fetched from remote service:{}",entity);
+			
 			return entity;
 		}
 		scheduleMapper.updateModel(schedule, existing);
@@ -106,6 +124,32 @@ public class StudentBookingService {
 		studentMapper.updateModel(studentProfile, existing);
 		existing.persistAndFlush();
 		return existing;
+	}
+
+
+	public StudentBooking tagStudentBooking(String bookingId, String tagId) {
+		TagEntity existing=getTag(tagId);
+		StudentBookingEntity booking=StudentBookingEntity.findById(bookingId);
+		booking.tags.add(existing);
+		booking.persistAndFlush();
+		return studentBookingMapper.toDomain(booking);
+	}
+	
+
+	public StudentBooking untagStudentBooking( String bookingId, String tagId) {
+		TagEntity existing=getTag(tagId);
+		StudentBookingEntity booking=StudentBookingEntity.findById(bookingId);
+		TagEntity deleteMe=null;
+		for(TagEntity t:booking.tags) {
+			if(t.id.equals(existing.id)) {
+				deleteMe=t;
+			}
+		}
+		if(deleteMe!=null) {
+			booking.tags.remove(deleteMe);
+		}
+		booking.persistAndFlush();
+		return studentBookingMapper.toDomain(booking);
 	}
 
 	public ResultPage<StudentBooking>  searchStudentBookings(String tag,String firstName, String sortParams,  Integer size, Integer page,
@@ -144,8 +188,8 @@ public class StudentBookingService {
 	
 	
     @Transactional
-	public void updateStudentBooking(StudentBooking body) {
-		 StudentBookingEntity booking=StudentBookingEntity.findById(body.getId());
+	public void updateStudentBooking(String id, StudentBooking body) {
+		 StudentBookingEntity booking=StudentBookingEntity.findById(id);
 		 if(booking==null) {
 				throw new NoSuchElementException(StudentBooking.class,body.getId());
 		 }

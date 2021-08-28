@@ -2,6 +2,7 @@ package org.reussite.appui.support.dashboard.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -89,12 +90,11 @@ public class ScheduleController {
     		@DefaultValue("") @QueryParam("courseId") String courseId, 
     		@DefaultValue("20") @QueryParam("size")Integer size,
     		@DefaultValue("0") @QueryParam("page") Integer page,
-    		@DefaultValue("0") @QueryParam("gradeMin") Integer gradeMin,
-    		@DefaultValue("30") @QueryParam("gradeMax") Integer gradeMax,
+    		@QueryParam("grade") List<Integer> grade,
 	    		@DefaultValue("01/01/2010 00:00:00 -0500") @QueryParam("startDate") String startDate, 
 	    		@DefaultValue("01/01/2110 00:00:00 -0500") @QueryParam("endDate") String endDate ) {
 		
-		ResultPage<Schedule> result= scheduleService.searchSchedules(courseId,subjectIds, gradeMin,gradeMax, sort, size, page,startDate,endDate,language);
+		ResultPage<Schedule> result= scheduleService.searchSchedules(grade,courseId,subjectIds,  sort, size, page,startDate,endDate,language);
 		return Response.ok(result).build();
 	}
 

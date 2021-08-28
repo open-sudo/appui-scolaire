@@ -12,7 +12,9 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.reussite.appui.support.dashboard.domain.Course;
 import org.reussite.appui.support.dashboard.domain.Schedule;
+import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.domain.TeacherAvailability;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
 import org.reussite.appui.support.dashboard.model.ResultPage;
@@ -48,10 +50,24 @@ public class TeacherAvailabilityServiceTest {
     	teacher.setPhoneNumber("45027575634");
     	teacher.setLastName("Moonsoon");
     	teacher.setId(UUID.randomUUID().toString());
+    	
+    	
+    	Subject subject = new Subject();
+    	subject.setId(UUID.randomUUID().toString());
+    	subject.setName("Japanese");
+    	
+    	Course course= new Course();
+    	course.setLanguage("EN");
+    	course.setName("Japanese");
+    	course.setId(UUID.randomUUID().toString());
+    	course.setSubject(subject);
+    	
     	Schedule schedule= new Schedule();
     	schedule.setStartDate(TimeUtils.getCurrentTime().plusHours(5));
     	schedule.setEndDate(TimeUtils.getCurrentTime().plusHours(6));
     	schedule.setId(UUID.randomUUID().toString());
+    	schedule.setCourse(course);
+
     	Mockito.when(teacherService.getTeacherProfile(teacher.getId())).thenReturn(teacher);
     	Mockito.when(scheduleService.getSchedule(schedule.getId())).thenReturn(schedule);
 
@@ -85,6 +101,7 @@ public class TeacherAvailabilityServiceTest {
     	schedule.endDate=TimeUtils.getCurrentTime().plusHours(2);
     	schedule.id=UUID.randomUUID().toString();
     	schedule.persist();
+    	
     	
     	TeacherAvailabilityEntity availability= new TeacherAvailabilityEntity();
     	availability.teacherProfile=(teacher);

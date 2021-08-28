@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.groups.ConvertGroup;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -55,7 +56,7 @@ public class StudentBookingController {
     @Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Response.class)
-    public  Response searchStudents(
+    public  Response searchStudentBookings(
     		 @QueryParam("tag") String tag,
     		
     		@QueryParam("firstName") String firstName,
@@ -88,13 +89,38 @@ public class StudentBookingController {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(Views.Response.class)
-	public Response updateStudentBooking(@Valid @ConvertGroup(to = ValidationGroups.Patch.class)  @JsonView(Views.Request.class) StudentBooking booking) {
-		logger.info("Updating booking:{} with body:{}",booking);
-		studentBookingService.updateStudentBooking(booking);
+	public Response updateStudentBooking(@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Patch.class)  @JsonView(Views.Request.class) StudentBooking booking) {
+		logger.info("Updating booking:{} with body:{}",id,id);
+		studentBookingService.updateStudentBooking(id,booking);
 		logger.info("Updating booking:{} completed",booking);
 
 		return Response.ok().build();
 	}
 
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("{bookingId}/tag/{tagId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@JsonView(Views.Response.class)
+	@Transactional
+	public Response tagStudentProfile( @PathParam("bookingId") String bookingId, @PathParam("tagId") String tagId) {
+		logger.info("Tagging student booking {} with tag :{} ",bookingId, tagId);
+		StudentBooking result=studentBookingService.tagStudentBooking(bookingId,tagId);
+		logger.info("Tagging student booking {} with tag :{} completed. ",bookingId, tagId);
+		return Response.ok(result).build();
+	}
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("{studentId}/tag/{tagId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@JsonView(Views.Response.class)
+	@Transactional
+	public Response untagStudentProfile( @PathParam("studentId") String studentId, @PathParam("tagId") String tagId) {
+		logger.info("Tagging student booking {} with tag :{} ",studentId, tagId);
+		StudentBooking result=studentBookingService.untagStudentBooking(studentId,tagId);
+		logger.info("Tagging student booking {} with tag :{} completed. ",studentId, tagId);
+		return Response.ok(result).build();
+	}
 
 }

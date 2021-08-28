@@ -25,8 +25,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class StudentParent{
 	@JsonView(Views.Response.class)
 	private String id;
-    @NotNull(groups = ValidationGroups.Post.class)
 	private String email;
+    @NotNull(groups = ValidationGroups.Post.class)
 	private String phoneNumber;
 
 	@JsonIgnore

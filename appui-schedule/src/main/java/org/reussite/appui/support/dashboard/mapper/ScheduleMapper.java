@@ -9,9 +9,7 @@ import org.mapstruct.NullValueCheckStrategy;
 
 @Mapper(componentModel = "cdi", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS )
 public interface ScheduleMapper {
-	@Mapping(source = "domain.courseId", target = "course.id")
 	ScheduleEntity toEntity(Schedule domain);
-    @Mapping(source = "entity.course.id", target = "courseId")
 	Schedule toDomain(ScheduleEntity entity);
     
     @Mapping(ignore = true, target = "createDate")

@@ -12,9 +12,12 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.reussite.appui.support.dashboard.domain.Attachment;
+import org.reussite.appui.support.dashboard.domain.Course;
 import org.reussite.appui.support.dashboard.domain.Schedule;
 import org.reussite.appui.support.dashboard.domain.StudentBooking;
 import org.reussite.appui.support.dashboard.domain.StudentProfile;
+import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.ScheduleEntity;
 import org.reussite.appui.support.dashboard.model.StudentBookingEntity;
@@ -49,6 +52,17 @@ public class StudentBookingServiceTest {
     	schedule.setStartDate(TimeUtils.getCurrentTime().plusHours(5));
     	schedule.setEndDate(TimeUtils.getCurrentTime().plusHours(6));
     	schedule.setId(UUID.randomUUID().toString());
+    	
+    	Subject subject = new Subject();
+    	subject.setId(UUID.randomUUID().toString());
+    	subject.setName("Japanese");
+    	
+    	Course course= new Course();
+    	course.setLanguage("EN");
+    	course.setName("Japanese");
+    	course.setId(UUID.randomUUID().toString());
+    	course.setSubject(subject);
+    	schedule.setCourse(course);
     	Mockito.when(studentService.getStudentProfile(student.getId())).thenReturn(student);
     	Mockito.when(scheduleService.getSchedule(schedule.getId())).thenReturn(schedule);
 
@@ -56,6 +70,10 @@ public class StudentBookingServiceTest {
     	booking.setStudentProfile(student);
     	booking.setCreateDate(null);
     	booking.setSchedule(schedule);
+    	
+    	Attachment attachment= new Attachment();
+    	attachment.setUrl("http://example.com/somefile.jpeg");
+    	booking.getAttachments().add(attachment);
     	booking=
     		given()
 	    	  .header("TenantKey",tenantKey)

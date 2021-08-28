@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -58,6 +59,8 @@ public class StudentBookingEntity extends PanacheEntityBase{
 
 	@ManyToMany
 	public List<TagEntity> tags= new ArrayList<TagEntity>();
+	@OneToMany
+	public List<AttachmentEntity> attachments= new ArrayList<AttachmentEntity>();
 
     @Column(columnDefinition = "text")
 	public String conferenceUrl;

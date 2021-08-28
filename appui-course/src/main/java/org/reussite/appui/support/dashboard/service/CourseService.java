@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -34,13 +35,16 @@ public class CourseService {
 	
 	@Inject SubjectService subjectService;
 
-	public ResultPage<Course> searchCourses( String title, int gradeMin,int gradeMax,String sortParams, Integer size,
+	public ResultPage<Course> searchCourses( String title, List<Integer> grade,String sortParams, Integer size,
 			Integer page,  String language) {
-		logger.info("Searching schedules for  Min grade:{}. Max grade:{}. Start date:{}. End Date:{} and title:{}. Principal:{}. Sort params:{}",gradeMin,gradeMax,title,language,sortParams);
+		if(grade==null || grade.size()==0) {
+			grade = IntStream.range(0,25).boxed().collect(Collectors.toList());
+		}
+		logger.info("Searching schedules for   grade:{} Start date:{}. End Date:{} and title:{}. Principal:{}. Sort params:{}",Arrays.deepToString(grade.toArray()),title,language,sortParams);
 		Sort sort=SearchUtils.getAbsoluteSort(sortParams, Course.class);
 		List<Course> result=new ArrayList<Course>();
 		logger.info("Language found:{}",language);
-		PanacheQuery<CourseEntity> query = CourseEntity.find("select DISTINCT c from Course c , IN(c.grades) g where  g >=?1 and g<=?2    and  c.deleteDate IS NULL and  lower(c.subject.name) like concat('%',concat(?3,'%')) and ('null' = ?4 or lower(c.language)=?4 )",sort,gradeMin,gradeMax, title.toLowerCase(),String.valueOf(language).toLowerCase());
+		PanacheQuery<CourseEntity> query = CourseEntity.find("select DISTINCT c from Course c , IN(c.grades) g where  g in ?1 and  c.deleteDate IS NULL and  lower(c.subject.name) like concat('%',concat(?2,'%')) and ('null' = ?3 or lower(c.language)=?3 )",sort,grade, title.toLowerCase(),String.valueOf(language).toLowerCase());
 		result=query.page(page, size).list().stream().map(courseMapper::toDomain).collect(Collectors.toList());;
 		ResultPage<Course> resultPage= new ResultPage<Course>(page,query.pageCount(),query.count(),result);
 		logger.info("Number of schedules found:{}",result.toArray().length);

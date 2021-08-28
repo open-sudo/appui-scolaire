@@ -36,17 +36,20 @@ public class Schedule{
 	private ZonedDateTime endDate;
     
     @NotNull(groups = ValidationGroups.Post.class)
-    private String courseId;
+    private Course course;
    
-    private Integer repeatPeriodInDays=0;
+    public Course getCourse() {
+		return course;
+	}
+	public void setCourse(Course course) {
+		this.course = course;
+	}
+
+
+
+	private Integer repeatPeriodInDays=0;
    
 	
-	public String getCourseId() {
-		return courseId;
-	}
-	public void setCourseId(String courseId) {
-		this.courseId = courseId;
-	}
 	public String getId() {
 		return id;
 	}

@@ -13,15 +13,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <version.keycloak>11.0.3</version.keycloak>
     </properties>
 
     <modules>
         <module>appui-common</module>
         <module>appui-tag</module>
         <module>appui-course</module>
+        <module>appui-notification</module>
 
         <module>appui-comment</module>
+        <module>appui-conference</module>
         <module>appui-schedule</module>
         <module>appui-student-profile</module>
         <module>appui-student-booking</module>

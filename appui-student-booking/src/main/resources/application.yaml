@@ -34,7 +34,7 @@ quarkus:
    http:
      cors: 
         ~: true
-     test-port: 9090
+     test-port: 9095
    datasource:
       db-kind: postgresql
       username: appui_scolaire_user
@@ -42,7 +42,7 @@ quarkus:
       jdbc:
          max-size: 8
          min-size: 2
-         url: jdbc:postgresql://postgresql/comments
+         url: jdbc:postgresql://postgresql/bookings
    hibernate-orm:
       database:
          generation: update

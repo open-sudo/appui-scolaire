@@ -42,7 +42,7 @@ quarkus:
       jdbc:
          max-size: 8
          min-size: 2
-         url: jdbc:postgresql://postgresql/student_profiles
+         url: jdbc:postgresql://postgresql/students
    hibernate-orm:
       database:
          generation: update

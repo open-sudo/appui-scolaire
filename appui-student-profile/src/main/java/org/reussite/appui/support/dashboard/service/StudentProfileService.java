@@ -1,6 +1,7 @@
 package org.reussite.appui.support.dashboard.service;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -114,12 +115,28 @@ public class StudentProfileService {
 		StudentProfileEntity profile=studentMapper.toEntity(studentProfile);
 		profile.parent=parent;
 		if(StringUtils.isNoneBlank(profile.firstName,profile.lastName)) {
-			profile.conferenceUrl=(profile.firstName.trim()+"-"+profile.lastName.trim()).replaceAll("\\s", "").toLowerCase();
+			profile=generateConferenceUrl(profile,profile.firstName.trim(),profile.lastName.trim());
 		}
 		profile.persistAndFlush();
 		return studentMapper.toDomain(profile);
 	}
 	
+	protected StudentProfileEntity generateConferenceUrl(StudentProfileEntity entity, String firstName, String lastName) {
+		if(StringUtils.isNoneBlank(firstName,lastName)) {
+			entity.conferenceUrl=((firstName.trim()+"-"+lastName.trim()).replaceAll("\\s", "").toLowerCase());
+			logger.info("Searching student by conference:{}", entity.conferenceUrl);
+			StudentProfileEntity existing=StudentProfileEntity.findByExactConferenceUrl(entity.conferenceUrl);
+			Random random= new Random();
+			String conferenceUrl=entity.conferenceUrl;
+			while(existing!=null) {
+				entity.conferenceUrl=(conferenceUrl+random.nextInt(100));
+				logger.info("Student already with  conference:{}. Trying new one:{}",conferenceUrl,entity.conferenceUrl);
+				existing=StudentProfileEntity.findByExactConferenceUrl(entity.conferenceUrl);
+			}
+			logger.info("Conference URL generated:{}",entity.conferenceUrl);
+		}
+		return entity;
+	}
 
 	@Transactional
 	 public StudentProfile updateStudentProfile(String id,StudentProfile body) {
@@ -138,7 +155,7 @@ public class StudentProfileService {
 		 }
 
 		if(StringUtils.isNoneBlank(profile.firstName,profile.lastName)) {
-			profile.conferenceUrl=(profile.firstName.trim()+"-"+profile.lastName.trim()).replaceAll("\\s", "").toLowerCase();
+			profile=generateConferenceUrl(profile,profile.firstName.trim(),profile.lastName.trim());
 		}
 
 		 if(StringUtils.isNotBlank(body.getImageUrl())) {

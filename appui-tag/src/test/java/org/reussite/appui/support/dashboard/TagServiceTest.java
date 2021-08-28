@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.reussite.appui.support.dashboard.domain.TagRequest;
+import org.reussite.appui.support.dashboard.domain.TagResponse;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.TagEntity;
 import org.reussite.appui.support.dashboard.service.TagService;
@@ -28,10 +29,11 @@ public class TagServiceTest {
 	
 	String tenantKey="alpha";
 	@Transactional
-	public void setup() {
+	public TagEntity setup() {
 		TagEntity tag= new TagEntity();
     	tag.name=("Red");
     	tag.persistAndFlush();
+    	return tag;
 	}
 	
 	    
@@ -65,6 +67,19 @@ public class TagServiceTest {
     		assertNotNull(result);
     		assertTrue(result.content.size()>0);
             Mockito.verify(tagService, Mockito.times(1)).searchTags(Mockito.eq(""), Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt()); 
+
+    }
+    
+
+    @Test
+    public void testGetTag() {
+    		TagEntity tag=setup();
+			TagResponse result=given()
+	    	  .header("TenantKey",tenantKey)
+		      .when().get("/v1/tag/"+tag.id)
+		      .then()
+		         .statusCode(200).extract().body().as(TagResponse.class);
+    		assertNotNull(result);
 
     }
 }

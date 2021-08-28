@@ -121,4 +121,13 @@ public class TagService {
 		return tags;
 	}
 
+
+	public TagResponse findById(String id) {
+		TagEntity tag=TagEntity.findById(id);
+		if(tag==null) {
+			throw new NoSuchElementException(TagRequest.class,id);
+		}
+		return tagMapper.toDomain(tag);
+	}
+
 }

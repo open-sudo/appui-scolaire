@@ -1,7 +1,6 @@
 package org.reussite.appui.support.dashboard.service;
 
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,12 +8,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.reussite.appui.support.dashbaord.mapper.StudentParentMapper;
+import org.reussite.appui.support.dashbaord.utils.OAuth2Constants;
 import org.reussite.appui.support.dashbaord.utils.PhoneUtils;
 import org.reussite.appui.support.dashboard.domain.StudentParent;
-import org.reussite.appui.support.dashboard.exceptions.ApplicationException;
+import org.reussite.appui.support.dashboard.domain.TokenResponse;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
 import org.reussite.appui.support.dashboard.model.ResultPage;
 import org.reussite.appui.support.dashboard.model.StudentParentEntity;
@@ -36,13 +37,20 @@ public class StudentParentService {
 		
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@Inject
+    @RestClient
+	protected KeycloakService keycloakService;
+	@ConfigProperty(name = "reussite.appui.keycloak.client.name") 
+	protected String keycloakClientName;
+	@ConfigProperty(name = "reussite.appui.keycloak.client.secret") 
+	protected String keycloakClientSecret;
 
 
 	public StudentParent registerParent(StudentParent studentParent) {
 		logger.info("Creating parent :{} --> {}",studentParent);
 		StudentParentEntity parent=parentMapper.toEntity(studentParent);
 		String phone=PhoneUtils.validate(parent.phoneNumber,parent.countryCode);
-		StudentParentEntity p=StudentParentEntity.findByPhoneNumber(parent.phoneNumber);
+		StudentParentEntity p=StudentParentEntity.findByPhoneNumber(phone);
 		if(p!=null) {
 			logger.info("Existing parent found:{}",p);
 			parent=p;
@@ -53,34 +61,30 @@ public class StudentParentService {
 		if(StringUtils.isBlank(parent.email)) {
 			parent.email=parent.phoneNumber+"@phone.com";
 		}
-		parent.activationDate=null;
-		String activatioCode=RandomStringUtils.random(4, new char[] {'0','1','2','3','4','5','6','7','8','9'});
-		parent.activationCode=activatioCode;
-		
-		logger.info("Persisting parent:{}",parent);
+		String response=keycloakService.register(parent.phoneNumber);
+		logger.info("Parent registration triggered in Keycloak:{}, Persisting parent:{}",response,parent);
 		parent.persistAndFlush();
 		StudentParent result=parentMapper.toDomain(parent);
 		return result;
 	}
 
 	@Transactional
-	public String activateParent(String id, String activationCode) {
+	public TokenResponse activateParent(String id, String activationCode, String client, String refreshToken) {
 		StudentParentEntity parent= StudentParentEntity.findById(id);
 		logger.info("Parent found in db: {}",parent);
-		if(!parent.activationCode.equalsIgnoreCase(activationCode)) {
-			throw new ApplicationException(StudentParent.class.getCanonicalName());
-		}
-		HashSet<String>groups=new HashSet<String>();
-
-		groups.add("USER");
-		/*String jwt =Jwt.issuer(jwtIssuer).expiresIn(Duration.ofDays(30)) 
-		             .upn(parent.phoneNumber) 
-		             .groups(groups) 
-		             .sign();*/
+		logger.info("Preparing to send activation request to Keycloak:{} ");
 		parent.lastUpdateDate=TimeUtils.getCurrentTime();
 		parent.activationDate=TimeUtils.getCurrentTime();
+		TokenResponse token=null;
+		if(StringUtils.isBlank(refreshToken)) {
+			token=keycloakService.activate(OAuth2Constants.PASSWORD.asLowerCase(),parent.phoneNumber,activationCode,keycloakClientName,keycloakClientSecret,null);
+		}else {
+			token=keycloakService.activate(OAuth2Constants.PASSWORD.asLowerCase(),parent.phoneNumber,null,keycloakClientName,keycloakClientSecret,refreshToken);
+		}
+		logger.info("Activation response from  Keycloak:{} ",token);
+
 		parent.persistAndFlush();
-		return "OK";
+		return token;
 	}
 
 	public ResultPage<StudentParent>  searchStudentParents(String firstName, String sortParams, Integer size, Integer page) {
@@ -116,13 +120,13 @@ public class StudentParentService {
 		 if(StringUtils.isNotBlank(body.getPhoneNumber()) && StringUtils.isBlank(profile.phoneNumber)) {
 			 profile.phoneNumber=(body.getPhoneNumber());
 		 }
-		 if(StringUtils.isNotBlank(body.getEmail()) && StringUtils.isBlank(profile.email)) {
-			 profile.phoneNumber=(body.getEmail());
+		 if(StringUtils.isNotBlank(body.getEmail()) ) {
+			 profile.email=(body.getEmail());
 		 }
 		 if(StringUtils.isNotBlank(body.getLanguage())) {
 			 profile.language=(body.getLanguage()).toUpperCase();
 		 }
-	
+		
 		 profile.lastUpdateDate=TimeUtils.getCurrentTime();
 		 StudentParentEntity.persist(profile);
 		 return parentMapper.toDomain(profile);

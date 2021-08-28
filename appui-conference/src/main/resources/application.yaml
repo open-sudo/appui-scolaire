@@ -1,0 +1,96 @@
+"%prod":
+   quarkus:
+    hibernate-orm:
+      database:
+         generation: update
+    datasource:
+      username: appui_scolaire_user
+      password: et37dtHTE/o1@
+      jdbc:
+         url: jdbc:postgresql://localhost/appui_test_v9
+ 
+"%dev":
+  quarkus:
+    hibernate-orm:
+      database:
+         generation: update
+    datasource:
+      jdbc:
+         url: jdbc:postgresql://127.0.0.1/quarkus_test7
+  reussite:
+    appui:
+      conference:
+         url:
+           prefix:
+             teacher: https://meet.appui.io:3443/
+             student: https://meet.appui.io:3443/ 
+
+"%test":
+  smallrye:
+   jwt:
+      new-token:
+         lifespan: 360000
+  quarkus:
+    hibernate-orm:
+      database:
+         generation: drop-and-create
+    datasource:
+      db-kind: postgresql
+      username: quarkus_test1
+      password: quarkus_test1
+      jdbc:
+         url: jdbc:postgresql://192.168.1.15/quarkus_test7
+
+reussite:
+  appui:
+    conference:
+      timeWindowInMinutes: 600
+      bbb:
+        default:
+            baseUrl: https://bbb1.appui.io/bigbluebutton/api
+            authKey: zaFNF1FQLrqpJyVrfNDphPDdBahhPPS7ELksDBH9lM
+            enabled: true
+      url:
+        support: https://meet.google.com/kje-vgkt-djv
+        static: /index.html
+        prefix:
+          teacher: https://meet.appui.io/
+          student: https://meet.appui.io/
+    subjects:
+        elementary:
+          special: 
+            - Anglais
+            - English
+
+
+quarkus:
+   log:
+      level: INFO
+   swagger-ui:
+       always-include: true
+   package:
+      type: uber-jar
+   datasource:
+      db-kind: postgresql
+      username: quarkus_test1
+      password: quarkus_test1
+      jdbc:
+         max-size: 8
+         min-size: 2
+         url: jdbc:postgresql://192.168.1.15/quarkus_test3
+   hibernate-orm:
+      database:
+         generation: "none"
+   ssl:
+     native: true
+   http:
+     port: 8181
+     cors: 
+        ~: true
+     test-port: 9191
+     ssl-port: 3443
+     ssl:
+       certificate:
+            key-store-file: META-INF/resources/meet.appui.io.p12
+            key-store-password: changeit
+    

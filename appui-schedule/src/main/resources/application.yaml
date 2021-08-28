@@ -34,7 +34,7 @@ quarkus:
    http:
      cors: 
         ~: true
-     test-port: 9090
+     test-port: 9095
    datasource:
       db-kind: postgresql
       username: appui_scolaire_user

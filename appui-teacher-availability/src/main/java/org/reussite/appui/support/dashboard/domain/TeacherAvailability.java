@@ -3,7 +3,9 @@ package org.reussite.appui.support.dashboard.domain;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
@@ -49,7 +51,7 @@ public class TeacherAvailability {
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	private ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
 	
-	private List<TeacherProfile>assistants= new ArrayList<TeacherProfile>();
+	private Set<TeacherProfile>assistants= new HashSet<TeacherProfile>();
 	private List<Tag> tags= new ArrayList<Tag>();
 
 	@JsonIgnore
@@ -69,11 +71,11 @@ public class TeacherAvailability {
 	}
 
 
-	public List<TeacherProfile> getAssistants() {
+	public Set<TeacherProfile> getAssistants() {
 		return assistants;
 	}
 
-	public void setAssistants(List<TeacherProfile> assistants) {
+	public void setAssistants(Set<TeacherProfile> assistants) {
 		this.assistants = assistants;
 	}
 

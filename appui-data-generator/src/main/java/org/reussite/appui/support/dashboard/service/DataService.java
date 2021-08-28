@@ -40,10 +40,10 @@ public class DataService {
 	    
 	    protected String [] phones= {"416","647","289"};
 	    public static String [] tenants= {"alpha","beta","gamma"};
-	    protected String [] dates={"08/02/2021 09:00:00 -0500","08/02/2021 18:00:00 -0500", "08/02/2021 14:00:00 -0500",
-	    		"08/09/2021 09:00:00 -0500","08/09/2021 18:00:00 -0500", "08/09/2021 14:00:00 -0500",
-	    		"07/19/2021 09:00:00 -0500","07/19/2021 18:00:00 -0500", "07/19/2021 14:00:00 -0500",
-	    		"07/26/2021 09:00:00 -0500","07/26/2021 18:00:00 -0500", "07/26/2021 14:00:00 -0500"};
+	    protected String [] dates={"08/27/2021 09:00:00 -0500","08/27/2021 18:00:00 -0500", "08/27/2021 14:00:00 -0500",
+	    		"08/30/2021 09:00:00 -0500","08/30/2021 18:00:00 -0500", "08/30/2021 14:00:00 -0500",
+	    		"09/10/2021 09:00:00 -0500","09/10/2021 18:00:00 -0500", "09/10/2021 14:00:00 -0500",
+	    		"09/15/2021 09:00:00 -0500","09/15/2021 18:00:00 -0500", "09/15/2021 14:00:00 -0500"};
 	   
 
 	    ZonedDateTime datesObjects[];
@@ -346,7 +346,7 @@ public class DataService {
 	    							Schedule p= new Schedule();
 	    							p.setStartDate(datesObjects[d].plusDays(i));
 	    	         	    		p.setEndDate(p.getStartDate().plusHours(1));
-	    	         	    		p.setCourseId(courses.get(r.nextInt(courses.size())).getId());
+	    	         	    		p.setCourse(courses.get(r.nextInt(courses.size())));
 	    	         	    		p.setRepeatPeriodInDays(3);
 	    	         	    		schedules.add(p);
 	    						}

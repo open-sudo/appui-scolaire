@@ -9,6 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.exceptions.NoSuchElementException;
 import org.reussite.appui.support.dashboard.mapper.SubjectMapper;
@@ -65,14 +66,20 @@ public class SubjectService {
 	}
  
     @Transactional
-	public void updateSubject(Subject body) {
-    	SubjectEntity schedule=SubjectEntity.findById(body.getId());
-		 if(schedule==null) {
+	public void updateSubject(String id,Subject body) {
+    	SubjectEntity subject=SubjectEntity.findById(id);
+		 if(subject==null) {
  			throw new NoSuchElementException(Subject.class,body.getId().toString());
 		 }
 		
-		 schedule.lastUpdateDate=TimeUtils.getCurrentTime();
-		 schedule.persistAndFlush();
+		 if(StringUtils.isNoneBlank(body.getName())) {
+			 subject.name=body.getName();
+		 }
+		 if(StringUtils.isNoneBlank(body.getLanguage())) {
+			 subject.language=body.getLanguage();
+		 }
+		 subject.lastUpdateDate=TimeUtils.getCurrentTime();
+		 subject.persistAndFlush();
 	}
    
 }
