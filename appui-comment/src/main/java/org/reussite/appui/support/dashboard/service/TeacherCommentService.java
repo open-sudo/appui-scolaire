@@ -1,6 +1,7 @@
 package org.reussite.appui.support.dashboard.service;
 
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,19 +97,17 @@ public class TeacherCommentService {
 	}
 	public ResultPage<TeacherComment>  searchTeacherComments( String sortParams,  Integer size, Integer page,
 			 String studentId, String parentId, String bookingId) {
-		logger.info("Searching comments with  Profile ID:{}, Parent ID:{}, BookingID ID:{}",studentId,parentId,bookingId);
+		logger.info("Searching comments with  Student ID:{}, Parent ID:{}, BookingID ID:{}",studentId,parentId,bookingId);
 		
 		Sort sort=SearchUtils.getAbsoluteSort(sortParams, null);
 		PanacheQuery<TeacherCommentEntity> query=null;
-		if(StringUtils.isNotBlank(studentId)){
-			query = TeacherCommentEntity.find("SELECT c FROM TeacherComment c where c.studentProfile.id=?1  and c.deleteDate IS NULL ",
-				sort,studentId);
-		}
 		if(StringUtils.isNotBlank(bookingId)){
 			query = TeacherCommentEntity.find("SELECT c FROM TeacherComment c  where  c.studentBooking.id=?1   and c.deleteDate IS NULL ",
 				sort,bookingId);
-		}
-		if(StringUtils.isNotBlank(parentId)){
+		}else if(StringUtils.isNotBlank(studentId)){
+			query = TeacherCommentEntity.find("SELECT c FROM TeacherComment c where c.studentProfile.id=?1  and c.deleteDate IS NULL ",
+				sort,studentId);
+		}else if(StringUtils.isNotBlank(parentId)){
 			query = TeacherCommentEntity.find("SELECT c FROM TeacherComment c where  c.studentParent.id=?1   and c.deleteDate IS NULL ",
 				sort,parentId);
 		}
@@ -120,6 +119,8 @@ public class TeacherCommentService {
                 .map(commentMapper::toDomain)
                 .collect(Collectors.toList());;
 		logger.info("Number of comments  found:{}",result.size());
+		logger.info("Comments found:{}",Arrays.deepToString(result.toArray()));
+
 		ResultPage<TeacherComment> resultPage= new ResultPage<TeacherComment>(page,query.pageCount(),query.count(),result);
 		return resultPage;
 	}
@@ -154,6 +155,10 @@ public class TeacherCommentService {
 		 TeacherCommentEntity comment=TeacherCommentEntity.findById(commentId);
 		 if(comment==null) {
 				throw new NoSuchElementException(TeacherCommentEntity.class,commentId);
+		 }
+		 if(approverId.equalsIgnoreCase(comment.commenter.id)) {
+			 logger.info("Commenter and approver are the same teacher: {}. This is illegal.",approverId);
+			 throw new IllegalArgumentException("Approver and commenter cannot be the same");
 		 }
 		TeacherProfile teacher=teacherService.getTeacherProfile(approverId);
 	    logger.info("Teacher profile  found:{}",teacher);

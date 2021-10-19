@@ -58,21 +58,25 @@ public class StudentProfileService {
 	protected String studentPrefixUrl = "";
 
 	
-	public ResultPage<StudentProfile>  searchStudentProfiles(String tag,String firstName, String parentId,String sortParams, Integer size, Integer page) {
-		logger.info("Searching student profiles with  tag:{}",tag);
-		Sort sort=SearchUtils.getAbsoluteSort(sortParams);
-
+	public ResultPage<StudentProfile>  searchStudentProfiles(String tag,String firstName, String parentId,String sortParams, String path, Integer size, Integer page) {
 		PanacheQuery<StudentProfileEntity> query =null;
-		String tagParam=(StringUtils.isEmpty(tag) || StringUtils.isEmpty(tag.trim()))?"null":tag.trim().toLowerCase();
-
-		if(StringUtils.isNotBlank(parentId)) {
+		if(StringUtils.isNoneBlank(path)) {
 			query = StudentProfileEntity.find(
-					"SELECT DISTINCT c FROM StudentProfile c LEFT JOIN c.tags g  where (?2 ='null' OR ?2 = lower(g.name)) and c.parent.id=?1  and c.deleteDate IS NULL ",
-					parentId,tagParam);
-		}else {
-			query = StudentProfileEntity.find(
-				"SELECT  c FROM StudentProfile c  LEFT JOIN c.tags g  where (?2 ='null' OR ?2 = lower(g.name))  and (lower(c.firstName) like concat(concat('%',lower(?1),'%'))  OR  lower(c.lastName) like concat(concat('%',lower(?1),'%'))) and c.deleteDate IS NULL  ",
-				sort,firstName,tagParam);
+					"SELECT   c FROM StudentProfile c where lower(c.conferenceurl) like concat(concat('%',lower(?1),'%')) ",
+					path);
+		}else{
+			logger.info("Searching student profiles with  tag:{}",tag);
+			Sort sort=SearchUtils.getAbsoluteSort(sortParams);
+			String tagParam=(StringUtils.isEmpty(tag) || StringUtils.isEmpty(tag.trim()))?"null":tag.trim().toLowerCase();
+			if(StringUtils.isNotBlank(parentId)) {
+				query = StudentProfileEntity.find(
+						"SELECT DISTINCT c FROM StudentProfile c LEFT JOIN c.tags g  where (?2 ='null' OR ?2 = lower(g.name)) and c.parent.id=?1  and c.deleteDate IS NULL ",
+						parentId,tagParam);
+			}else {
+				query = StudentProfileEntity.find(
+					"SELECT  c FROM StudentProfile c  LEFT JOIN c.tags g  where (?2 ='null' OR ?2 = lower(g.name))  and (lower(c.firstName) like concat(concat('%',lower(?1),'%'))  OR  lower(c.lastName) like concat(concat('%',lower(?1),'%'))) and c.deleteDate IS NULL  ",
+					sort,firstName,tagParam);
+			}
 		}
 		List<StudentProfile> result=query.page(page, size).list().stream().map(studentMapper::toDomain).collect(Collectors.toList());
 
@@ -117,6 +121,7 @@ public class StudentProfileService {
 		if(StringUtils.isNoneBlank(profile.firstName,profile.lastName)) {
 			profile=generateConferenceUrl(profile,profile.firstName.trim(),profile.lastName.trim());
 		}
+		profile.countryCode=parent.countryCode;
 		profile.persistAndFlush();
 		return studentMapper.toDomain(profile);
 	}
@@ -125,14 +130,16 @@ public class StudentProfileService {
 		if(StringUtils.isNoneBlank(firstName,lastName)) {
 			entity.conferenceUrl=((firstName.trim()+"-"+lastName.trim()).replaceAll("\\s", "").toLowerCase());
 			logger.info("Searching student by conference:{}", entity.conferenceUrl);
-			StudentProfileEntity existing=StudentProfileEntity.findByExactConferenceUrl(entity.conferenceUrl);
-			Random random= new Random();
 			String conferenceUrl=entity.conferenceUrl;
-			while(existing!=null) {
-				entity.conferenceUrl=(conferenceUrl+random.nextInt(100));
-				logger.info("Student already with  conference:{}. Trying new one:{}",conferenceUrl,entity.conferenceUrl);
-				existing=StudentProfileEntity.findByExactConferenceUrl(entity.conferenceUrl);
+
+			StudentProfileEntity existing=StudentProfileEntity.findByExactConferenceUrl(conferenceUrl);
+			Random random= new Random();
+			while(existing!=null && !existing.id.equals(entity.id)) {
+				conferenceUrl=(conferenceUrl+random.nextInt(100));
+				logger.info("Student already with  conference:{}. Trying new one:{}",entity.conferenceUrl,conferenceUrl);
+				existing=StudentProfileEntity.findByExactConferenceUrl(conferenceUrl);
 			}
+			entity.conferenceUrl=conferenceUrl;
 			logger.info("Conference URL generated:{}",entity.conferenceUrl);
 		}
 		return entity;
@@ -146,16 +153,19 @@ public class StudentProfileService {
 				throw new NoSuchElementException(StudentProfile.class,body.getId());
 		 }
 		 
-		
+		 String firstName=profile.firstName;;
+		 String lastName=profile.lastName;
 		 if(StringUtils.isNotBlank(body.getFirstName())) {
 			 profile.firstName=(body.getFirstName());
+			 firstName=profile.firstName;
 		 }
 		 if(StringUtils.isNotBlank(body.getLastName())) {
 			 profile.lastName=(body.getLastName());
+			 lastName=profile.lastName;
 		 }
 
-		if(StringUtils.isNoneBlank(profile.firstName,profile.lastName)) {
-			profile=generateConferenceUrl(profile,profile.firstName.trim(),profile.lastName.trim());
+		if(StringUtils.isNotBlank(body.getFirstName()) || StringUtils.isNotBlank(body.getLastName())) {
+			profile=generateConferenceUrl(profile,firstName.trim(),lastName.trim());
 		}
 
 		 if(StringUtils.isNotBlank(body.getImageUrl())) {
@@ -165,8 +175,17 @@ public class StudentProfileService {
 		 if(StringUtils.isNotBlank(body.getSchoolName())) {
 			 profile.schoolName=(body.getSchoolName());
 		 }
+		 if(StringUtils.isNotBlank(body.getSchoolBoard())) {
+			 profile.schoolBoard=(body.getSchoolBoard());
+		 }
 		 if(body.getGrade()!=null ) {
 			 profile.grade=(body.getGrade());
+		 }
+		 if(StringUtils.isNotBlank(body.getPhoneNumber())) {
+			 profile.phoneNumber=body.getPhoneNumber();
+		 }
+		 if(body.getCountryCode()!=null && body.getCountryCode()>0) {
+			 profile.countryCode=body.getCountryCode();
 		 }
 		 logger.info("Updating tenant now:{}",body.getId());
 		 profile.lastUpdateDate=TimeUtils.getCurrentTime();
@@ -217,6 +236,7 @@ public class StudentProfileService {
 	public StudentProfile findById(String id) {
 		StudentProfileEntity entity= StudentProfileEntity.findById(id);
 		StudentProfile student=studentMapper.toDomain(entity);
+  		student.setConferenceUrl(studentPrefixUrl+student.getConferenceUrl());
 		return student;
 	}
 	 

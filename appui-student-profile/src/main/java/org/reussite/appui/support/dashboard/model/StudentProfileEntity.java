@@ -59,7 +59,8 @@ public class StudentProfileEntity extends PanacheEntityBase{
 	public short onlineStatus;
 	public String lastSeenRoom;
 	public String phoneNumber;
-
+	public Integer countryCode;
+	
 	@ManyToMany
 	public List<TagEntity> tags= new ArrayList<TagEntity>();
 

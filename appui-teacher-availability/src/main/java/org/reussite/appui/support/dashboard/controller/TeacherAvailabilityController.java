@@ -82,6 +82,17 @@ public class TeacherAvailabilityController {
 		List<StudentBooking> bookings= teacherAvailabilityService.searchStudentBooking(tenantKey,availabilityId);
 		return Response.ok(bookings).build();
 	}
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("/{availabilityId}")
+	@Transactional
+	@JsonView(Views.Response.class)
+    public Response getAvailability(
+    		@HeaderParam("TenantKey") String tenantKey,
+    		@PathParam("availabilityId") String availabilityId) {
+		TeacherAvailability availability= teacherAvailabilityService.getAvailability(availabilityId);
+		return Response.ok(availability).build();
+	}
 		
 	@Consumes(MediaType.APPLICATION_JSON)
 	@POST

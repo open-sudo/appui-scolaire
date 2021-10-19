@@ -15,8 +15,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.reussite.appui.support.dashboard.model.StudentProfile;
-import org.reussite.appui.support.dashboard.model.TeacherProfile;
+import org.reussite.appui.support.dashboard.model.StudentProfileEntity;
+import org.reussite.appui.support.dashboard.model.TeacherProfileEntity;
 import org.reussite.appui.support.dashboard.service.ConferenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +51,13 @@ public class ConferenceController {
 		String path = originalPath.replaceAll("[^a-zA-Z-]", "");
 		logger.info("Path {} cleaned into: {}", originalPath, path);
 		
-		TeacherProfile teacherProfile = TeacherProfile.findByConferenceUrl(path);
+		TeacherProfileEntity teacherProfile = TeacherProfileEntity.findByConferenceUrl(path);
 		if(teacherProfile!=null) {
 			logger.info("Teacher profile found for path:{}, :{}",path,teacherProfile);
 			logger.info("Looking up conference for teacher {}",path);
 			return conferenceService.meet(path,teacherProfile).setStudent(false).resolve();
 		}
-		StudentProfile studentProfile = StudentProfile.findByConferenceUrlContaining(path);
+		StudentProfileEntity studentProfile = StudentProfileEntity.findByConferenceUrl(path);
 		logger.info("Student profile found for path:{}, :{}",path,studentProfile);
 		logger.info("Looking up conference for student {}",path);
 		URI uri=conferenceService.meet(path,studentProfile).setStudent(true).resolve();

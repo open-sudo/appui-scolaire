@@ -18,10 +18,14 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 public class StudentProfileEntity extends PanacheEntityBase{
 	@Id
 	public String id;
-	
+	public Integer grade;
 	public String email;
 	public String lastName;
 	public String firstName;
+	public String conferenceUrl;
+	public String phoneNumber;
+	public Integer countryCode;
+
 	@Override
 	public String toString() 
 	{ 

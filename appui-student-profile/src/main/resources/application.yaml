@@ -56,8 +56,8 @@ reussite:
                enabled: false
          url:
            prefix:
-             teacher: https://meet.appui.io:3443/
-             student: https://meet.appui.io:3443/ 
+             teacher: http://appui.us/
+             student: http://appui.us/ 
 org:
   eclipse:
      microprofile:

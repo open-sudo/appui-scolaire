@@ -16,6 +16,7 @@ public class TokenResponse {
 	public String session_state;
 	public String scope;
 	public String not_before_policy;
+	public String id;
 	
 	@Override
 	public String toString() 

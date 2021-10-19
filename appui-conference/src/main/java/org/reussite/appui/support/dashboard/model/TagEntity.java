@@ -1,13 +1,9 @@
 package org.reussite.appui.support.dashboard.model;
 
-
-
 import java.time.ZonedDateTime;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -19,34 +15,30 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 
-@Entity(name = "StudentBooking")
-@Table(name = "student_booking")
-public class StudentBookingEntity extends PanacheEntityBase{
+
+
+
+@Entity(name = "Tag")
+@Table(name = "tag")
+public class TagEntity extends PanacheEntityBase{
 	@Id
 	public String id;
+	
+
+	public String name;
+	public String url;
+	public Boolean enabled;
+	
 
 	
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
-    public ZonedDateTime teacherAssignedDate;
-
-	public String conferenceUrl;
+	public ZonedDateTime createDate=TimeUtils.getCurrentTime();
+	public ZonedDateTime deleteDate;
+	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
+	public ZonedDateTime lastUpdateDate=TimeUtils.getCurrentTime();
 	
-	@ManyToOne
-	public TeacherAvailabilityEntity teacherAvailability;
 
-	@ManyToOne
-	public StudentProfileEntity studentProfile;
-
-	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
-    public ZonedDateTime effectiveStartDate;
-	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
-    public ZonedDateTime rejectDate;
-	@ManyToOne(targetEntity=ScheduleEntity.class,fetch = FetchType.EAGER)
-	public ScheduleEntity schedule;
-
-	public static long countByTeacherAvailability(String id) {
-		return count("teacherAvailability.id = ?1",id);
-	}
+	
 	@Override
 	public String toString() 
 	{ 
@@ -54,3 +46,4 @@ public class StudentBookingEntity extends PanacheEntityBase{
 	}
 	
 }
+    

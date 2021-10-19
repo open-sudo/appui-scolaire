@@ -26,17 +26,16 @@ public class ConferenceRoom {
 	private String teacherRoom;
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private StudentBooking booking;
-	private TeacherAvailability availability;
-	private StudentProfile studentProfile;
-	private TeacherProfile teacherProfile;
+	private StudentBookingEntity booking;
+	private TeacherAvailabilityEntity availability;
+	private StudentProfileEntity studentProfile;
 	private boolean student=true;
-	@ConfigProperty(name="reussite.appui.conference.bbb.default.enabled")
+	@ConfigProperty(name="reussite.appui.conference.enabled")
 	protected boolean conferenceServerAvailable=true;
-	@ConfigProperty(name="reussite.appui.conference.bbb.default.baseUrl")
-	protected String defaultVideoServerUrl;
-	@ConfigProperty(name="reussite.appui.conference.bbb.default.authKey")
-	protected String defaultVideoServerAuthKey;
+	@ConfigProperty(name="reussite.appui.conference.baseUrl")
+	protected String videoServerUrl;
+	@ConfigProperty(name="reussite.appui.conference.authKey")
+	protected String videoServerAuthKey;
 
 	public ConferenceRoom setStudent(boolean b) {
 		this.student=b;
@@ -47,32 +46,27 @@ public class ConferenceRoom {
 		return student;
 	}
 
-	public StudentBooking getBooking() {
+	public StudentBookingEntity getBooking() {
 		return booking;
 	}
 
-	public TeacherAvailability getAvailability() {
+	public TeacherAvailabilityEntity getAvailability() {
 		return availability;
 	}
 
-	public StudentProfile getProfile() {
+	public StudentProfileEntity getProfile() {
 		return studentProfile;
 	}
 
-	public ConferenceRoom withTeacherAvailability(TeacherAvailability availability) {
+	public ConferenceRoom withTeacherAvailability(TeacherAvailabilityEntity availability) {
 		this.availability = availability;
 		return this;
 	}
 
 
 
-	public ConferenceRoom withStudentBooking(StudentBooking booking) {
+	public ConferenceRoom withStudentBooking(StudentBookingEntity booking) {
 		this.booking = booking;
-		return this;
-	}
-
-	public ConferenceRoom withTeacherProfile(TeacherProfile teacherProfile) {
-		this.teacherProfile=teacherProfile;
 		return this;
 	}
 
@@ -82,7 +76,7 @@ public class ConferenceRoom {
 	}
 	
 
-	public ConferenceRoom withStudentProfile(StudentProfile studentProfile) {
+	public ConferenceRoom withStudentProfile(StudentProfileEntity studentProfile) {
 		this.studentProfile=studentProfile;
 		return this;
 	}
@@ -115,18 +109,11 @@ public class ConferenceRoom {
 		return t;
 	}
 	
-	protected String createConferenceCreationUrl(TeacherAvailability availability) {
-		String secret=availability.tenant.videoServerAuthKey;
+	protected String createConferenceCreationUrl(TeacherAvailabilityEntity availability) {
+		String secret=videoServerAuthKey;
 		String firstName=availability.teacherProfile.firstName;
 		String lastName=availability.teacherProfile.lastName;
 		String meetingId=availability.conferenceId;
-		String videoServerUrl=availability.tenant.videoServerUrl;
-		if(StringUtils.isBlank(videoServerUrl)) {
-			videoServerUrl=defaultVideoServerUrl;
-		}
-		if(StringUtils.isBlank(secret)) {
-			secret=defaultVideoServerAuthKey;
-		}
 		String base="name="+encode(firstName)+"+"+encode(lastName+"'s Classroom")+"&";
 		base=base+"meetingID="+meetingId;
 		base=base+"&attendeePW="+availability.studentPassword+"&moderatorPW="+availability.teacherPassword;
@@ -135,8 +122,8 @@ public class ConferenceRoom {
 		return baseUrl;
 	}
 	
-	protected String createJoinConferenceUrl(TeacherAvailability availability) {
-		if(!isStudent()) {
+	protected String createJoinConferenceUrl(TeacherAvailabilityEntity availability) {
+		if(!isStudent() && conferenceServerAvailable) {
 			try {
 				String createUrl=createConferenceCreationUrl(availability);
 				logger.info("Conference creation URL created for teacher:{}: {}",availability.teacherProfile.firstName,createUrl);
@@ -148,17 +135,10 @@ public class ConferenceRoom {
 				logger.error(e.getMessage(),e);
 			}
 		}
-		String secret=availability.tenant.videoServerAuthKey;
+		String secret=videoServerAuthKey;
 		String firstName=isStudent()?studentProfile.firstName:availability.teacherProfile.firstName;
-		String lastName=isStudent()?studentProfile.firstName:availability.teacherProfile.lastName;
+		String lastName=isStudent()?studentProfile.lastName:availability.teacherProfile.lastName;
 		String meetingId=availability.conferenceId;
-		String videoServerUrl=availability.tenant.videoServerUrl;
-		if(StringUtils.isBlank(videoServerUrl)) {
-			videoServerUrl=defaultVideoServerUrl;
-		}
-		if(StringUtils.isBlank(secret)) {
-			secret=defaultVideoServerAuthKey;
-		}
 		String base="fullName="+encode(firstName)+"+"+encode(lastName+"'s Classroom")+"&";
 		base=base+"joinViaHtml5=true&meetingID="+meetingId;
 		base=base+"&password="+(isStudent()?availability.studentPassword:availability.teacherPassword);
@@ -169,38 +149,13 @@ public class ConferenceRoom {
 	}
 	
 	public URI resolve() throws URISyntaxException {
-		TenantProfile tenant=null;
 		if(availability!=null) {
 			return new URI(createJoinConferenceUrl(availability));
 		}
 		if(StringUtils.isNotBlank(supportRoom)) {
-			if(booking!=null) {
-				tenant=booking.tenant;
-			}
-			if(teacherProfile!=null) {
-				tenant=teacherProfile.tenants.iterator().next().tenant;
-			}
-			if(tenant==null && studentProfile!=null && studentProfile.tenants.size()>0) {
-				tenant=studentProfile.tenants.get(0);
-			}
-			if(tenant!=null && StringUtils.isNotBlank(tenant.supportUrl)) {
-				if(StringUtils.isNotBlank(tenant.conferenceUrlPrefix) && !tenant.supportUrl.startsWith(tenant.conferenceUrlPrefix)) {
-						return new URI(tenant.conferenceUrlPrefix+tenant.supportUrl);
-				}
-				return new URI(tenant.supportUrl);
-			}
 			return new URI(supportRoom);
 		}
 		if(StringUtils.isNotBlank(welcomePage)) {
-			if(booking!=null) {
-				tenant=booking.tenant;
-			}
-			if(tenant==null && studentProfile!=null && studentProfile.tenants.size()>0) {
-				tenant=studentProfile.tenants.get(0);
-			}
-			if(tenant!=null && StringUtils.isNotBlank(tenant.staticWelcomeUrl)) {
-				return new URI(tenant.staticWelcomeUrl);
-			}
 			return new URI(welcomePage);
 		}
 		return new URI(supportRoom);

@@ -51,15 +51,15 @@ reussite:
       keycloak:
          client: 
             name: web-teacher
-            secret: b9c7f07c-bdc8-42b0-92cb-c439d530a4a1 
+            secret: 8d76d09b-ccdc-4b00-9ee1-a63ae0e0660d 
       conference:
          bbb:
             default:
                enabled: false
          url:
            prefix:
-             teacher: https://meet.appui.io:3443/
-             student: https://meet.appui.io:3443/ 
+             teacher: http://appui.us/
+             student: http://appui.us/ 
 org:
   eclipse:
      microprofile:

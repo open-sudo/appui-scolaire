@@ -29,8 +29,15 @@ public class Subject {
 	private String name;
     @NotEmpty(groups = ValidationGroups.Post.class)
 	private String language;
+	private Boolean general;
+
 	
-	
+	public Boolean getGeneral() {
+		return general;
+	}
+	public void setGeneral(Boolean general) {
+		this.general = general;
+	}
 	public String getLanguage() {
 		return language;
 	}

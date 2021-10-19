@@ -31,15 +31,20 @@ public class TeacherProfileEntity extends PanacheEntityBase{
 	public String phoneNumber;
 	public String firstName;
 	public String lastName;
+	public String email;
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
 	public ZonedDateTime activationDate;
 	public String conferenceUrl;
-	public String email;
 	@ElementCollection(fetch = FetchType.EAGER)
 	public Set<Integer>  grades=new HashSet<Integer>();
 	@ManyToMany
 	public Set<SubjectEntity> subjects= new HashSet<SubjectEntity>();
+	  
 	public Integer countryCode;
+
+	public static TeacherProfileEntity findByConferenceUrl(String path) {
+		return find("conferenceUrl like concat('%',concat(?1,'%'))",path).firstResult();
+	}
 	@Override
 	public String toString() 
 	{ 

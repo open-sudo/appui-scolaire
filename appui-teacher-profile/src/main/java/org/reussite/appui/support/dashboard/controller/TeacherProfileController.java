@@ -48,11 +48,12 @@ public class TeacherProfileController {
     public Response searchTeacherProfiles(
     		 @QueryParam("tag") String tag,
     		@DefaultValue("") @QueryParam("firstName") String firstName,
+    		@QueryParam("path") String path,
     		@DefaultValue("firstName,asc") @QueryParam("sort") String sort, 
     		@DefaultValue("20") @QueryParam("size")Integer size,
     		@DefaultValue("0") @QueryParam("page") Integer page ) {
 		
-		ResultPage<TeacherProfile>  result= teacherProfileService.searchTeacherProfiles(tag, firstName==null?"":firstName, sort, size, page);
+		ResultPage<TeacherProfile>  result= teacherProfileService.searchTeacherProfiles(tag, firstName==null?"":firstName, sort, path,size, page);
 		return Response.ok(result).build();
 	}
 		   
@@ -98,19 +99,19 @@ public class TeacherProfileController {
 	@JsonView(Views.Response.class) 
 	public Response login(@HeaderParam("TenantKey") String tenantKey, @QueryParam("phoneNumber") String phoneNumber) {
  		logger.info("Loggin in teacher :{}",phoneNumber);
-		teacherProfileService.login(phoneNumber);
+ 		teacherProfileService.login(phoneNumber);
 		logger.info("Teacher login   completed:{}",phoneNumber);
 		return Response.ok().status(Response.Status.CREATED).build();
 	}
 
 	@GET
-	@Path("activate/{id}")
+	@Path("activate/{phoneNumber}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
-	public Response activateParent( @PathParam("id") String id,@QueryParam("activationCode") String activationCode,@QueryParam("refreshToken") String refreshToken) {
-		logger.info("Activating teacher:{} with code",id,activationCode);
-		TokenResponse jwt= teacherProfileService.activateTeacher(id,activationCode,refreshToken);
-		logger.info("Activating teacher {} with ocde{}, resulting in jwt:",id,activationCode,jwt);
+	public Response activateParent( @PathParam("phoneNumber") String phoneNumber,@QueryParam("activationCode") String activationCode,@QueryParam("refreshToken") String refreshToken) {
+		logger.info("Activating teacher:{} with code",phoneNumber,activationCode);
+		TokenResponse jwt= teacherProfileService.activateTeacher(phoneNumber,activationCode,refreshToken);
+		logger.info("Activating teacher {} with ocde{}, resulting in jwt:",phoneNumber,activationCode,jwt);
 		return Response.ok(jwt).build();
 	}
 

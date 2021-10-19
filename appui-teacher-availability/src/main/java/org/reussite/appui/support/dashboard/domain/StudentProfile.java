@@ -16,7 +16,43 @@ public class StudentProfile {
 	private String id;
 	private String firstName;
 	private String lastName;
+	private int grade;
+	private String conferenceUrl;
+	private String phoneNumber;
+	private Integer countryCode;
 	
+
+	public String getConferenceUrl() {
+		return conferenceUrl;
+	}
+
+	public void setConferenceUrl(String conferenceUrl) {
+		this.conferenceUrl = conferenceUrl;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public Integer getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(Integer countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public int getGrade() {
+		return grade;
+	}
+
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
 
 	public String getFirstName() {
 		return firstName;

@@ -33,4 +33,8 @@ public class TeacherProfileRepository implements PanacheRepositoryBase<TeacherPr
 				Sort.by("createDate").descending(),tag.toLowerCase(),createDate).list();
 	}
 
+	public TeacherProfileEntity findByPhoneNumber(String phoneNumber) {
+		 return find("phoneNumber = ?1",phoneNumber).firstResult();
+	}
+
 }

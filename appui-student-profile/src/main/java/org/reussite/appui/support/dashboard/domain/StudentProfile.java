@@ -42,7 +42,7 @@ public class StudentProfile{
 	private String schoolBoard;
 	private boolean isTermCondionApproved;
 	private String conferenceUrl;
-
+	private Integer countryCode;
 	private String phoneNumber;
 	
 	@JsonView(Views.Read.class)
@@ -59,6 +59,16 @@ public class StudentProfile{
 	
 
 	
+	public Integer getCountryCode() {
+		return countryCode;
+	}
+
+
+	public void setCountryCode(Integer countryCode) {
+		this.countryCode = countryCode;
+	}
+
+
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}

@@ -51,13 +51,13 @@ reussite:
       activation:
         defaultCodeEnabled: true
       conference:
-         enabled: false
-         baseUrl: https://bbb1.appui.io/bigbluebutton/api
-         authKey: zaFNF1FQLrqpJyVrfNDphPDdBahhPPS7ELksDBH9lM
+         enabled: true
+         baseUrl: https://blue.appui.io/bigbluebutton/api
+         authKey: TtovTxBWGS2APsOWUQMs3sVWYoaBBrET7EbwHxg
          url:
            prefix:
-             teacher: https://meet.appui.io:3443/
-             student: https://meet.appui.io:3443/
+             teacher: http://appui.us/
+             student: http://appui.us/
              
 org:
   eclipse:

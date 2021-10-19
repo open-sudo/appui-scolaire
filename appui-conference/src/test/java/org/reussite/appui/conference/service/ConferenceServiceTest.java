@@ -1,4 +1,4 @@
-package org.reussite.appui.support.dashboard.service;
+package org.reussite.appui.conference.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,20 +24,21 @@ import javax.transaction.SystemException;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
-import org.reussite.appui.support.dashbaord.utils.TimeUtils;
 import org.reussite.appui.support.dashboard.controller.ConferenceController;
 import org.reussite.appui.support.dashboard.model.ConferenceRoom;
-import org.reussite.appui.support.dashboard.model.StudentBooking;
-import org.reussite.appui.support.dashboard.model.StudentProfile;
-import org.reussite.appui.support.dashboard.model.TeacherAvailability;
-import org.reussite.appui.support.dashboard.model.TenantProfile;
+import org.reussite.appui.support.dashboard.model.ScheduleEntity;
+import org.reussite.appui.support.dashboard.model.StudentBookingEntity;
+import org.reussite.appui.support.dashboard.model.StudentProfileEntity;
+import org.reussite.appui.support.dashboard.model.SubjectEntity;
+import org.reussite.appui.support.dashboard.service.ConferenceService;
+import org.reussite.appui.support.dashboard.utils.TimeUtils;
 
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
-public class ConferenceServiceTest extends TestingBase  {
+public class ConferenceServiceTest extends SampleDataService  {
 
 	@Inject
 	protected ConferenceController conferenceController;
@@ -49,20 +51,52 @@ public class ConferenceServiceTest extends TestingBase  {
 	
 
 	
-	String conf0="michael-smith";
+	String conf0="jeanne-nguyen";
 	String conf15="ryan-martin";
 	String conf35="thomas-adams";
 	String conf18="justin-martinez";
 	
 
-
+	@Test
+	public void basicTest() throws IOException {
+		assertTrue(true);
+	}
 	
+	@Test
+	@TestTransaction
+	public void mathSubjectExists() throws IOException {
+		generateData();
+		List<SubjectEntity> subjects=SubjectEntity.listAll();
+		SubjectEntity math=subjects.stream().filter( t -> t.name.toLowerCase().contains("math")).findAny().orElse(null);
+		assertNotNull(math);
+		assertTrue(math.general);
+
+	}
+	
+	@Test
+	@TestTransaction
+	public void mathScheduleExists() throws IOException {
+		generateData();
+		List<ScheduleEntity> schedules=ScheduleEntity.listAll();
+		System.out.println("\n\n\n\n=====Number of schedules:"+schedules.size());
+		ScheduleEntity math=schedules.stream().filter( t -> t.course.subject.name.toLowerCase().contains("math")).findAny().orElse(null);
+		assertNotNull(math);
+	}
+	
+	@Test
+	@TestTransaction
+	public void mathBookingExists() throws IOException {
+		generateData();
+		List<StudentBookingEntity> bookings=StudentBookingEntity.listAll();
+		StudentBookingEntity math=bookings.stream().filter( t -> t.schedule.course.subject.name.toLowerCase().contains("math")).findAny().orElse(null);
+		assertNotNull(math);
+	}
 	@Test
 	@TestTransaction
 	public void meetWithBridgeClose() throws IOException {
 		generateData();
 		conferenceService.setBridgeOpened(false);
-		StudentProfile studentProfile = StudentProfile.findByConferenceUrlContaining(conf0);
+		StudentProfileEntity studentProfile = StudentProfileEntity.findByConferenceUrl(conf0);
 		ConferenceRoom room=conferenceService.meet(conf0,studentProfile);
 		assertNotNull(room);
 		assertEquals(room.getWelcomePage(),staticWelcomePage);
@@ -77,7 +111,7 @@ public class ConferenceServiceTest extends TestingBase  {
 		conferenceService.setBridgeOpened(true);
 		assertTrue(conferenceService.isBridgeOpened());
 		
-		StudentProfile studentProfile = StudentProfile.findByConferenceUrlContaining(conf0);
+		StudentProfileEntity studentProfile = StudentProfileEntity.findByConferenceUrl(conf0);
 
 		ConferenceRoom room=conferenceService.meet(conf0,studentProfile);
 		assertNotNull(room);
@@ -95,79 +129,60 @@ public class ConferenceServiceTest extends TestingBase  {
 		 ZonedDateTime date1= ZonedDateTime.now().minusMinutes(thenMinutes);
 		 ZonedDateTime date2=date1.plusMinutes(40);
 		 ZonedDateTime date3=date2.plusMinutes(40);
-		StudentProfile studentProfile = StudentProfile.findByConferenceUrlContaining(conf0);
+		StudentProfileEntity studentProfile = StudentProfileEntity.findByConferenceUrl(conf0);
 
 		generateDataWithGivenDates(date1,date2,date3);
 		conferenceService.setBridgeOpened(true);
 		ConferenceRoom room=conferenceService.meet(conf0,studentProfile);
 		assertNotNull(room);
+		assertNotNull(room.getSupportRoom());
 		assertEquals(room.getSupportRoom(),supportConferenceUrl);
 	}
 	
-	
 
-	
 
-	@Test
-	@TestTransaction
-	public void specialElementarySubjectsNotNull() throws IOException {
-		assertNotNull(conferenceService.getSpecialSubjects());
-		assertEquals(conferenceService.getSpecialSubjects().get(0),"Anglais");
-		assertEquals(conferenceService.getSpecialSubjects().get(1),"English");
-	}
-	
-	
 	@Test
 	@TestTransaction
 	public void meetWithBridgeOpenAndStaggeredDates() throws IOException, URISyntaxException {
 		conferenceService.setBridgeOpened(true);
 
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.listAll();
-		StudentBooking student=null;
-		for(StudentBooking st:students) {
-			String formatedDate=TimeUtils.toLongString(st.schedule.startDate);
-			if(formatedDate.equals(sampleDataService.getDates()[0])) {
-				student=st;
-				break;
-			}
-		}
-		StudentProfile p = StudentProfile.findByConferenceUrlContaining(conf0);
-
-		String studentUrl=student.studentProfile.conferenceUrl;
+		List<StudentBookingEntity> bookings=StudentBookingEntity.listAll();
+		StudentBookingEntity booking=bookings.stream().filter( t -> t.studentProfile.grade<=6 &&  t.schedule.course.subject.name.toLowerCase().contains("math")).findAny().orElse(null);
+		assertNotNull(booking);
+		StudentProfileEntity p = StudentProfileEntity.findByConferenceUrl(conf0);
+		
+		String studentUrl=booking.studentProfile.conferenceUrl;
 		ConferenceRoom teacherRoom=conferenceService.meet(studentUrl,p);
 		assertNotNull(teacherRoom);
 		assertNotNull(teacherRoom.getAvailability());
 		assertNotNull(teacherRoom.getAvailability().conferenceUrl);
-
+		assertNotNull(teacherRoom.getProfile());
 		String url=teacherRoom.resolve().toString();
 
 		assertNotEquals(url,supportConferenceUrl);
 		assertNotEquals(url,staticWelcomePage);
-		assertTrue(url.contains(googlePrefix));
+		assertTrue(url.contains("bbb"));
 	}
-	String googlePrefix="meet.google.com";
+	String conferencePrefix="bbb1";
 	
 	@Test
 	@TestTransaction
 	public void meetWithBridgeOpenAndStaggeredDatesSuperiorGrades() throws IOException, URISyntaxException {
 		conferenceService.setBridgeOpened(true);
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.listAll();
-		StudentBooking student=null;
-		System.out.println(sampleDataService.getDates()[0]);
-		System.out.println(sampleDataService.getDates()[1]);
-		System.out.println(sampleDataService.getDates()[2]);
-
-		for(StudentBooking st:students) {
+		List<StudentBookingEntity> students=StudentBookingEntity.listAll();
+		StudentBookingEntity student=null;
+		
+		for(StudentBookingEntity st:students) {
 			String formatedDate=TimeUtils.toLongString(st.schedule.startDate);
 			System.out.println(formatedDate);
-			if(formatedDate.equals(sampleDataService.getDates()[0]) && st.studentProfile.grade>7) {
+			if(formatedDate.equals(getDate(0)) && st.studentProfile.grade>7) {
 				student=st;
 				break;
 			}
 		}
-		StudentProfile p = StudentProfile.findByConferenceUrlContaining(conf0);
+		StudentProfileEntity p = StudentProfileEntity.findByConferenceUrl(conf0);
 
 		String studentUrl=student.studentProfile.conferenceUrl;
 		ConferenceRoom teacherRoom=conferenceService.meet(studentUrl,p);
@@ -177,7 +192,7 @@ public class ConferenceServiceTest extends TestingBase  {
 
 		assertNotEquals(url,supportConferenceUrl);
 		assertNotEquals(url,staticWelcomePage);
-		assertTrue(url.contains(googlePrefix));
+		assertTrue(url.contains(conferencePrefix));
 
 	}
 	
@@ -188,11 +203,11 @@ public class ConferenceServiceTest extends TestingBase  {
 		conferenceService.setBridgeOpened(true);
 
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.listAll();
-		StudentBooking student=null;
-		for(StudentBooking st:students) {
+		List<StudentBookingEntity> students=StudentBookingEntity.listAll();
+		StudentBookingEntity student=null;
+		for(StudentBookingEntity st:students) {
 			String formatedDate=TimeUtils.toLongString(st.schedule.startDate);
-			if(formatedDate.equals(sampleDataService.getDates()[0])) {
+			if(formatedDate.equals(getDate(0))) {
 				student=st;
 				break;
 			}
@@ -217,11 +232,8 @@ public class ConferenceServiceTest extends TestingBase  {
 	public void meetWithBridgeOpenAndStaggeredDates2() throws IOException, URISyntaxException {
 		conferenceService.setBridgeOpened(true);
 		generateSampleDataWithStaggeredDates();
-		List<TenantProfile> tenants=TenantProfile.findAll().list();
-		for(TenantProfile t:tenants) {
-			assertNotNull(t.conferenceUrlPrefix);
-		}
-		List<StudentBooking> students=StudentBooking.listAll();
+		
+		List<StudentBookingEntity> students=StudentBookingEntity.listAll();
 		
 		String studentUrl=students.get(0).studentProfile.conferenceUrl;
 		assertNotNull(studentUrl);
@@ -230,7 +242,7 @@ public class ConferenceServiceTest extends TestingBase  {
 		assertNotEquals(redirectUrl.toString(),supportConferenceUrl);
 		System.out.println(redirectUrl.toString());
 		assertNotEquals(redirectUrl.toString(),staticWelcomePage);
-		assertTrue(redirectUrl.toASCIIString().contains(googlePrefix));
+		assertTrue(redirectUrl.toASCIIString().contains(conferencePrefix));
 		
 	}
 	
@@ -241,14 +253,14 @@ public class ConferenceServiceTest extends TestingBase  {
 		
 		conferenceService.setBridgeOpened(true);
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.listAll();
+		List<StudentBookingEntity> students=StudentBookingEntity.listAll();
 		assertNull(students.get(0).teacherAvailability);
 		String studentUrl=students.get(0).studentProfile.conferenceUrl;
 		assertNotNull(studentUrl);
 		URI redirectUrl=conferenceController.meet(studentUrl);
 		assertNotNull(redirectUrl);
 		
-		StudentBooking student=StudentBooking.findById(students.get(0).id);
+		StudentBookingEntity student=StudentBookingEntity.findById(students.get(0).id);
 		assertNotNull(student);
 		System.out.println("Student URL:"+studentUrl);
 		
@@ -277,8 +289,8 @@ public class ConferenceServiceTest extends TestingBase  {
 		
 		conferenceService.setBridgeOpened(true);
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.findByTenantKey(SampleDataService.tenants[0]);
-		StudentBooking student=students.get(0);
+		List<StudentBookingEntity> students=StudentBookingEntity.findByTenantKey(SampleDataService.tenants[0]);
+		StudentBookingEntity student=students.get(0);
 		
 		
 		String studenturl=students.get(0).studentProfile.conferenceUrl;
@@ -292,7 +304,7 @@ public class ConferenceServiceTest extends TestingBase  {
 		
 		assignTeacher(teacherAvailability.tenant.key,student.id, teacherAvailability.id);
 		redirectUrl=conferenceService.meet(studenturl);
-		StudentBooking student1=StudentBooking.findById(student.id);
+		StudentBookingEntity student1=StudentBookingEntity.findById(student.id);
 		assertEquals(redirectUrl.resolve(studenturl),student1.teacherAvailability.teacherProfile.conferenceUrl);
 
  	}
@@ -300,7 +312,7 @@ public class ConferenceServiceTest extends TestingBase  {
 	
 
 	private TeacherAvailability assignTeacher(String tenantKey,String bookingId, String availablityId) {
-		 StudentBooking booking=StudentBooking.findById(bookingId);
+		 StudentBookingEntity booking=StudentBookingEntity.findById(bookingId);
 		 if(booking==null) {
 			 throw new NoSuchElementException(String.valueOf(bookingId));
 		 }
@@ -321,11 +333,11 @@ public class ConferenceServiceTest extends TestingBase  {
 		 booking.persistAndFlush();
 		 
 		 TeacherAvailability availability=TeacherAvailability.findById(booking.teacherAvailability.id);
-		 long count=StudentBooking.countByTeacherAvailability(availability.id);
+		 long count=StudentBookingEntity.countByTeacherAvailability(availability.id);
 		 availability.studentCount=count;
 		 availability.persistAndFlush();
 		 if(previous!=null) {
-			 count=StudentBooking.countByTeacherAvailability(previous.id);
+			 count=StudentBookingEntity.countByTeacherAvailability(previous.id);
 			 previous.studentCount=count;
 			 previous.persistAndFlush();
 		 }
@@ -338,22 +350,22 @@ public class ConferenceServiceTest extends TestingBase  {
 	public void nullifyrejectDate() throws IOException, NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
 		
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.listAll();
-		StudentBooking student=students.get(0);
+		List<StudentBookingEntity> students=StudentBookingEntity.listAll();
+		StudentBookingEntity student=students.get(0);
 		assertNull(student.rejectDate);
 
 		student.rejectDate=TimeUtils.getCurrentTime();
 		student.persistAndFlush();
 		
 		
-		student=StudentBooking.findById(student.id);
+		student=StudentBookingEntity.findById(student.id);
 		assertNotNull(student.rejectDate);
 		
 		student.rejectDate=null;
 		
 		student.persistAndFlush();
 		
-		student=StudentBooking.findById(student.id);
+		student=StudentBookingEntity.findById(student.id);
 		assertNull(student.rejectDate);
 		
 	}
@@ -364,8 +376,8 @@ public class ConferenceServiceTest extends TestingBase  {
 		
 		conferenceService.setBridgeOpened(true);
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.listAll();
-		StudentBooking student=students.get(0);
+		List<StudentBookingEntity> students=StudentBookingEntity.listAll();
+		StudentBookingEntity student=students.get(0);
 		
 		
 		String studentUrl=student.studentProfile.conferenceUrl;
@@ -380,16 +392,16 @@ public class ConferenceServiceTest extends TestingBase  {
 		skeleton.id="aaa";
 		
 		student.teacherAvailability=skeleton;
-		 StudentBooking booking=StudentBooking.findById(student.id);
+		 StudentBookingEntity booking=StudentBookingEntity.findById(student.id);
 			booking.persistAndFlush();
-		bookingService.updateStudentBooking(student.tenantKey,student, student.id);
+		bookingService.updateStudentBookingEntity(student.tenantKey,student, student.id);
 		
 		redirectUrl=conferenceService.meet(studentUrl);
 		assertEquals(redirectUrl,supportConferenceUrl);
 
 		
 
-		 student=StudentBooking.findById(student.id);
+		 student=StudentBookingEntity.findById(student.id);
 		 assertNotNull(student.rejectDate);
 		 assertNull(student.teacherAvailability);
 		 
@@ -399,9 +411,9 @@ public class ConferenceServiceTest extends TestingBase  {
 		 skeleton.id= teachers.get(5).id;
 		 student.teacherAvailability=skeleton;
 		 
-		 bookingService.updateStudentBooking(student.tenantKey,student, student.id);
+		 bookingService.updateStudentBookingEntity(student.tenantKey,student, student.id);
 		 
-		 StudentBooking b=StudentBooking.findById(student.id);
+		 StudentBookingEntity b=StudentBookingEntity.findById(student.id);
 		 assertNull(b.rejectDate);
 		 redirectUrl=conferenceService.meet(studentUrl);
 		 assertEquals(redirectUrl,teachers.get(5).teacherProfile.conferenceUrl);
@@ -415,8 +427,8 @@ public class ConferenceServiceTest extends TestingBase  {
 		conferenceService.setBridgeOpened(true);
 
 		generateSampleDataWithStaggeredDates();
-		List<StudentBooking> students=StudentBooking.findByTenantKey(SampleDataService.tenants[0]);
-		StudentBooking student=students.get(0);
+		List<StudentBookingEntity> students=StudentBookingEntity.findByTenantKey(SampleDataService.tenants[0]);
+		StudentBookingEntity student=students.get(0);
 		
 		String studentUrl=student.studentProfile.conferenceUrl;
 		ConferenceRoom redirectUrl=conferenceService.meet(studentUrl);
@@ -429,7 +441,7 @@ public class ConferenceServiceTest extends TestingBase  {
 		assertEquals(teacherAvailability1.studentCount,0);
 		assignTeacher(student.tenant.key,student.id, teacherAvailability1.id);
 
-		student=StudentBooking.findById(student.id);
+		student=StudentBookingEntity.findById(student.id);
 		
 		
 		teacherAvailability1=TeacherAvailability.findById(teacherAvailability1.id);
@@ -438,19 +450,19 @@ public class ConferenceServiceTest extends TestingBase  {
 		redirectUrl=conferenceService.meet(studentUrl);
 		assertEquals(redirectUrl.resolve(studentUrl),teacherAvailability1.teacherProfile.conferenceUrl);
 		
-		 List<StudentBooking> bookings=null;
-		 bookings=StudentBooking.findByConferenceUrlAndDeleteDateIsNullAndEndDateIsNull(studentUrl,TimeUtils.getCurrentTime().minusHours(2),TimeUtils.getCurrentTime().plusHours(2));
+		 List<StudentBookingEntity> bookings=null;
+		 bookings=StudentBookingEntity.findByConferenceUrlAndDeleteDateIsNullAndEndDateIsNull(studentUrl,TimeUtils.getCurrentTime().minusHours(2),TimeUtils.getCurrentTime().plusHours(2));
 		
 		 assertNotNull(bookings.get(0).teacherAvailability);
 		 assertEquals(bookings.get(0).teacherAvailability.teacherProfile.conferenceUrl,redirectUrl.resolve(studentUrl));
-		 student=StudentBooking.findById(student.id);
+		 student=StudentBookingEntity.findById(student.id);
 		TeacherAvailability teacherAvailability2=teacherAvailabilities.get(8);
 	
 		assignTeacher(student.tenant.key,student.id, teacherAvailability2.id);
 
 		
 		
-		 bookings=StudentBooking.findByConferenceUrlAndDeleteDateIsNullAndEndDateIsNull(studentUrl,TimeUtils.getCurrentTime().minusHours(2),TimeUtils.getCurrentTime().plusHours(2));
+		 bookings=StudentBookingEntity.findByConferenceUrlAndDeleteDateIsNullAndEndDateIsNull(studentUrl,TimeUtils.getCurrentTime().minusHours(2),TimeUtils.getCurrentTime().plusHours(2));
 			
 		 assertNotNull(bookings.get(0).teacherAvailability);
 		 assertEquals(bookings.get(0).teacherAvailability.id,teacherAvailability2.id);

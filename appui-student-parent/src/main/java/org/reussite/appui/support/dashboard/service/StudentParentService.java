@@ -1,12 +1,15 @@
 package org.reussite.appui.support.dashboard.service;
 
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -46,7 +49,7 @@ public class StudentParentService {
 	protected String keycloakClientSecret;
 
 
-	public StudentParent registerParent(StudentParent studentParent) {
+	public StudentParent registerParent(StudentParent studentParent, SecurityContext ctx) {
 		logger.info("Creating parent :{} --> {}",studentParent);
 		StudentParentEntity parent=parentMapper.toEntity(studentParent);
 		String phone=PhoneUtils.validate(parent.phoneNumber,parent.countryCode);
@@ -61,8 +64,14 @@ public class StudentParentService {
 		if(StringUtils.isBlank(parent.email)) {
 			parent.email=parent.phoneNumber+"@phone.com";
 		}
-		String response=keycloakService.register(parent.phoneNumber);
-		logger.info("Parent registration triggered in Keycloak:{}, Persisting parent:{}",response,parent);
+		if(ctx.getUserPrincipal()==null) {
+			logger.info("No principal found in request. Authenticating the parent {} via keycloak",parent.phoneNumber);
+			String response=keycloakService.register(parent.phoneNumber);
+			logger.info("Parent registration triggered in Keycloak:{}, Persisting parent:{}",response,parent);
+		}
+		else {
+			logger.info("Principal found in request .Creating parent {} without keycloak authentication",parent.phoneNumber);
+		}
 		parent.persistAndFlush();
 		StudentParent result=parentMapper.toDomain(parent);
 		return result;

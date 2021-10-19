@@ -13,10 +13,12 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.hibernate.annotations.Parent;
 import org.reussite.appui.support.dashbaord.mapper.SubjectMapper;
 import org.reussite.appui.support.dashbaord.mapper.TagMapper;
 import org.reussite.appui.support.dashbaord.mapper.TeacherProfileMapper;
 import org.reussite.appui.support.dashbaord.utils.OAuth2Constants;
+import org.reussite.appui.support.dashbaord.utils.PhoneUtils;
 import org.reussite.appui.support.dashboard.domain.Subject;
 import org.reussite.appui.support.dashboard.domain.Tag;
 import org.reussite.appui.support.dashboard.domain.TeacherProfile;
@@ -70,15 +72,22 @@ public class TeacherProfileService {
 	protected SubjectMapper subjectMapper;
 
 
-	public ResultPage<TeacherProfile>  searchTeacherProfiles(String tag,String firstName, String sortParams, Integer size, Integer page) {
-		String tagParam=(StringUtils.isEmpty(tag) || StringUtils.isEmpty(tag.trim()))?"null":tag.trim().toLowerCase();
-
-		Sort sort=SearchUtils.getAbsoluteSort(sortParams);
-		PanacheQuery<TeacherProfileEntity> query = teacherRepo.find(
-				"SELECT   c FROM TeacherProfile c  LEFT JOIN c.tags h where (?2 ='null' OR ?2 = lower(h.name))  and (lower(c.firstName) like concat(concat('%',lower(?1),'%'))  OR  lower(c.lastName) like concat(concat('%',lower(?1),'%'))) and c.deleteDate IS NULL ",
-				sort,firstName,tagParam);
+	public ResultPage<TeacherProfile>  searchTeacherProfiles(String tag,String firstName, String sortParams, String path,Integer size, Integer page) {
+		PanacheQuery<TeacherProfileEntity> query =null;
+		
+		if(StringUtils.isNoneBlank(path)) {
+			query = teacherRepo.find(
+					"SELECT   c FROM TeacherProfile c where lower(c.conferenceurl) like concat(concat('%',lower(?1),'%')) ",
+					path);
+		}else{
+			String tagParam=(StringUtils.isEmpty(tag) || StringUtils.isEmpty(tag.trim()))?"null":tag.trim().toLowerCase();
+	
+			Sort sort=SearchUtils.getAbsoluteSort(sortParams);
+			query = teacherRepo.find(
+					"SELECT   c FROM TeacherProfile c  LEFT JOIN c.tags h where (?2 ='null' OR ?2 = lower(h.name))  and (lower(c.firstName) like concat(concat('%',lower(?1),'%'))  OR  lower(c.lastName) like concat(concat('%',lower(?1),'%'))) and c.deleteDate IS NULL ",
+					sort,firstName,tagParam);
+		}
 		List<TeacherProfile> result=query.page(page, size).list().stream().map(teacherMapper::toDomain).collect(Collectors.toList());
-
 		for(TeacherProfile teacher:result) {
 		  	String url=teacher.getConferenceUrl(); 
 	  		teacher.setConferenceUrl(studentPrefixUrl+url);
@@ -91,11 +100,15 @@ public class TeacherProfileService {
 	@Transactional
 	public TeacherProfile registerTeacher(TeacherProfile profile) {
 		TeacherProfileEntity entity=teacherMapper.toEntity(profile);
+		if(StringUtils.isNotBlank(profile.getPhoneNumber())) {
+			String phone=PhoneUtils.validate(profile.getPhoneNumber(),profile.getCountryCode());
+			profile.setPhoneNumber(phone);
+		}
 		if(StringUtils.isNoneBlank(profile.getFirstName())) {
 			String firstNames[]=profile.getFirstName().trim().split(" ");
 			entity.setFirstName("");;
 			for(String firstName:firstNames) {
-				entity.setFirstName((profile.getFirstName()+" "+firstName).trim());
+				entity.setFirstName((entity.getFirstName()+" "+firstName).trim());
 			}
 		}
 		logger.info("First name cleaned up into:{}",entity.getFirstName());
@@ -103,7 +116,7 @@ public class TeacherProfileService {
 			String lastNames[]=profile.getLastName().trim().split(" ");
 			entity.setLastName("");
 			for(String lastName:lastNames) {
-				entity.setLastName((profile.getLastName()+" "+lastName).trim());
+				entity.setLastName((entity.getLastName()+" "+lastName).trim());
 			}
 		}
 		logger.info("Last name cleaned up into:{}",entity.getLastName());
@@ -215,6 +228,11 @@ public class TeacherProfileService {
 		if (StringUtils.isNotBlank(body.getEmail())) {
 			profile.setEmail(body.getEmail());
 		}
+		if(body.getCountryCode()>0) {
+			profile.setCountryCode(body.getCountryCode());
+			String phone=PhoneUtils.validate(profile.getPhoneNumber(),profile.getCountryCode());
+			profile.setPhoneNumber(phone);
+		}
 		if (StringUtils.isNotBlank(body.getBiographie())) {
 			profile.setBiographie(body.getBiographie());
 		}
@@ -249,6 +267,8 @@ public class TeacherProfileService {
 		}
 		if (StringUtils.isNotBlank(body.getPhoneNumber())) {
 			profile.setPhoneNumber(body.getPhoneNumber().replaceAll("[^0-9]", "").replaceFirst("^0+(?!$)", ""));
+			String phone=PhoneUtils.validate(profile.getPhoneNumber(),profile.getCountryCode());
+			profile.setPhoneNumber(phone);
 		}
 		
 		logger.info("Persisting teacher profile");
@@ -303,20 +323,32 @@ public class TeacherProfileService {
 	
 
 	@Transactional
-	public TokenResponse activateTeacher(String id, String activationCode,  String refreshToken) {
-		TeacherProfileEntity teacher= teacherRepo.findById(id);
-		logger.info("Teacher found in db: {}",teacher);
+	public TokenResponse activateTeacher(String phoneNumber, String activationCode,  String refreshToken) {
+		logger.info("Activating teacher : {}",phoneNumber);
 		logger.info("Preparing to send activation request to Keycloak:{} ");
 		
 		TokenResponse token=null;
 		if(StringUtils.isBlank(refreshToken)) {
-			token=keycloakService.activate(OAuth2Constants.PASSWORD.asLowerCase(),teacher.getPhoneNumber(),activationCode,keycloakClientName,keycloakClientSecret,null);
+			token=keycloakService.activate(OAuth2Constants.PASSWORD.asLowerCase(),phoneNumber,activationCode,keycloakClientName,keycloakClientSecret,null);
 		}else {
-			token=keycloakService.activate(OAuth2Constants.REFRESH_TOKEN.asLowerCase(),teacher.getPhoneNumber(),null,keycloakClientName,keycloakClientSecret,refreshToken);
+			token=keycloakService.activate(OAuth2Constants.REFRESH_TOKEN.asLowerCase(),phoneNumber,null,keycloakClientName,keycloakClientSecret,refreshToken);
 		}
+		logger.info("Teacher succesfully authenticated in Keycloak: {}",phoneNumber);
+
+		TeacherProfileEntity teacher= teacherRepo.findByPhoneNumber(phoneNumber);
+		if(teacher!=null) {
+			logger.info("Teacher found in db: {}",teacher);
+		}else {
+			teacher = new TeacherProfileEntity();
+			teacher.setPhoneNumber(phoneNumber);
+			teacher.setActivationCode(activationCode);
+			teacher.setConferenceUrl(phoneNumber);
+		}
+		
 		teacher.setLastUpdateDate(TimeUtils.getCurrentTime());
 		teacher.setActivationDate(TimeUtils.getCurrentTime());
 		logger.info("Activation response from  Keycloak:{} ",token);
+		token.id=teacher.getId();
 		teacherRepo.persist(teacher);
 		return token;
 	}

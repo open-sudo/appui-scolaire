@@ -69,10 +69,11 @@ public class StudentProfileController {
     		@QueryParam("firstName") String firstName,
     		@QueryParam("parentId") String parentId,
     		@DefaultValue("firstName,asc") @QueryParam("sort") String sort, 
+    		@QueryParam("path") String path,
     		@DefaultValue("20") @QueryParam("size")Integer size,
     		@DefaultValue("0") @QueryParam("page") Integer page ) {
 		logger.info("Executing search query:{}",firstName);
-		ResultPage<StudentProfile> result= studentProfileService.searchStudentProfiles(tag, firstName==null?"":firstName, parentId,sort, size, page);
+		ResultPage<StudentProfile> result= studentProfileService.searchStudentProfiles(tag, firstName==null?"":firstName, parentId,sort,path, size, page);
 		return Response.ok(result).build();
 	}
 		

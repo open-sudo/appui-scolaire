@@ -52,7 +52,7 @@ reussite:
     keycloak:
          client: 
             name: mobile
-            secret: 46428c57-6155-4532-b61e-0dd77f7f33be 
+            secret: 7505d408-a19c-4af1-874d-25595812568c 
  
 org:
   eclipse:

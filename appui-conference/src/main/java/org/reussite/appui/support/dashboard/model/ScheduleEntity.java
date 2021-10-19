@@ -1,8 +1,7 @@
 package org.reussite.appui.support.dashboard.model;
 
-
-
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,42 +14,39 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.reussite.appui.support.dashboard.utils.TimeUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 
-@Entity(name = "StudentBooking")
-@Table(name = "student_booking")
-public class StudentBookingEntity extends PanacheEntityBase{
+
+@Entity(name = "Schedule")
+@Table(name = "schedule")
+public class ScheduleEntity  extends PanacheEntityBase{
+
 	@Id
 	public String id;
-
 	
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
-    public ZonedDateTime teacherAssignedDate;
+	public ZonedDateTime startDate;
 
-	public String conferenceUrl;
+	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
+	public ZonedDateTime endDate;
 	
-	@ManyToOne
-	public TeacherAvailabilityEntity teacherAvailability;
-
-	@ManyToOne
-	public StudentProfileEntity studentProfile;
-
+	@JsonIgnore
 	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
-    public ZonedDateTime effectiveStartDate;
-	@JsonFormat(pattern = TimeUtils.DateTimeFormats.DATETIME_FORMAT)    
-    public ZonedDateTime rejectDate;
-	@ManyToOne(targetEntity=ScheduleEntity.class,fetch = FetchType.EAGER)
-	public ScheduleEntity schedule;
+	public ZonedDateTime deleteDate;
 
-	public static long countByTeacherAvailability(String id) {
-		return count("teacherAvailability.id = ?1",id);
+	@ManyToOne(targetEntity=CourseEntity.class,fetch = FetchType.EAGER)
+	public CourseEntity course;
+
+	public static  List<ScheduleEntity> findByStartDate(ZonedDateTime startDate, ZonedDateTime endDate) {
+		return find(" startDate >?1 and startDate < ?2",startDate,endDate).list();
+
 	}
 	@Override
 	public String toString() 
 	{ 
 	    return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE); 
 	}
-	
 }

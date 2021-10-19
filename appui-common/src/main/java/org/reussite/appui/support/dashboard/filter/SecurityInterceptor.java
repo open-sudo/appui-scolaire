@@ -1,5 +1,7 @@
 package org.reussite.appui.support.dashboard.filter;
 
+import java.util.Arrays;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
@@ -15,7 +17,10 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext context) {
         String path=context.getUriInfo().getAbsolutePath().toString();
-        MultivaluedMap<String, String> params = context.getUriInfo().getQueryParameters();  
+        MultivaluedMap<String, String> params = context.getUriInfo().getQueryParameters(); 
+        for(String header: context.getHeaders().keySet()) {
+        	logger.info("Header: {} -> {}",header,Arrays.deepToString(context.getHeaders().get(header).toArray()));
+        }
         logger.info("Executing request:{}",path);
         if(params.get("tenantKey")!=null && params.get("tenantKey").size()>0) {
     		logger.info("Tenant key found in url param:{}",params.get("tenantKey"));

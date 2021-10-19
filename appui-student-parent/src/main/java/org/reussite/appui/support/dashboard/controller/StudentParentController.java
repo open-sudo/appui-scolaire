@@ -16,8 +16,10 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import org.reussite.appui.support.dashbaord.utils.PhoneUtils;
 import org.reussite.appui.support.dashboard.domain.StudentParent;
@@ -43,9 +45,9 @@ public class StudentParentController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional
 	@JsonView(Views.Response.class)
-	public Response registerParent(@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Post.class)  @JsonView(Views.Request.class) StudentParent parent) {
+	public Response registerParent(@PathParam("id") String id,@Valid @ConvertGroup(to = ValidationGroups.Post.class)  @JsonView(Views.Request.class) StudentParent parent,@Context SecurityContext ctx) {
 		logger.info("Creating parent:{}",parent);
-		StudentParent result=parentService.registerParent(parent);
+		StudentParent result=parentService.registerParent(parent,ctx);
 		logger.info("Parent creation completed:{}",result);
 		return Response.ok(result).status(Response.Status.CREATED).build();
 	}

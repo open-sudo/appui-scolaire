@@ -120,6 +120,17 @@ public class TeacherAvailabilityService {
 		 	ResultPage<TeacherAvailability> resultPage= new ResultPage<TeacherAvailability>(page, query.pageCount(), query.count(),avs);
 		return resultPage;
 	}
+	
+	public TeacherAvailability getAvailability(String availabilityId) {
+		logger.info("Searching with availability Id:{}",availabilityId);
+			TeacherAvailabilityEntity availabilityEntity=TeacherAvailabilityEntity.findById(availabilityId);
+			 if(availabilityEntity==null) {
+					throw new NoSuchElementException(TeacherAvailability.class,availabilityId);
+			 }
+			 logger.info("TeacherAvailability found in db :{}",availabilityEntity);
+			 TeacherAvailability availability= mapper.toDomain(availabilityEntity);
+		return availability;
+	}
 	public List<StudentBooking> findStudentBookings(List<String> ids){
 		List<StudentBookingEntity>  entities= StudentBookingEntity.find("id in ?1",ids).list();
 	 	List<StudentBooking>bookings=entities.stream().map(studentBookingMapper::toDomain).collect(Collectors.toList());
@@ -425,7 +436,7 @@ public class TeacherAvailabilityService {
 		 booking.teacherAssignedDate=TimeUtils.getCurrentTime();
 		 booking.conferenceUrl=createJoinConferenceUrl(availability,booking);
 		 booking.persistAndFlush();
-		 
+		 logger.info("Persisted booking:{}",booking);
 		 long count=StudentBookingEntity.countByTeacherAvailability(availability.id);
 		 availability.studentCount=count;
 		 availability.persistAndFlush();

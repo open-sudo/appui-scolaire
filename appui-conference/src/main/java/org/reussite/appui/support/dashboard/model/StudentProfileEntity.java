@@ -18,17 +18,21 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 public class StudentProfileEntity extends PanacheEntityBase{
 	@Id
 	public String id;
-	
+	public Integer grade;
 	public String email;
 	public String lastName;
 	public String firstName;
-	public String studentParentId;
-	public Integer grade=1;
 	public String conferenceUrl;
-
+	public String phoneNumber;
+	public Integer countryCode;
+	
 	@Override
 	public String toString() 
 	{ 
 	    return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE); 
+	}
+
+	public static StudentProfileEntity findByConferenceUrl(String path) {
+		return find("conferenceUrl like concat('%',concat(?1,'%'))",path).firstResult();
 	}
 }

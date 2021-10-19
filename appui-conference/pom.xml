@@ -8,24 +8,20 @@
 	<artifactId>appui-conference</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 	<properties>
-		<maven.compiler.parameters>true</maven.compiler.parameters>
 		<compiler-plugin.version>3.8.1</compiler-plugin.version>
-		<quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-		<surefire-plugin.version>2.22.1</surefire-plugin.version>
-		<quarkus.platform.version>1.12.2.Final</quarkus.platform.version>
-		<maven.compiler.target>8</maven.compiler.target>
-		<quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<quarkus-plugin.version>1.12.2.Final</quarkus-plugin.version>
-
-		<maven.compiler.source>8</maven.compiler.source>
 		<jacoco.version>0.8.4</jacoco.version>
-		<quarkus.database.url>jdbc:postgresql://192.168.1.15/quarkus_test4</quarkus.database.url>
+		<maven.compiler.parameters>true</maven.compiler.parameters>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputDirectory>${project.build.directory}</project.reporting.outputDirectory>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<quarkus-plugin.version>2.0.2.Final</quarkus-plugin.version>
+		<quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+		<quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+		<quarkus.platform.version>2.0.2.Final</quarkus.platform.version>
+		<surefire-plugin.version>2.22.1</surefire-plugin.version>
 	</properties>
-
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -38,18 +34,38 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-	
-	
 		<dependency>
-			<groupId>org.reussite.appui</groupId>
-			<artifactId>dashboard-model</artifactId>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-rest-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-jdbc-h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-junit5-mockito</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-kubernetes-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-openshift</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.reussite</groupId>
+			<artifactId>appui-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-smallrye-health</artifactId>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-hibernate-orm-rest-data-panache</artifactId>
 		</dependency>
@@ -58,7 +74,6 @@
 			<artifactId>quarkus-reactive-pg-client</artifactId>
 			<scope>test</scope>
 		</dependency>
-	
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
@@ -68,8 +83,6 @@
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-hibernate-orm-panache</artifactId>
 		</dependency>
-
-
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-config-yaml</artifactId>
@@ -81,11 +94,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.libphonenumber</groupId>
-			<artifactId>geocoder</artifactId>
-			<version>2.148</version>
 		</dependency>
 		<dependency>
 			<groupId>io.quarkus</groupId>
@@ -111,15 +119,7 @@
 		</dependency>
 		<dependency>
 			<groupId>io.quarkus</groupId>
-			<artifactId>quarkus-rest-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-resteasy-jackson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.quarkus</groupId>
-			<artifactId>quarkus-mailer</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.rest-assured</groupId>
@@ -134,31 +134,8 @@
 			<groupId>org.jboss.logmanager</groupId>
 			<artifactId>log4j2-jboss-logmanager</artifactId>
 		</dependency>
-
-
 	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>application.yaml</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-				<includes>
-					<include>META-INF/**</include>
-					<include>players/**</include>
-					<include>*.txt</include>
-					<include>*.html</include>
-					<include>*.p12</include>
-					<include>*.pem</include>
-				</includes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>io.quarkus</groupId>
@@ -178,7 +155,6 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${compiler-plugin.version}</version>
-
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -193,49 +169,6 @@
 		</plugins>
 	</build>
 	<profiles>
-		<profile>
-			<id>dev</id>
-			<properties>
-				<google.oauth.enabled>true</google.oauth.enabled>
-				<reussite.appui.activation.code>true</reussite.appui.activation.code>
-				<reussite.appui.email.reminder.enabled>false</reussite.appui.email.reminder.enabled>
-				<reussite.appui.twilio.sms.enable>false</reussite.appui.twilio.sms.enable>
-				<quarkus.datasource.jdbc.url>jdbc:postgresql://192.168.1.15/quarkus_test3</quarkus.datasource.jdbc.url>
-				<reussite.appui.conference.url.prefix.student>https://tower.watu.fi:8443/meet/e/</reussite.appui.conference.url.prefix.student>
-				<reussite.appui.conference.url.prefix.teacher>https://tower.watu.fi:8443/meet/p/</reussite.appui.conference.url.prefix.teacher>
-				<quarkus.datasource.database.generation>none</quarkus.datasource.database.generation>
-			</properties>
-		</profile>
-		<profile>
-			<id>prod</id>
-			<properties>
-				<google.oauth.enabled>true</google.oauth.enabled>
-				<reussite.appui.activation.code>true</reussite.appui.activation.code>
-				<quarkus.datasource.jdbc.url>jdbc:postgresql://192.168.1.15/reussite_appui_v1</quarkus.datasource.jdbc.url>
-				<reussite.appui.twilio.sms.enable>true</reussite.appui.twilio.sms.enable>
-				<reussite.appui.email.reminder.enabled>true</reussite.appui.email.reminder.enabled>
-				<reussite.appui.conference.url.prefix.student>http://appui.cc/e/</reussite.appui.conference.url.prefix.student>
-				<reussite.appui.conference.url.prefix.teacher>http://appui.cc/p/</reussite.appui.conference.url.prefix.teacher>
-				<quarkus.datasource.database.generation>none</quarkus.datasource.database.generation>
-			</properties>
-		</profile>
-		<profile>
-			<id>pascal</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<google.oauth.enabled>false</google.oauth.enabled>
-				<reussite.appui.activation.code>false</reussite.appui.activation.code>
-				<quarkus.datasource.jdbc.url>jdbc:postgresql://192.168.1.15/quarkus_test3</quarkus.datasource.jdbc.url>
-				<reussite.appui.twilio.sms.enable>false</reussite.appui.twilio.sms.enable>
-				<reussite.appui.email.reminder.enabled>false</reussite.appui.email.reminder.enabled>
-				<reussite.appui.conference.url.prefix.student>https://localhost:8443/meet/e/</reussite.appui.conference.url.prefix.student>
-				<reussite.appui.conference.url.prefix.teacher>https://localhost:8443/meet/p/</reussite.appui.conference.url.prefix.teacher>
-				<quarkus.datasource.database.generation>none</quarkus.datasource.database.generation>
-			</properties>
-		</profile>
-
 		<profile>
 			<id>native</id>
 			<activation>
@@ -288,7 +221,6 @@
 						</executions>
 					</plugin>
 				</plugins>
-
 			</build>
 			<properties>
 				<quarkus.package.type>native</quarkus.package.type>

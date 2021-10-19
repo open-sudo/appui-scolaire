@@ -31,11 +31,12 @@ public class TeacherProfileEntity{
 	@GenericGenerator(name="system-uuid", strategy = "uuid")
 	private String id;
 	
-	@NotBlank
-	@Column(unique=true)
+	
     private String email;
     private String firstName;
     private String lastName;
+    @NotBlank
+	@Column(unique=true)
     private String phoneNumber;
     private String schoolBoard;
     private String qualifications;
@@ -47,10 +48,6 @@ public class TeacherProfileEntity{
     private String biographie;
     private String imageUrl;
     private String schoolName;
-    @Column(unique=true)
-    private String internalEmail;
-    @JsonIgnore
-    private String internalEmailPassword;
     @Column(unique=true)
 	private String conferenceUrl;
     private String meetUrl;
@@ -200,22 +197,6 @@ public class TeacherProfileEntity{
 
 	public void setSchoolName(String schoolName) {
 		this.schoolName = schoolName;
-	}
-
-	public String getInternalEmail() {
-		return internalEmail;
-	}
-
-	public void setInternalEmail(String internalEmail) {
-		this.internalEmail = internalEmail;
-	}
-
-	public String getInternalEmailPassword() {
-		return internalEmailPassword;
-	}
-
-	public void setInternalEmailPassword(String internalEmailPassword) {
-		this.internalEmailPassword = internalEmailPassword;
 	}
 
 	public String getConferenceUrl() {

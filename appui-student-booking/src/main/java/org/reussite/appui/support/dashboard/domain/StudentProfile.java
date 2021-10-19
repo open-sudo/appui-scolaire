@@ -20,7 +20,15 @@ public class StudentProfile {
 	private String lastName;
 	private String firstName;
 	private String studentParentId;
+	private int grade;
+	private String conferenceUrl;
 	
+	public int getGrade() {
+		return grade;
+	}
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
 	public String getStudentParentId() {
 		return studentParentId;
 	}
@@ -53,6 +61,12 @@ public class StudentProfile {
 	}
 	
 
+	public String getConferenceUrl() {
+		return conferenceUrl;
+	}
+	public void setConferenceUrl(String conferenceUrl) {
+		this.conferenceUrl = conferenceUrl;
+	}
 	@Override
 	public String toString() 
 	{ 
