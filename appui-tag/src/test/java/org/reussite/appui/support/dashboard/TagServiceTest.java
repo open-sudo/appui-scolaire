@@ -37,7 +37,7 @@ public class TagServiceTest {
 	}
 	
 	    
-    @Test
+//    @Test
     public void testTagCreation() {
     	
     	TagRequest tag= new TagRequest();
@@ -55,7 +55,7 @@ public class TagServiceTest {
             System.out.println("Tag created:"+tag);
     }
     
-    @Test
+//    @Test
     public void testTagSearch() {
     		setup();
     		@SuppressWarnings("rawtypes")
@@ -71,7 +71,7 @@ public class TagServiceTest {
     }
     
 
-    @Test
+//    @Test
     public void testGetTag() {
     		TagEntity tag=setup();
 			TagResponse result=given()

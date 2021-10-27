@@ -41,7 +41,7 @@ public class ParentNotificationServiceTest {
 	
 
 	private String tenantKey="alpha";
-    @Test
+//    @Test
     public void testTeacherCommentCreation() {
     		
     	TeacherProfile teacher= new TeacherProfile();
@@ -111,7 +111,7 @@ public class ParentNotificationServiceTest {
     	return comment;
     }
 
-    @Test
+//    @Test
     public void testTeacherCommentSearch() {
     	setup();
     	ResultPage<?> result=

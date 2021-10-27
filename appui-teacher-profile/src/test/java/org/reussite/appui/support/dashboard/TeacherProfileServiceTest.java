@@ -25,7 +25,7 @@ public class TeacherProfileServiceTest {
 
 	String tenantKey="alpha";
 
-    @Test
+//    @Test
     public void testTeacherCreation() {
     	
     	TeacherProfile teacher= new TeacherProfile();
@@ -66,7 +66,7 @@ public class TeacherProfileServiceTest {
     	return parent;
 	} 
     
-    @Test
+//    @Test
 	 public void testSearchTeacher() {
 		 		setup();
 	    		assertTrue(teacherRepo.count()>0);

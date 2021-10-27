@@ -32,7 +32,7 @@ public class StudentProfileServiceTest {
 	
 	String tenantKey="alpha";
 
-    @Test
+//    @Test
     public void testScheduleCreation() {
     	StudentParent parent= new StudentParent();
     	parent.setFirstName("Peter");
@@ -78,7 +78,7 @@ public class StudentProfileServiceTest {
     	return student;
 	} 
     
-    @Test
+//    @Test
 	 public void testSeatchStudent() {
 		 		setup();
 	    		assertTrue(StudentProfileEntity.count()>0);

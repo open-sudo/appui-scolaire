@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/appui-comment/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-comment/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-conference/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-conference/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-course/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-course/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-data-generator/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-data-generator/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-notification/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-notification/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-schedule/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-schedule/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-student-booking/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-student-booking/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-student-parent/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-student-parent/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-student-profile/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-student-profile/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-tag/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-tag/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-teacher-availability/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-teacher-availability/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-teacher-profile/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/appui-teacher-profile/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

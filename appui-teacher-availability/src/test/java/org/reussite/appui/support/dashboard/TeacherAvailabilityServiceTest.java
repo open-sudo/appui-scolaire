@@ -41,7 +41,7 @@ public class TeacherAvailabilityServiceTest {
 	ScheduleService scheduleService;
 	String tenantKey="alpha";
 
-    @Test
+//    @Test
     public void testScheduleCreation() {
     	
     	TeacherProfile teacher= new TeacherProfile();
@@ -111,7 +111,7 @@ public class TeacherAvailabilityServiceTest {
     	return availability;
 	} 
     
-    @Test
+//    @Test
 	 public void testSearchTeacherAvailability() {
 		 		setup();
 	    		assertTrue(TeacherAvailabilityEntity.count()>0);
