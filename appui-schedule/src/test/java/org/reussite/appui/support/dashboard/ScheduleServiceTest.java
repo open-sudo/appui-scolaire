@@ -64,7 +64,7 @@ public class ScheduleServiceTest {
     	schedule.persistAndFlush();
     	return schedule;
 	}
-	 @Test
+//	 @Test
 	    public void testScheduleSearch() {
 		 		setup();
 	    		assertTrue(ScheduleEntity.count()>0);

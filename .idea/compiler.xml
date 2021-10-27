@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="appui-data-generator" />
+        <module name="appui-schedule" />
+        <module name="appui-teacher-profile" />
+        <module name="appui-notification" />
+        <module name="appui-conference" />
+        <module name="appui-comment" />
+        <module name="appui-course" />
+        <module name="appui-student-profile" />
+        <module name="appui-tag" />
+        <module name="appui-student-booking" />
+        <module name="appui-student-parent" />
+        <module name="appui-common" />
+        <module name="appui-teacher-availability" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="appui-tag" options="-parameters" />
+    </option>
+  </component>
+</project>
