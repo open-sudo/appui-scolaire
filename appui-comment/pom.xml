@@ -22,9 +22,6 @@
 		<quarkus.platform.version>2.0.2.Final</quarkus.platform.version>
 		<surefire-plugin.version>2.22.1</surefire-plugin.version>
 	</properties>
-	<modules>
-		<module>../appui-common</module>
-	</modules>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -63,6 +60,8 @@
 			<groupId>org.reussite</groupId>
 			<artifactId>appui-common</artifactId>
 			<version>${project.version}</version>
+			<scope>system</scope>
+         		<systemPath>/tmp/src/appui-common-1.0.1-SNAPSHOT</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
