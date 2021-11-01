@@ -61,7 +61,7 @@
 			<artifactId>appui-common</artifactId>
 			<version>${project.version}</version>
 			<scope>system</scope>
-         		<systemPath>/tmp/src/appui-common-1.0.1-SNAPSHOT</systemPath>
+         		<systemPath>/deployments/appui-common-1.0.1-SNAPSHOT.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
