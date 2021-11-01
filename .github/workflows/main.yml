@@ -35,7 +35,7 @@ jobs:
         id: build_image
         uses: redhat-actions/s2i-build@v2
         with:
-          path_context: 'appui-comment/'
+          path_context: './appui-comment'
           # Builder image for a java project
           builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
           image: ${{ env.IMAGE_NAME }}
