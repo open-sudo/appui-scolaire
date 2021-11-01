@@ -3,7 +3,7 @@
 name: CI
 
 env:
-  IMAGE_NAME: appui-comment
+  IMAGE_NAME: appui-test
   TAGS: latest
 
 # Controls when the workflow will run
@@ -42,10 +42,10 @@ jobs:
           tags: ${{ env.TAGS }}
           
       - name: Pull Image from Docker
-        run: /usr/bin/podman pull docker-daemon:appui-comment:latest
+        run: /usr/bin/podman pull docker-daemon:appui-test:latest
         
       - name: Remove Image from Docker
-        run: /usr/bin/docker rmi appui-comment:latest
+        run: /usr/bin/docker rmi appui-test:latest
 
       # Push Image to Docker registry
       - name: Push To Docker Action
