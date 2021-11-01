@@ -30,17 +30,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
           
-       # Setup and Build
-      - name: Setup and Build
-        id: build_common
-        uses: redhat-actions/s2i-build@v2
-        with:
-          path_context: './appui-common'
-          # Builder image for a java project
-          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
-          image: appui-common
-          tags: ${{ env.TAGS }}
-          
       - name: Setup and Build
         id: build_image
         uses: redhat-actions/s2i-build@v2
