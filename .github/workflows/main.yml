@@ -3,7 +3,7 @@
 name: CI
 
 env:
-  IMAGE_NAME: appui-scolaire
+  IMAGE_NAME: appui-comment
   TAGS: latest
 
 # Controls when the workflow will run
@@ -35,17 +35,17 @@ jobs:
         id: build_image
         uses: redhat-actions/s2i-build@v2
         with:
-          path_context: '.'
+          path_context: 'appui-comment/'
           # Builder image for a java project
           builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.TAGS }}
           
       - name: Pull Image from Docker
-        run: /usr/bin/podman pull docker-daemon:appui-scolaire:latest
+        run: /usr/bin/podman pull docker-daemon:appui-comment:latest
         
       - name: Remove Image from Docker
-        run: /usr/bin/docker rmi appui-scolaire:latest
+        run: /usr/bin/docker rmi appui-comment:latest
 
       # Push Image to Docker registry
       - name: Push To Docker Action
