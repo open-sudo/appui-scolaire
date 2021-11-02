@@ -40,6 +40,12 @@ jobs:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       
+      - name: Copy file
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: /deployments/appui-common-1.0.1-SNAPSHOT.jar
+          target: /deployments/appui-common-1.0.1-SNAPSHOT-copy.jar
+      
       - name: Setup and Build
         id: build_image
         uses: redhat-actions/s2i-build@v2
