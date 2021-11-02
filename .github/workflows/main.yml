@@ -30,21 +30,21 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
-      - name: Setup and Build appui-common
-        id: build_common
-        uses: redhat-actions/s2i-build@v2
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.2
         with:
-          path_context: './appui-common'
-          # Builder image for a java project
-          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.TAGS }}
+          maven-version: 3.8.2
+          
+      - name: setup 
+        run: |
+          cd ./appui-common
+          mvn package
       
       - name: Copy file
         uses: canastro/copy-action@0.0.2
         with:
-          source: /tmp/artifacts/m2/repository/org/reussite/appui-common/1.0.1-SNAPSHOT/appui-common-1.0.1-SNAPSHOT.jar
-          target: /tmp/src/appui-common-1.0.1-SNAPSHOT.jar
+          source: ./appui-common/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-comment/appui-common-1.0.1-SNAPSHOT.jar
       
       - name: Setup and Build
         id: build_image
