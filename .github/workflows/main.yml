@@ -43,7 +43,7 @@ jobs:
       - name: Copy file
         uses: canastro/copy-action@0.0.2
         with:
-          source: ./appui-common/appui-common-1.0.1-SNAPSHOT.jar
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
           target: ./appui-comment/appui-common-1.0.1-SNAPSHOT.jar
       
       - name: Setup and Build
