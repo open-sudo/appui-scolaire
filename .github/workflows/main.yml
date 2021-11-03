@@ -113,7 +113,7 @@ jobs:
           target: ./appui-teacher-profile/appui-common-1.0.1-SNAPSHOT.jar
       
       - name: Setup and Build appui-comment
-        id: build appui-comment
+        id: build-appui-comment
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-comment'
@@ -122,7 +122,7 @@ jobs:
           image: ${{ env.APPUI_COMMENT_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-conference
-        id: build appui-conference
+        id: build-appui-conference
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-conference'
@@ -131,7 +131,7 @@ jobs:
           image: ${{ env.APPUI_CONFERENCE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-course
-        id: build appui-course
+        id: build-appui-course
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-course'
@@ -140,7 +140,7 @@ jobs:
           image: ${{ env.APPUI_COURSE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-data-generator
-        id: build appui-data-generator
+        id: build-appui-data-generator
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-data-generator'
@@ -149,7 +149,7 @@ jobs:
           image: ${{ env.APPUI_DATA_GENERATOR_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-notification
-        id: build appui-notification
+        id: build-appui-notification
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-notification'
@@ -158,7 +158,7 @@ jobs:
           image: ${{ env.APPUI_NOTIFICATION_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-schedule
-        id: build appui-schedule
+        id: build-appui-schedule
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-schedule'
@@ -167,7 +167,7 @@ jobs:
           image: ${{ env.APPUI_SCHEDULE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-student-booking
-        id: build appui-student-booking
+        id: build-appui-student-booking
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-student-booking'
@@ -176,7 +176,7 @@ jobs:
           image: ${{ env.APPUI_STUDENT_BOOKING_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-student-parent
-        id: build appui-student-parent
+        id: build-appui-student-parent
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-student-parent'
@@ -185,7 +185,7 @@ jobs:
           image: ${{ env.APPUI_STUDENT_PARENT_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-student-profile
-        id: build appui-student-profile
+        id: build-appui-student-profile
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-student-profile'
@@ -194,7 +194,7 @@ jobs:
           image: ${{ env.APPUI_STUDENT_PROFILE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-tag
-        id: build appui-tag
+        id: build-appui-tag
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-tag'
@@ -203,7 +203,7 @@ jobs:
           image: ${{ env.APPUI_TAG_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-teacher-availability
-        id: build appui-teacher-availability
+        id: build-appui-teacher-availability
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-teacher-availability'
@@ -212,7 +212,7 @@ jobs:
           image: ${{ env.APPUI_TEACHER_AVAILABILITY_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
       - name: Setup and Build appui-teacher-profile
-        id: build appui-teacher-profile
+        id: build-appui-teacher-profile
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-teacher-profile'
