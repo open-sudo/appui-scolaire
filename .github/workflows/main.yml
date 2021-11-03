@@ -1,9 +1,20 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CI CD for appui scolaire microservices
 
 env:
-  IMAGE_NAME: appui-comment
+  APPUI_COMMENT_IMAGE_NAME: appui-comment
+  APPUI_CONFERENCE_IMAGE_NAME: appui-conference
+  APPUI_COURSE_IMAGE_NAME: appui-course
+  APPUI_DATA_GENERATOR_IMAGE_NAME: appui-data-generator
+  APPUI_NOTIFICATION_IMAGE_NAME: appui-notification
+  APPUI_SCHEDULE_IMAGE_NAME: appui-schedule
+  APPUI_STUDENT_BOOKING_IMAGE_NAME: appui-student-booking
+  APPUI_STUDENT_PARENT_IMAGE_NAME: appui-student-parent
+  APPUI_STUDENT_PROFILE_IMAGE_NAME: appui-student-profile
+  APPUI_TAG_IMAGE_NAME: appui-tag
+  APPUI_TEACHER_AVAILABILITY_IMAGE_NAME: appui-teacher-availability
+  APPUI_TEACHER_PROFILE_IMAGE_NAME: appui-teacher-profile
   TAGS: latest
 
 # Controls when the workflow will run
@@ -35,38 +46,326 @@ jobs:
         with:
           maven-version: 3.8.2
           
-      - name: setup 
+      - name: Build appui common
         run: |
           cd ./appui-common
           mvn package
       
-      - name: Copy file
+      - name: Copy appui-common jar in appui-comment
         uses: canastro/copy-action@0.0.2
         with:
           source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
           target: ./appui-comment/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-conference
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-conference/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-course
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-course/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-data-generator
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-data-generator/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-notification
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-notification/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-schedule
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-schedule/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-student-booking
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-student-booking/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-student-parent
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-student-parent/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-student-profile
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-student-profile/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-tag
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-tag/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar in appui-teacher-availability
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-teacher-availability/appui-common-1.0.1-SNAPSHOT.jar
+      - name: Copy appui-common jar inappui-teacher-profile
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./appui-common/target/appui-common-1.0.1-SNAPSHOT.jar
+          target: ./appui-teacher-profile/appui-common-1.0.1-SNAPSHOT.jar
       
-      - name: Setup and Build
-        id: build_image
+      - name: Setup and Build appui-comment
+        id: build appui-comment
         uses: redhat-actions/s2i-build@v2
         with:
           path_context: './appui-comment'
           # Builder image for a java project
           builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ env.APPUI_COMMENT_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-conference
+        id: build appui-conference
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-conference'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_CONFERENCE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-course
+        id: build appui-course
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-course'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_COURSE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-data-generator
+        id: build appui-data-generator
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-data-generator'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_DATA_GENERATOR_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-notification
+        id: build appui-notification
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-notification'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_NOTIFICATION_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-schedule
+        id: build appui-schedule
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-schedule'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_SCHEDULE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-student-booking
+        id: build appui-student-booking
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-student-booking'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_STUDENT_BOOKING_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-student-parent
+        id: build appui-student-parent
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-student-parent'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_STUDENT_PARENT_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-student-profile
+        id: build appui-student-profile
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-student-profile'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_STUDENT_PROFILE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-tag
+        id: build appui-tag
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-tag'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_TAG_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-teacher-availability
+        id: build appui-teacher-availability
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-teacher-availability'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_TEACHER_AVAILABILITY_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+      - name: Setup and Build appui-teacher-profile
+        id: build appui-teacher-profile
+        uses: redhat-actions/s2i-build@v2
+        with:
+          path_context: './appui-teacher-profile'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/openjdk/openjdk-11-rhel7'
+          image: ${{ env.APPUI_TEACHER_PROFILE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
           
-      - name: Pull Image from Docker
+      - name: Pull appui-comment Image from Docker
         run: /usr/bin/podman pull docker-daemon:appui-comment:latest
+      - name: Pull appui-conference Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-conference:latest
+      - name: Pull appui-course Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-course:latest
+      - name: Pull appui-data-generator Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-data-generator:latest
+      - name: Pull appui-notification Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-notification:latest
+      - name: Pull appui-schedule Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-schedule:latest
+      - name: Pull appui-student-booking Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-student-booking:latest
+      - name: Pull appui-student-parent Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-student-parent:latest
+      - name: Pull appui-student-profile Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-student-profile:latest
+      - name: Pull appui-tag Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-tag:latest
+      - name: Pull appui-teacher-availability Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-teacher-availability:latest
+      - name: Pull appui-teacher-profile Image from Docker
+        run: /usr/bin/podman pull docker-daemon:appui-teacher-profile:latest
         
       - name: Remove Image from Docker
         run: /usr/bin/docker rmi appui-comment:latest
+      - name: Remove appui-comment Image from Docker
+        run: /usr/bin/docker rmi appui-comment:latest
+      - name: Remove appui-conference Image from Docker
+        run: /usr/bin/docker rmi appui-conference:latest
+      - name: Remove appui-course Image from Docker
+        run: /usr/bin/docker rmi appui-course:latest
+      - name: Remove appui-data-generator Image from Docker
+        run: /usr/bin/docker rmi appui-data-generator:latest
+      - name: Remove appui-notification Image from Docker
+        run: /usr/bin/docker rmi appui-notification:latest
+      - name: Remove appui-schedule Image from Docker
+        run: /usr/bin/docker rmi appui-schedule:latest
+      - name: Remove appui-student-booking Image from Docker
+        run: /usr/bin/docker rmi appui-student-booking:latest
+      - name: Remove appui-student-parent Image from Docker
+        run: /usr/bin/docker rmi appui-student-parent:latest
+      - name: Remove appui-student-profile Image from Docker
+        run: /usr/bin/docker rmi appui-student-profile:latest
+      - name: Remove appui-tag Image from Docker
+        run: /usr/bin/docker rmi appui-tag:latest
+      - name: Remove appui-teacher-availability Image from Docker
+        run: /usr/bin/docker rmi appui-teacher-availability:latest
+      - name: Remove appui-teacher-profile Image from Docker
+        run: /usr/bin/docker rmi appui-teacher-profile:latest
 
       # Push Image to Docker registry
       - name: Push To Docker Action
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: ${{ env.IMAGE_NAME }}
+          image: ${{ env.APPUI_COMMENT_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_CONFERENCE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_COURSE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_DATA_GENERATOR_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_NOTIFICATION_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_SCHEDULE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_STUDENT_BOOKING_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_STUDENT_PARENT_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_STUDENT_PROFILE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_TAG_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_TEACHER_AVAILABILITY_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}     
+          registry: docker.io/aproresco
+          username: aproresco
+          password: 7608cf6e-6ca2-4bbb-81aa-a8bc453ea864
+      - name: Push To Docker Action
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.APPUI_TEACHER_PROFILE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}     
           registry: docker.io/aproresco
           username: aproresco
