@@ -246,8 +246,6 @@ jobs:
       - name: Pull appui-teacher-profile Image from Docker
         run: /usr/bin/podman pull docker-daemon:appui-teacher-profile:latest
         
-      - name: Remove Image from Docker
-        run: /usr/bin/docker rmi appui-comment:latest
       - name: Remove appui-comment Image from Docker
         run: /usr/bin/docker rmi appui-comment:latest
       - name: Remove appui-conference Image from Docker
