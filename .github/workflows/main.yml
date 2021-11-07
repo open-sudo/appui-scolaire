@@ -18,6 +18,7 @@ env:
   TAGS: latest
   AWS_ACCESS_KEY_ID: AKIA246GZY5MXJ3KJACI
   AWS_SECRET_ACCESS_KEY: d9FpXyjDA3Akcv7pjtc6v9g1MBnvUXNIa69Asn0i
+  OBJECT: $(aws s3 ls --profile $PROFILE $BUCKET --recursive | sort | tail -n 1 | awk '{print $4}')
 
 # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
@@ -506,10 +507,10 @@ jobs:
       
       - name: S3 cp
         run: |
-          OBJECT="$(aws s3 ls --profile $PROFILE $BUCKET --recursive | sort | tail -n 1 | awk '{print $4}')"; aws s3 cp s3://appui-database-backup/$OBJECT ./db/$OBJECT; cp ./db/$OBJECT ./db/test.sql.bz2.nc
+          aws s3 cp s3://appui-database-backup/${{ env.OBJECT }} ./db/${{ env.OBJECT }}
           
       - name: Copybackup file in appui-comment
         uses: canastro/copy-action@0.0.2
         with:
-          source: ./db/test.sql.bz2.nc
+          source: ./db/${{ env.OBJECT }}
           target: ./appui-comment/test.sql.bz2.nc
