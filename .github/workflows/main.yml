@@ -307,6 +307,7 @@ jobs:
 
       # Push Image to Docker registry
       - name: Push To Docker Action
+        id: push-image
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ env.APPUI_COMMENT_IMAGE_NAME }}
@@ -409,8 +410,8 @@ jobs:
         with:
           script: |
             const secrets = {
-              OPENSHIFT_SERVER: `${{ secrets.OPENSHIFT_SERVER }}`,
-              OPENSHIFT_TOKEN: `${{ secrets.OPENSHIFT_TOKEN }}`,
+              OPENSHIFT_SERVER: `${{ env.OPENSHIFT_SERVER }}`,
+              OPENSHIFT_TOKEN: `${{ env.OPENSHIFT_TOKEN }}`,
             };
 
             const GHCR = "ghcr.io";
@@ -419,7 +420,7 @@ jobs:
             }
             else {
               core.info("A registry password is required");
-              secrets["IMAGE_REGISTRY_PASSWORD"] = `${{ secrets.IMAGE_REGISTRY_PASSWORD }}`;
+              secrets["IMAGE_REGISTRY_PASSWORD"] = `${{ env.IMAGE_REGISTRY_PASSWORD }}`;
             }
 
             const missingSecrets = Object.entries(secrets).filter(([ name, value ]) => {
@@ -455,32 +456,6 @@ jobs:
         run: |
           echo "IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
 
-      # https://github.com/redhat-actions/buildah-build#readme
-      - name: Build from Dockerfile
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: ${{ env.APP_NAME }}
-          tags: ${{ env.IMAGE_TAGS }}
-
-          # If you don't have a Dockerfile/Containerfile, refer to https://github.com/redhat-actions/buildah-build#scratch-build-inputs
-          # Or, perform a source-to-image build using https://github.com/redhat-actions/s2i-build
-          # Otherwise, point this to your Dockerfile/Containerfile relative to the repository root.
-          dockerfiles: |
-            ./Dockerfile
-
-      # https://github.com/redhat-actions/push-to-registry#readme
-      - name: Push to registry
-        id: push-image
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: ${{ env.IMAGE_REGISTRY }}
-          username: ${{ env.IMAGE_REGISTRY_USER }}
-          password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
-
-      # The path the image was pushed to is now stored in ${{ steps.push-image.outputs.registry-path }}
 
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
