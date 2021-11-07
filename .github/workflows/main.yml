@@ -16,6 +16,8 @@ env:
 #   APPUI_TEACHER_AVAILABILITY_IMAGE_NAME: appui-teacher-availability
 #   APPUI_TEACHER_PROFILE_IMAGE_NAME: appui-teacher-profile
   TAGS: latest
+  AWS_ACCESS_KEY_ID: AKIA246GZY5MXJ3KJACI
+  AWS_SECRET_ACCESS_KEY: d9FpXyjDA3Akcv7pjtc6v9g1MBnvUXNIa69Asn0i
 
 # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
@@ -498,8 +500,8 @@ jobs:
       - name: S3 cp
         uses: prewk/s3-cp-action@v0.1.1
         with:
-          aws_access_key_id: AKIA246GZY5MXJ3KJACI
-          aws_secret_access_key: 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
+          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           source: 's3://appui-database-backup'
           dest: './db'
           flags: --query 'reverse(sort_by(Contents[?contains(Key, \`pg-backup\`)], &LastModified))[:1].Key'
