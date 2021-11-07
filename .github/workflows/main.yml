@@ -506,7 +506,7 @@ jobs:
       
       - name: S3 cp
         run: |
-          OBJECT="$(aws s3 ls --profile $PROFILE $BUCKET --recursive | sort | tail -n 1 | awk '{print $4}')"; aws s3 cp s3://appui-database-backup/$OBJECT ./db/test.sql.bz2.nc
+          OBJECT="$(aws s3 ls --profile $PROFILE $BUCKET --recursive | sort | tail -n 1 | awk '{print $4}')"; aws s3 cp s3://appui-database-backup/$OBJECT ./db/$OBJECT; cp ./db/$OBJECT ./db/test.sql.bz2.nc
           
       - name: Copybackup file in appui-comment
         uses: canastro/copy-action@0.0.2
