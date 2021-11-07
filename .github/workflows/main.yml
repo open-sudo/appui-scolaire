@@ -504,4 +504,4 @@ jobs:
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           source: 's3://appui-database-backup'
           dest: './db'
-          flags: --query 'reverse(sort_by(Contents[?contains(Key, \`pg-backup\`)], &LastModified))[:1].Key'
+          flags: --query 'reverse(sort_by(Contents[?contains(Key, `pg-backup`)], &LastModified))[:1].Key'
