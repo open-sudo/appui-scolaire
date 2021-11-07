@@ -507,10 +507,10 @@ jobs:
       
       - name: S3 cp
         run: |
-          aws s3 cp s3://appui-database-backup/${{ env.OBJECT }} ./db/${{ env.OBJECT }}
+          OBJECT=${{ env.OBJECT }}; aws s3 cp s3://appui-database-backup/$OBJECT ./db/$OBJECT
           
       - name: Copybackup file in appui-comment
         uses: canastro/copy-action@0.0.2
         with:
-          source: ./db/${{ env.OBJECT }}
+          source: ./db/$OBJECT
           target: ./appui-comment/test.sql.bz2.nc
