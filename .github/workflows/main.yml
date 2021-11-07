@@ -15,7 +15,7 @@ env:
 #   APPUI_TAG_IMAGE_NAME: appui-tag
 #   APPUI_TEACHER_AVAILABILITY_IMAGE_NAME: appui-teacher-availability
 #   APPUI_TEACHER_PROFILE_IMAGE_NAME: appui-teacher-profile
-#   TAGS: latest
+  TAGS: latest
 
 # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
