@@ -519,10 +519,10 @@ jobs:
         run: |
           sudo apt-get install -y mcrypt bzip2
           
-      - name: mcrypt dump file
+      - name: decrypt dump file
         run: |
-          mcrypt -d ./db/test.sql.bz2.nc
+          mcrypt -k Man2than4/. -d ./db/test.sql.bz2.nc
           
-      - name: bzip2 dump file
+      - name: unzip dump file
         run: |
           bzip2 -vd ./db/test.sql.bz2
