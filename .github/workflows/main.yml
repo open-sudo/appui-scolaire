@@ -498,23 +498,31 @@ jobs:
 #           echo
 #           echo "Your app can be taken down with: \"oc delete all --selector='${{ env.SELECTOR }}'\""
 
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v1
-#         with:
-#           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-#           aws-region: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       
-#       - name: S3 cp
-#         run: |
-#           OBJECT=${{ env.OBJECT }}; aws s3 cp s3://appui-database-backup/$OBJECT ./db/test.sql.bz2.nc
+      - name: S3 cp
+        run: |
+          OBJECT=${{ env.OBJECT }}; aws s3 cp s3://appui-database-backup/$OBJECT ./db/test.sql.bz2.nc
           
-#       - name: Copybackup file in appui-comment
-#         uses: canastro/copy-action@0.0.2
-#         with:
-#           source: ./db/test.sql.bz2.nc
-#           target: ./appui-comment/test.sql.bz2.nc
+      - name: Copybackup file in appui-comment
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ./db/test.sql.bz2.nc
+          target: ./appui-comment/test.sql.bz2.nc
           
       - name: install mcrypt and bzip2
         run: |
           sudo apt-get install -y mcrypt bzip2
+          
+      - name: mcrypt dump file
+        run: |
+          mcrypt -d ./db/test.sql.bz2.nc
+          
+      - name: bzip2 dump file
+        run: |
+          bzip2 -vd ./db/test.sql.bz2
