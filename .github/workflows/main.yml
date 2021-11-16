@@ -461,10 +461,10 @@ jobs:
 #           echo "IMAGE_TAGS=latest ${GITHUB_SHA::12}" | tee -a $GITHUB_ENV
 
 
-#       - name: Install oc
-#         uses: redhat-actions/openshift-tools-installer@v1
-#         with:
-#           oc: 4
+      - name: Install oc
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: 4
 
 #       # https://github.com/redhat-actions/oc-login#readme
 #       - name: Log in to OpenShift
