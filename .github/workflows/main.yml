@@ -19,6 +19,7 @@ env:
   AWS_ACCESS_KEY_ID: AKIA246GZY5MXJ3KJACI
   AWS_SECRET_ACCESS_KEY: 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
   OBJECT: $(aws s3 ls s3://appui-database-backup --recursive | sort | tail -n 1 | awk '{print $4}')
+  DB_POD: $(oc get pods | grep postgresql | awk '{print $1}') && echo $DB_POD
 
 # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
@@ -507,13 +508,13 @@ jobs:
       
       - name: S3 cp
         run: |
-          OBJECT=${{ env.OBJECT }}; aws s3 cp s3://appui-database-backup/$OBJECT ./db/test.sql.bz2.nc
+          OBJECT=${{ env.OBJECT }}; aws s3 cp s3://appui-database-backup/$OBJECT ./db/postgresql.sql.bz2.nc
           
-      - name: Copybackup file in appui-comment
-        uses: canastro/copy-action@0.0.2
-        with:
-          source: ./db/test.sql.bz2.nc
-          target: ./appui-comment/test.sql.bz2.nc
+#       - name: Copy backup file in appui-comment
+#         uses: canastro/copy-action@0.0.2
+#         with:
+#           source: ./db/test.sql.bz2.nc
+#           target: ./appui-comment/postgresql.sql.bz2.nc
           
       - name: install mcrypt and bzip2
         run: |
@@ -521,8 +522,17 @@ jobs:
           
       - name: decrypt dump file
         run: |
-          mcrypt -k Man2than4/. -d ./db/test.sql.bz2.nc
+          mcrypt -k Man2than4/. -d ./db/postgresql.sql.bz2.nc
           
       - name: unzip dump file
         run: |
-          bzip2 -vd ./db/test.sql.bz2
+          bzip2 -vd ./db/postgresql.sql.bz2
+          
+      - name: switch to the namespace
+        run: |
+          oc project quarkus-s2i
+          
+      - name: get the db pod and import the backup to the db
+        run: |
+          DB_POD=${{ env.DB_POD }}; oc rsync ./db/ $DB_POD:/var/lib/pgsql/data; oc rsh $DB_POD;  psql -d postgresql < /var/lib/pgsql/data/postgresql/postgresql.sql; rm -rf /var/lib/pgsql/data/postgresql/
+         
