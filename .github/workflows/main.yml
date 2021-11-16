@@ -532,9 +532,9 @@ jobs:
         run: |
           oc project quarkus-s2i
 
-      - name: get the db pod and import the backup to the db
-        run: |
-          oc new-app -e POSTGRESQL_USER=appui_scolaire_user -e POSTGRESQL_PASSWORD=Man2than4/. -e POSTGRESQL_DATABASE=sampledb postgresql
+#       - name: create the db pod
+#         run: |
+#           oc new-app -e POSTGRESQL_USER=appui_scolaire_user -e POSTGRESQL_PASSWORD=Man2than4/. -e POSTGRESQL_DATABASE=sampledb postgresql
 
       - name: get the db pod
         run: |
