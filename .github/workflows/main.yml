@@ -536,6 +536,11 @@ jobs:
 #         run: |
 #           oc new-app -e POSTGRESQL_USER=appui_scolaire_user -e POSTGRESQL_PASSWORD=Man2than4/. -e POSTGRESQL_DATABASE=sampledb postgresql
 
+#       - name: Sleep for 2 min. The time for the pod to be up and running
+#         uses: juliangruber/sleep-action@v1
+#         with:
+#           time: 120s
+
       - name: get the db pod
         run: |
           DB_POD=${{ env.DB_POD }}; oc rsync ./db/ $DB_POD:/var/lib/pgsql/data
