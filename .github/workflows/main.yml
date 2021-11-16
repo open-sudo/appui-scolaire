@@ -534,5 +534,9 @@ jobs:
           
       - name: get the db pod and import the backup to the db
         run: |
-          DB_POD=${{ env.DB_POD }}; oc rsync ./db/ $DB_POD:/var/lib/pgsql/data; oc rsh $DB_POD;  psql -d postgresql < /var/lib/pgsql/data/postgresql/postgresql.sql; rm -rf /var/lib/pgsql/data/postgresql/
-         
+          DB_POD=${{ env.DB_POD }}; oc rsync ./db/ $DB_POD:/var/lib/pgsql/data 
+          
+#       - name: get the db pod and import the backup to the db
+#         run: |
+#           DB_POD=${{ env.DB_POD }}; oc rsync ./db/ $DB_POD:/var/lib/pgsql/data; oc rsh $DB_POD;  psql -d postgresql < /var/lib/pgsql/data/postgresql/postgresql.sql; rm -rf /var/lib/pgsql/data/postgresql/
+
