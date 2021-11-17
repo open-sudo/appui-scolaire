@@ -19,7 +19,7 @@ env:
   AWS_ACCESS_KEY_ID: AKIA246GZY5MXJ3KJACI
   AWS_SECRET_ACCESS_KEY: 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
   OBJECT: $(aws s3 ls s3://appui-database-backup --recursive | sort | tail -n 1 | awk '{print $4}')
-  DB_POD: $(oc get pods | grep postgresql | awk '{print $1}')
+  DB_POD: $(oc get pods | grep postgresql | awk '{print $1}') && echo $DB_POD
 
 # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
