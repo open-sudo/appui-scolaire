@@ -552,7 +552,7 @@ jobs:
 
       - name: get the db pod
         run: |
-          DB_POD=${{ env.DB_POD }}; oc rsync ./db/postgresql.sql $DB_POD:/var/lib/pgsql/data          
+          DB_POD=${{ env.DB_POD }}; oc rsync ./db/ $DB_POD:/var/lib/pgsql/data          
           
       - name: import the backup to the db
         run: |
