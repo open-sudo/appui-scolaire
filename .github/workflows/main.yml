@@ -25,10 +25,10 @@ env:
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
   OPENSHIFT_SERVER: https://api.atlanta.appui.us:6443
-  OPENSHIFT_TOKEN: eyJhbGciOiJSUzI1NiIsImtpZCI6Ii0xNVhPb3lPa0Ztc3F2ZE1Yem9ET1lWX1Jyanowam1fRXBoUWRKd3A2NnMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJtYW51YWwtc2V0dXAtYXBwdWkiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZ2l0aHViLWFjdGlvbnMtc2EtdG9rZW4tcXB2OW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZ2l0aHViLWFjdGlvbnMtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIzZWRlZDI0ZS0zNjYwLTQxNTctYTQyNi0xZDZiMDVhYzA2ZDYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6bWFudWFsLXNldHVwLWFwcHVpOmdpdGh1Yi1hY3Rpb25zLXNhIn0.WbxxeqVe-5Xz9cRh7Td4358zdQGfHwRVu6RZZ4OHzlGxR378i-6Dy-EaHA5jJZneRmukK7mDzetkdGvphKe19zI0NN-2JyrpUrIUjUHmCiml5GstSUrQMhrKbXVKiKwolAwWEmUGH7Rrh2kU4_cC03zbEqyRkgh6wFui2rL2kPZGbSt4amjPXrsRP2lD9CGypBFzhDttJBpyGWxtvkRnoEtEg_3eMmaG91cG_MtKt_fF4FEPQWL3ODrB_ZrQ9H_3ASZNzO86igkfonH8IeCPdz3UpbSvLQxVkCTUBmAE5vwadN-3l9kcEyTHRZTx7vMpl0LZGU9j4dy3saPU9XC6SvtfaUBPU8TfVEBgYi-Z5q7yfLsSbsB-3dKPGQKkEP5f5RqyEq58ePuy_Hcdj16DkzFA05FoXwVBuUr3thyxkY1XyBLgrP63F4Ar2vDzK4PqBPdtxUYQyMhn913ARk6bqDchKmfjv_fdxV7mzyqmPBcaOeA04_ZfprOvY328-Gli1EogCN9HF8uCiidJkYuHTYS2r2SwcZiMtPgPt02IUUYVwjJsbbJAW95XRh0FyBFdcl_eBjHPSheh7UZ55wXBo5PNpkTSJeuqJcsS1UB2QU0dGVnXXDLnYkuovrteJNFCxc13qOcKfrj51lcN6DN455vZD973AoNXNopCEILiVwI
+  OPENSHIFT_TOKEN: eyJhbGciOiJSUzI1NiIsImtpZCI6Inl0YkplYWRqWmJjeHp0dGNLSFZBUm1iUzg0MmtOT19wM25EV0JYY3BYSWMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJhcHB1aSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJnaXRodWItYWN0aW9ucy1zYS10b2tlbi01YjhueCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJnaXRodWItYWN0aW9ucy1zYSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImFjYTI2Yzk2LWM3NTMtNDA0Ni1hNzA0LTI5NDQwMjllOWFiZCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDphcHB1aTpnaXRodWItYWN0aW9ucy1zYSJ9.XN65TzpbvQwcecO3nJ64UCBe0nQtCOfhkL7EBc_0GnGvMOX26kuR99kb2WHGvtRz4y4KchPUsAfsbMhQAMeex12vnfQPyqapHemiJ6F1sQr-ciAj6GtZywDtDnCNnEhrpLobqiObABT7Hhf2iFrcAq1QJRx8nNrXlvYLELSuUmTvz9cjE6h7ZO9pjwO7X5SKczwJkZUaJ_hKta_KvbGauExDUAY9GOcvUjYB6mURDJk0Uf1bvc8lgG4Jx2brJXtCMuZNQsiVyeOE6n-sWwTTDB0ffaY5DzK0XbGPA-9Ty8cF9NrzVb31CmMFZVIZ5JfQLJnO7E3Zz_W-hyTGq8kWH-qjC7fqU802q3e3j4vUfW9noHnTOKVPQrVNM5LCd59Lpn0IPVGVAEyU6NkxfBDnLqJiMOTTIUny4qLvMZzaFrXkJ7NYpNr_I2b-qHuC-b_wok5YyQQ4IpoB9_Nt9Wuts2skA3Penn2-rXFgWj2i3pxB9Lqw1gmgbmf3CQtTWNSyxlXh6_tSa7XjmoPgNwCQxY6jq1zrKKaj5LxyJElWnCUgGJb4aavT8G849iVJHn3IZZe1hMgLJ3AjHmFOEnaizGid7VFeZN_aL9XU17JYwmOaizwQCs-F91j8ASflLujk4O4Ld2uabVb9dh3EzussYez_WpOqV9oMgBnDp0n9VkA
 #   OPENSHIFT_TOKEN: sha256~OBjokdELB_X-j2aRJTGbAqH0l90F0Xyo6garTmSa3HQ
   # 🖊️ EDIT to set the kube context's namespace after login. Leave blank to use your user's default namespace.
-  OPENSHIFT_NAMESPACE: quarkus-s2i
+  OPENSHIFT_NAMESPACE: appui
 
   # 🖊️ EDIT to set a name for your OpenShift app, or a default one will be generated below.
   APP_NAME: appui-comment
@@ -536,6 +536,14 @@ jobs:
 #       - name: create the db pod
 #         run: |
 #           oc new-app -e POSTGRESQL_USER=appui_scolaire_user -e POSTGRESQL_PASSWORD=Man2than4/. -e POSTGRESQL_DATABASE=sampledb postgresql
+
+
+#To test
+      - name: create the db pod
+        run: |
+          oc new-app --name=postgresql -e POSTGRESQL_USER=appui_scolaire_user -e POSTGRESQL_PASSWORD=Man2than4/. -e POSTGRESQL_DATABASE=sampledb postgresql:9.5
+
+
 
 #       - name: create the db pod
 #         run: |
