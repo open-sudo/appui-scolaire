@@ -4,17 +4,17 @@ name: CI CD for appui scolaire microservices
 
 env:
   APPUI_COMMENT_IMAGE_NAME: appui-comment
-#   APPUI_CONFERENCE_IMAGE_NAME: appui-conference
-#   APPUI_COURSE_IMAGE_NAME: appui-course
-#   APPUI_DATA_GENERATOR_IMAGE_NAME: appui-data-generator
-#   APPUI_NOTIFICATION_IMAGE_NAME: appui-notification
-#   APPUI_SCHEDULE_IMAGE_NAME: appui-schedule
-#   APPUI_STUDENT_BOOKING_IMAGE_NAME: appui-student-booking
-#   APPUI_STUDENT_PARENT_IMAGE_NAME: appui-student-parent
-#   APPUI_STUDENT_PROFILE_IMAGE_NAME: appui-student-profile
-#   APPUI_TAG_IMAGE_NAME: appui-tag
-#   APPUI_TEACHER_AVAILABILITY_IMAGE_NAME: appui-teacher-availability
-#   APPUI_TEACHER_PROFILE_IMAGE_NAME: appui-teacher-profile
+  APPUI_CONFERENCE_IMAGE_NAME: appui-conference
+  APPUI_COURSE_IMAGE_NAME: appui-course
+  APPUI_DATA_GENERATOR_IMAGE_NAME: appui-data-generator
+  APPUI_NOTIFICATION_IMAGE_NAME: appui-notification
+  APPUI_SCHEDULE_IMAGE_NAME: appui-schedule
+  APPUI_STUDENT_BOOKING_IMAGE_NAME: appui-student-booking
+  APPUI_STUDENT_PARENT_IMAGE_NAME: appui-student-parent
+  APPUI_STUDENT_PROFILE_IMAGE_NAME: appui-student-profile
+  APPUI_TAG_IMAGE_NAME: appui-tag
+  APPUI_TEACHER_AVAILABILITY_IMAGE_NAME: appui-teacher-availability
+  APPUI_TEACHER_PROFILE_IMAGE_NAME: appui-teacher-profile
   TAGS: latest
   AWS_ACCESS_KEY_ID: AKIA246GZY5MXJ3KJACI
   AWS_SECRET_ACCESS_KEY: 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
