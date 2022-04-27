@@ -531,7 +531,7 @@ jobs:
           
       - name: switch to the namespace
         run: |
-          oc project quarkus-s2i
+          oc project appui
 
 #       - name: create the db pod
 #         run: |
