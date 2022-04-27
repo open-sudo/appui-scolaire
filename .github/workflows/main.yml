@@ -539,12 +539,12 @@ jobs:
 
 
 #To test
-      - name: pull centos postgres image
-        run: /usr/bin/docker pull centos/postgresql-95-centos7
+#       - name: pull centos postgres image
+#         run: /usr/bin/docker pull centos/postgresql-95-centos7
         
-      - name: create the db pod
-        run: |
-          oc new-app --name=postgresql -e POSTGRESQL_USER=appui_scolaire_user -e POSTGRESQL_PASSWORD=Man2than4/. -e POSTGRESQL_DATABASE=sampledb centos/postgresql-95-centos7
+#       - name: create the db pod
+#         run: |
+#           oc new-app --name=postgresql -e POSTGRESQL_USER=appui_scolaire_user -e POSTGRESQL_PASSWORD=Man2than4/. -e POSTGRESQL_DATABASE=sampledb centos/postgresql-95-centos7
 
 
 
